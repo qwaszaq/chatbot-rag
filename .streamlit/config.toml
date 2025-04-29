@@ -1,0 +1,4 @@
+[server]
+# Wyłącza mechanizm śledzenia zmian w plikach źródłowych
+# aby zapobiec konfliktom z PyTorch/innymi bibliotekami.
+fileWatcherType = "none"

@@ -13,3 +13,4 @@ python-docx
 unstructured
 llama-cpp-python
 langchain-qdrant
+langchain-openai
