@@ -1,0 +1,15 @@
+# Wymagane biblioteki dla chatbota RAG z Qdrant
+requests
+sentence-transformers
+streamlit
+qdrant-client
+langchain
+langchain-community
+langchain-core
+torch
+transformers
+pypdf
+python-docx
+unstructured
+llama-cpp-python
+langchain-qdrant
