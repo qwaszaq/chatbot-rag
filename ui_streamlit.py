@@ -37,17 +37,20 @@ def main():
         st.header("📁 Zarządzanie dokumentami")
 
         # Ładowanie z pliku lokalnego
-        uploaded_file = st.file_uploader("Wybierz dokument do przetworzenia", type=["pdf", "docx", "txt"])
+        uploaded_files = st.file_uploader("Wybierz dokumenty do przetworzenia", type=["pdf", "docx", "txt"], accept_multiple_files=True)
 
-        if uploaded_file:
-            # Zapisz przesłany plik tymczasowo
-            with st.spinner("Zapisywanie dokumentu..."):
-                temp_dir = tempfile.mkdtemp()
-                file_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getvalue())
-                st.session_state.uploaded_file_path = file_path
-                logger.info(f"📥 Zapisano dokument: {file_path}")
+        if uploaded_files:
+            # Zapisz przesłane pliki tymczasowo i zbierz ścieżki
+            temp_dir = tempfile.mkdtemp()
+            st.session_state.uploaded_file_paths = []
+            with st.spinner(f"Zapisywanie {len(uploaded_files)} dokumentów..."):
+                for uploaded_file in uploaded_files:
+                    file_path = os.path.join(temp_dir, uploaded_file.name)
+                    with open(file_path, "wb") as f:
+                        f.write(uploaded_file.getvalue())
+                    st.session_state.uploaded_file_paths.append(file_path)
+                    logger.info(f"📥 Zapisano dokument: {file_path}")
+            st.success(f"✅ Zapisano {len(uploaded_files)} dokumentów tymczasowo.")
 
         # Ładowanie z URL
         st.markdown("---")
@@ -83,19 +86,21 @@ def main():
 
 
         st.markdown("---")
-        if st.button("🧠 Przetwórz wybrany dokument"):
-            if hasattr(st.session_state, "uploaded_file_path") and st.session_state.uploaded_file_path:
-                with st.spinner("Przetwarzanie dokumentu..."):
-                    success = st.session_state.chatbot.process_document(st.session_state.uploaded_file_path)
+        if st.button("🧠 Przetwórz wybrane dokumenty"):
+            if hasattr(st.session_state, "uploaded_file_paths") and st.session_state.uploaded_file_paths:
+                with st.spinner(f"Przetwarzanie {len(st.session_state.uploaded_file_paths)} dokumentów..."):
+                    # Zakładamy, że metoda w app.py przyjmie listę ścieżek
+                    success = st.session_state.chatbot.process_documents(st.session_state.uploaded_file_paths) # Zmieniono nazwę metody i argument
                     if success:
-                        st.success("✅ Dokument został pomyślnie przetworzony i zapisany do Qdrant")
-                        # Opcjonalnie posprzątaj tymczasowy plik po przetworzeniu
-                        # os.unlink(st.session_state.uploaded_file_path)
-                        # del st.session_state.uploaded_file_path
+                        st.success("✅ Dokumenty zostały pomyślnie przetworzone i zapisane do Qdrant")
+                        # Opcjonalnie posprzątaj tymczasowe pliki po przetworzeniu
+                        # for file_path in st.session_state.uploaded_file_paths:
+                        #     os.unlink(file_path)
+                        # del st.session_state.uploaded_file_paths
                     else:
-                        st.error("❌ Wystąpił błąd podczas przetwarzania dokumentu")
+                        st.error("❌ Wystąpił błąd podczas przetwarzania dokumentów")
             else:
-                st.warning("⚠️ Najpierw wybierz dokument do przetworzenia (z pliku lub URL)")
+                st.warning("⚠️ Najpierw wybierz dokumenty do przetworzenia (z pliku lub URL)")
 
 
         st.markdown("---")
@@ -107,6 +112,17 @@ def main():
         if st.button("🔄 Resetuj czat"):
             st.session_state.messages = []
             st.rerun() # Używamy st.rerun() do odświeżenia po resecie czatu
+
+
+        if st.button("🗑️ Wyczyść bazę danych"):
+            with st.spinner("Czyszczenie bazy danych Qdrant..."):
+                success = st.session_state.chatbot.clear_qdrant_collection()
+                if success:
+                    st.success("✅ Baza danych Qdrant została pomyślnie wyczyszczona.")
+                    st.session_state.messages = [] # Zresetuj czat po wyczyszczeniu bazy
+                    st.rerun() # Odśwież interfejs
+                else:
+                    st.error("❌ Wystąpił błąd podczas czyszczenia bazy danych Qdrant.")
 
 
     # Historia czatu

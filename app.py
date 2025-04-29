@@ -39,7 +39,7 @@ class RAGChatbot:
 
         # Inicjalizacja komponentów
         self.document_loader = DocumentLoader()
-        self.text_splitter = TextSplitter(chunk_size=1000, chunk_overlap=200)
+        self.text_splitter = TextSplitter(chunk_size=512, chunk_overlap=90)
 
         # Inicjalizacja modelu embeddingowego
         self.embedding_generator = EmbeddingGenerator(
@@ -76,7 +76,7 @@ class RAGChatbot:
 
         # Szablon promptu dla LLM
         self.prompt_template = PromptTemplate(
-            template="Użyj poniższego kontekstu do odpowiedzi na pytanie. Jeśli nie znasz odpowiedzi, powiedz, że nie wiesz.\nKontekst: {context}\nPytanie: {question}\nOdpowiedź:",
+            template="Rola: Jesteś doświadczonym analitykiem tekstu, który odpowiada na pytania na podstawie dostarczonych dokumentów.\n\nInstrukcje:\n- Przeczytaj uważnie dostarczony kontekst.\n- Odpowiedz na pytanie użytkownika WYŁĄCZNIE na podstawie informacji zawartych w kontekście.\n- Jeśli odpowiedź nie znajduje się w kontekście, zwróć WYŁĄCZNIE frazę 'brak takich informacji' i nic więcej.\n- Jeśli odpowiedź znajduje się w kontekście, zwróć SAMĄ odpowiedź opartą na kontekście.\n\nKontekst:\n{context}\n\nPytanie: {question}",
             input_variables=["context", "question"],
         )
 
@@ -127,6 +127,61 @@ class RAGChatbot:
         except Exception as e:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
+
+    def process_documents(self, file_paths):
+        """
+        Przetwarza listę dokumentów: ładuje, dzieli na chunki i zapisuje do Qdrant
+
+        Args:
+            file_paths (list[str]): Lista ścieżek do plików dokumentów
+
+        Returns:
+            bool: True jeśli wszystkie dokumenty zostały przetworzone sukcesem, False w przeciwnym wypadku
+        """
+        if not isinstance(file_paths, list) or not file_paths:
+            logger.error("❌ Otrzymano nieprawidłową listę ścieżek plików.")
+            return False
+
+        all_succeeded = True
+        for file_path in file_paths:
+            success = self.process_document(file_path) # Wywołaj istniejącą metodę dla każdego pliku
+            if not success:
+                all_succeeded = False
+                logger.error(f"❌ Przetwarzanie dokumentu {file_path} nie powiodło się.")
+
+        if all_succeeded:
+            logger.info("✅ Wszystkie dokumenty zostały pomyślnie przetworzone.")
+        else:
+             logger.warning("⚠️ Nie wszystkie dokumenty zostały pomyślnie przetworzone. Sprawdź logi.")
+
+        return all_succeeded
+
+    def clear_qdrant_collection(self):
+        """Czyści (usuwa i tworzy ponownie) kolekcję w Qdrant"""
+        if not self.qdrant_connector:
+            logger.error("❌ Qdrant connector nie jest zainicjalizowany.")
+            return False
+
+        logger.info("🧹 Próba wyczyszczenia kolekcji Qdrant...")
+        # Wywołaj metodę czyszczącą z konektora
+        success = self.qdrant_connector.clear_collection()
+
+        # Po wyczyszczeniu, ponownie zainicjalizuj kolekcję (utworzy ją na nowo)
+        if success:
+             logger.info("✨ Ponowna inicjalizacja kolekcji Qdrant po wyczyszczeniu.")
+             # Musimy przekazać embedding generator do ponownej inicjalizacji
+             # Upewnij się, że self.embedding_generator jest dostępny w RAGChatbot
+             if hasattr(self, 'embedding_generator') and self.embedding_generator:
+                  reinitialize_success = self.qdrant_connector.initialize(self.embedding_generator)
+                  if not reinitialize_success:
+                       logger.error("❌ Nie udało się ponownie zainicjalizować kolekcji Qdrant po wyczyszczeniu.")
+                       return False # Czyszczenie zakończone, ale ponowna inicjalizacja nie powiodła się
+             else:
+                  logger.error("❌ Embedding generator nie jest dostępny do ponownej inicjalizacji Qdrant.")
+                  return False # Czyszczenie zakończone, ale ponowna inicjalizacja nie powiodła się
+
+
+        return success # Zwróć status sukcesu usunięcia kolekcji
 
     def query(self, question):
         """

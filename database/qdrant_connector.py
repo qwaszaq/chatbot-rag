@@ -117,3 +117,26 @@ class QdrantConnector:
     def get_vectorstore(self):
         """Zwraca vectorstore Qdrant"""
         return self.vectorstore
+
+    def clear_collection(self):
+        """Usuwa (czyści) aktualną kolekcję w Qdrant"""
+        if not self.client:
+            logger.error("❌ Klient Qdrant nie jest zainicjalizowany. Nie można wyczyścić kolekcji.")
+            return False
+
+        logger.info(f"🧹 Czyszczenie kolekcji w Qdrant: {self.collection_name}")
+        try:
+            # Usunięcie kolekcji
+            success = self.client.delete_collection(collection_name=self.collection_name)
+            if success:
+                 logger.info(f"✅ Kolekcja '{self.collection_name}' została pomyślnie usunięta.")
+                 # Opcjonalnie można od razu utworzyć ją ponownie, ale initialize() w RAGChatbot to zrobi przy następnym uruchomieniu
+                 self.vectorstore = None # Upewnij się, że vectorstore jest ustawiony na None po usunięciu kolekcji
+            else:
+                 logger.error(f"❌ Nie udało się usunąć kolekcji '{self.collection_name}'.")
+                 return False
+
+            return True
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas czyszczenia kolekcji w Qdrant: {str(e)}")
+            return False
