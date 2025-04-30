@@ -10,6 +10,7 @@ import uuid # Dodano import uuid
 import json # Dodano import json
 import networkx as nx # Dodano import networkx
 from streamlit_agraph import agraph, Node, Edge, Config # Dodano importy dla wizualizacji grafu
+import textwrap # Dodano import textwrap do zawijania etykiet
 # Dodano import dla obiektu odpowiedzi LLM z LangChain, aby móc sprawdzić jego typ
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -541,18 +542,27 @@ def main():
 
                           if st.toggle("Wyświetl Graf Wiedzy", key=toggle_key):
                                try:
-                                    # Przygotuj dane dla agraph z formatu node_link_data
-                                    nodes = [Node(id=node['id'], label=node.get('label', node['id']), size=15) for node in graph_data.get('nodes', [])]
+                                    # Przygotuj dane dla agraph z formatu node_link_data, dodając zawijanie etykiet
+                                    nodes = [
+                                        Node(
+                                            id=node['id'],
+                                            # Użyj textwrap do zawijania długich etykiet co ~25 znaków
+                                            label=textwrap.fill(node.get('label', node['id']), width=25),
+                                            size=15
+                                        ) for node in graph_data.get('nodes', [])
+                                    ]
+                                    # Krawędzie pozostają bez zmian formatowania etykiet (zwykle są krótsze)
                                     edges = [Edge(source=link['source'], target=link['target'], label=link.get('label', '')) for link in graph_data.get('links', [])]
 
-                                    # Konfiguracja wyglądu grafu (można dostosować)
-                                    config = Config(width='100%', # Użyj pełnej szerokości
-                                                    height=600, # Zwiększona wysokość
+                                    # Konfiguracja wyglądu grafu - zmiana na układ hierarchiczny
+                                    config = Config(width='100%',
+                                                    height=600,
                                                     directed=True,
-                                                    physics={'solver': 'forceAtlas2Based', 'forceAtlas2Based': {'gravitationalConstant': -30}}, # Poprawiona fizyka
-                                                    hierarchical=False,
+                                                    physics=False, # Wyłącz fizykę dla układu hierarchicznego
+                                                    hierarchical=True, # Włącz układ hierarchiczny
+                                                    layout={'hierarchical': {'direction': 'UD', 'sortMethod': 'hubsize'}}, # Podstawowe opcje hierarchii (Up-Down, sortuj wg liczby połączeń)
                                                     nodeHighlightBehavior=True,
-                                                    highlightColor='#F7A7A6', # Kolor podświetlenia
+                                                    highlightColor='#F7A7A6',
                                                     collapsible=True # Opcja zwijania węzłów (może wymagać dodatkowej konfiguracji)
                                                     )
 
