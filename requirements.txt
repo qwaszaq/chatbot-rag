@@ -14,3 +14,6 @@ unstructured
 llama-cpp-python
 langchain-qdrant
 langchain-openai
+spacy>=3.0.0 # Dla NER
+networkx # Dla budowy grafu wiedzy
+streamlit-agraph # Dla wizualizacji grafu wiedzy

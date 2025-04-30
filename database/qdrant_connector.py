@@ -15,8 +15,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class QdrantConnector:
-    # Zmieniono domyślną nazwę kolekcji na "nowa" i vector_size na 1024
-    def __init__(self, host="localhost", port=6333, collection_name="nowa", vector_size=1024):
+    # Zmieniono domyślną nazwę kolekcji na "nowa1"
+    def __init__(self, host="localhost", port=6333, collection_name="nowa1", vector_size=1024):
         self.host = host
         self.port = port
         self.collection_name = collection_name
@@ -117,3 +117,68 @@ class QdrantConnector:
     def get_vectorstore(self):
         """Zwraca vectorstore Qdrant"""
         return self.vectorstore
+
+    def clear_collection(self):
+        """Usuwa i tworzy na nowo kolekcję Qdrant, efektywnie czyszcząc jej zawartość."""
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można wyczyścić kolekcji.")
+            return False
+
+        collection_name = self.collection_name
+
+        logger.warning(f"🗑️ Próba usunięcia WSZYSTKICH punktów z kolekcji: {collection_name}")
+        try:
+            # Sprawdź, czy kolekcja istnieje
+            try:
+                self.client.get_collection(collection_name=collection_name)
+                logger.info(f"   Kolekcja '{collection_name}' istnieje. Usuwanie punktów...")
+
+                # Zdefiniuj filtr, który pasuje do wszystkich punktów (pusty filtr Must)
+                # Alternatywnie, jeśli znasz jakiś wspólny atrybut metadanych, można go użyć.
+                # Lepszym podejściem jest użycie scroll API do pobrania ID i usunięcie po ID,
+                # ale dla prostoty użyjemy delete z filtrem, który powinien działać dla mniejszych kolekcji.
+                # Qdrant < 1.7: Użyj pustego filtru `models.Filter()`
+                # Qdrant >= 1.7: Użyj `models.Filter(must=[])` lub po prostu `None` dla filtru
+                # Sprawdź wersję qdrant-client, jeśli to konieczne. Załóżmy nowszą wersję lub None.
+                from qdrant_client.http import models as rest
+
+                # Usuń wszystkie punkty używając pustego filtru `must` lub braku filtru
+                # Użycie 'wait=True' zapewnia, że operacja zostanie potwierdzona przed kontynuacją.
+                self.client.delete(
+                    collection_name=collection_name,
+                    points_selector=rest.PointIdsList(ids=[]), # To może nie działać zgodnie z oczekiwaniami dla "wszystkich"
+                    # Spróbujmy usunąć używając filtru, który zawsze jest prawdziwy lub braku filtru.
+                    # Według dokumentacji, aby usunąć wszystko, można użyć scroll API lub
+                    # jeśli ID są znane, PointIdsList.
+                    # Prostsze, choć potencjalnie mniej wydajne dla ogromnych kolekcji, jest delete z filtrem.
+                    # Filtr, który zawsze jest prawdziwy (np. sprawdzający istnienie jakiegoś pola,
+                    # które zawsze istnieje lub pusty `must` w nowszych wersjach).
+                    # Sprawdźmy pusty `must` dla Qdrant >= 1.7 lub None
+                    wait=True # Poczekaj na zakończenie operacji
+                )
+                # UWAGA: Skuteczność usuwania wszystkich punktów przez pusty filtr `delete` może zależeć
+                # od wersji Qdrant. Bardziej niezawodne jest usuwanie i tworzenie kolekcji na nowo,
+                # lub użycie scroll API do pobrania ID i ich usunięcie.
+                # Wracamy do metody usuwania i tworzenia na nowo, ale z lepszym logowaniem.
+
+                logger.info(f"   Próba usunięcia kolekcji: {collection_name}")
+                self.client.delete_collection(collection_name=collection_name)
+                logger.info(f"   Usunięto kolekcję '{collection_name}'.")
+
+            except Exception as e:
+                 # Jeśli kolekcja nie istnieje, get_collection rzuci wyjątek.
+                 logger.info(f"   Kolekcja '{collection_name}' nie istniała lub wystąpił błąd przy sprawdzaniu/usuwaniu: {e}.")
+                 # Upewnij się, że błąd nie jest krytyczny (np. problem z połączeniem)
+
+            # Utwórz kolekcję na nowo
+            vector_size = self.vector_size # Pobierz rozmiar z instancji
+            logger.info(f"   Tworzenie nowej, pustej kolekcji: {collection_name} z rozmiarem wektora {vector_size}")
+            self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE)
+            )
+            logger.info(f"✅ Pomyślnie wyczyszczono (usunięto i utworzono na nowo) kolekcję '{collection_name}'.")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas czyszczenia (usuwania/tworzenia) kolekcji '{collection_name}': {str(e)}")
+            return False

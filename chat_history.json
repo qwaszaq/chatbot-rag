@@ -1,0 +1,72 @@
+{
+    "chats": {
+        "4ff7878a-974d-458c-adaf-01ecd4d10a07": {
+            "name": "kurz",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "kto zbiera kurz?"
+                },
+                {
+                    "role": "user",
+                    "content": "kto zbiera kurz"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Kto zbiera kurz?\n\nOdpowiedź: Zgłoszenie o kobiecie zbierającej kurz ze szczelin między płytkami podłogowymi na peronie stacji metra Centrum złożył pracownik Metra Warszawskiego.  Osoba ta, według informacji zawartych w dokumentach, jest znana jako \"Pył\" i ma na imię Agnieszka Nowak.\n\nŹródło w dokumentach: „Przebieg czynności: Otrzymano zgłoszenie od pracownika Metra Warszawskiego o kobiecie, która na peronie stacji, w oczekiwaniu na pociąg, zbierała kurz ze szczelin między płytkami podłogowymi za pomocą pędzelka i małej łopatki… Agnieszka Nowak (\"Pył\"): Sprzedaż \"historycznego kurzu z energetycznymi wibracjami\" za Monero na platformie TOR.”\n"
+                },
+                {
+                    "role": "user",
+                    "content": "kim jest agnieszka>\\"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Kim jest Agnieszka?\n\nOdpowiedź: Z materiałów wynika, że \"Agnieszka\" to nie jedna osoba, a nazwa używana przez członkiń zorganizowanej grupy przestępczej (ZGP). Istnieje co najmniej 19 osób o imieniu Agnieszka, które są podejrzewane o udział w tej grupie. Każda z tych Agnieszek ma różne role i specjalizacje, a ich działania są skoordynowane w celu osiągnięcia korzyści majątkowych dla grupy oraz jej poszczególnych członków.\n\nŹródło w dokumentach:\n*   \"Wnioski Końcowe dla Archiwum X\": \"Najbardziej intrygującym elementem jest stopień, w jakim 'dziwactwa' są ZINTEGROWANE I KORELOWANE w dokumentacji wewnętrznej grupy i ich komunikacji. To nie przypadkowe osoby o dziwnych hobby, to osoby o spójnych, choć absurdalnych 'operacjach tematycznych', które są planowane i rozliczane centralnie.\"\n*   \"Uzasadnienie Wniosku\": \"Sprawa ZGP \"Agnieszka\" stanowi jedno z najbardziej skomplikowanych... polegająca na wykorzystywaniu przez grupę (składającą się wyłącznie z kobiet o imieniu Agnieszka) pozornie niegroźnych lub wręcz absurdalnych 'dziwactw' jako wyrafinowanego kamuflażu i narzędzia do popełniania poważnych przestępstw gospodarczych...\"\n*   Lista osób: Dokument zawiera listę 19 osób o imieniu Agnieszka (Agnieszka Malinowska, Agnieszka Grabowska, Agnieszka Jankowska, itd.), każda z nich ma inne dane personalne, miejsce zamieszkania i rolę w grupie.\n\nKomentarz: Choć Agnieszka Malinowska jawi się jako centralna postać finansowa i koordynująca, możliwe jest istnienie osoby \"zza kulis\", która kieruje grupą i nie została jeszcze zidentyfikowana."
+                }
+            ]
+        },
+        "2e0697aa-e447-413d-9393-620e9e535c4b": {
+            "name": "Czat 3",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "jaki problem miał listonosz?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jaki problem miał listonosz?\n\nOdpowiedź: Listonosz miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się Agnieszki K. \n\nŹródło w dokumentach: NOTATKA SŁUŻBOWA, akapit 1: „Ponowna interwencja w miejscu zamieszkania Agnieszki K. po zgłoszeniu od listonosza, który miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się ww.”\n"
+                }
+            ]
+        },
+        "02500033-795c-4663-b61f-054a374b9e1c": {
+            "name": "Czat 3",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "jaki problem ma listonosz?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jaki problem ma listonosz?\n\nOdpowiedź: Listonosz miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się Agnieszki K.\n\nŹródło w dokumentach: NOTATKA SŁUŻBOWA, akapit 2: \"Ponowna interwencja w miejscu zamieszkania Agnieszki K. po zgłoszeniu od listonosza, który miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się ww.\"\n\nKomentarz: Brak dodatkowych informacji na temat konkretnego charakteru problemu listonosza poza tym, że jest on związany z nietypowym sposobem komunikacji Agnieszki K.\n"
+                },
+                {
+                    "role": "user",
+                    "content": "jaki problem ma listonosz"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jaki problem ma listonosz?\n\nOdpowiedź: Listonosz miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się Agnieszki K.\n\nŹródło w dokumentach: NOTATKA SŁUŻBOWA, akapit 2: \"Ponowna interwencja w miejscu zamieszkania Agnieszki K. po zgłoszeniu od listonosza, który miał problem z przekazaniem przesyłki rejestrowanej z powodu nietypowego sposobu komunikowania się ww.\"\n\nKomentarz: Brak dodatkowych informacji na temat konkretnego charakteru problemu listonosza poza ogólnym stwierdzeniem o \"nietypowym sposobie komunikowania się\"."
+                },
+                {
+                    "role": "user",
+                    "content": "kim jest agnieszka?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Kim jest Agnieszka?\n\nOdpowiedź: Agnieszka K. to osoba mieszkająca pod adresem Pcim Dolny 17/3, urodzona 15.03.1970 roku, która wykazuje ekscentryczne zachowanie polegające na komunikowaniu się wyłącznie za pomocą cytatów z instrukcji obsługi różnych urządzeń.\n\nŹródło w dokumentach: NOTATKA SŁUŻBOWA, Dane osoby przesłuchiwanej: Imię i Nazwisko: Agnieszka K., Adres zamieszkania: Pcim Dolny 17/3, Data urodzenia: 15.03.1970; Przebieg czynności: „Przesłuchiwana Agnieszka K… konsekwentnie używała wyłącznie fraz z instrukcji obsługi”; Obserwacje funkcjonariusza: \"Sposób komunikacji werbalnej osoby jest niezmiennie oparty na cytatach z instrukcji obsługi.\"\n\nKomentarz: Notatka opisuje zachowanie Agnieszki K. jako nietypowe, ale nie wskazuje na żadne przestępstwo lub zagrożenie."
+                }
+            ]
+        }
+    },
+    "active_chat_id": "02500033-795c-4663-b61f-054a374b9e1c"
+}
