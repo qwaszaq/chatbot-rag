@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Główny plik aplikacji chatbota RAG z Qdrant
 """
@@ -12,8 +13,6 @@ from data_processing.reranker import Reranker
 from langchain_core.documents import Document
 # Zmieniono import LLM na ChatOpenAI z langchain_openai do połączenia z LM Studio API
 from langchain_openai import ChatOpenAI
-# Usunięto import PromptTemplate, bo nie jest już używany w __init__
-# from langchain_core.prompts import PromptTemplate
 import spacy # Dodano import spacy
 import networkx as nx # Dodano import networkx
 import json # Dodano import json do parsowania odpowiedzi LLM
@@ -76,19 +75,24 @@ class RAGChatbot:
             base_url="http://localhost:1234/v1", # Adres endpointu LM Studio
             api_key="sk-no-key-required", # Klucz API nie jest wymagany przez LM Studio
             temperature=0.7,
-            max_tokens=1000,
+            max_tokens=10000,
             # Dostosuj inne parametry według potrzeb
         )
 
         # --- Ładowanie modelu spaCy dla NER ---
         try:
-             self.nlp = spacy.load("pl_core_news_md")
-             logger.info("✅ Załadowano model spaCy 'pl_core_news_md' dla NER.")
+             # Użyjmy większego modelu dla potencjalnie lepszego NER
+             self.nlp = spacy.load("pl_core_news_lg")
+             logger.info("✅ Załadowano model spaCy 'pl_core_news_lg' dla NER.")
         except OSError:
-             logger.error("❌ Nie znaleziono modelu spaCy 'pl_core_news_md'.")
-             logger.error("Aby go zainstalować, uruchom w terminalu: python -m spacy download pl_core_news_md")
-             # Można rzucić wyjątek lub ustawić self.nlp na None i obsłużyć to dalej
-             self.nlp = None # Ustawienie na None, logika przetwarzania musi to obsłużyć
+             logger.warning("⚠️ Nie znaleziono modelu spaCy 'pl_core_news_lg'. Próbuję załadować 'pl_core_news_md'.")
+             try:
+                 self.nlp = spacy.load("pl_core_news_md")
+                 logger.info("✅ Załadowano model spaCy 'pl_core_news_md' dla NER.")
+             except OSError:
+                 logger.error("❌ Nie znaleziono żadnego z modeli spaCy ('lg' ani 'md'). NER w grafie nie będzie dostępny.")
+                 logger.error("Aby zainstalować model, uruchom w terminalu: python -m spacy download pl_core_news_lg")
+                 self.nlp = None # Ustawienie na None, logika przetwarzania musi to obsłużyć
         # ------------------------------------
 
 
@@ -127,30 +131,12 @@ class RAGChatbot:
 
             logger.info(f"✂️ Dokument podzielony na {len(all_splits)} chunków")
 
-            # --- Przetwarzanie NER przed zapisem ---
-            if self.nlp: # Sprawdź, czy model spaCy został załadowany
-                 logger.info("🔍 Rozpoznawanie obiektów (NER) za pomocą spaCy...")
-                 processed_splits = []
-                 for chunk in all_splits:
-                      # Przetwórz tekst chunka przez spaCy
-                      doc_spacy = self.nlp(chunk.page_content)
-                      # Wyodrębnij encje
-                      entities = [{"text": ent.text, "label": ent.label_} for ent in doc_spacy.ents]
-                      # Dodaj encje do metadanych (lub zaktualizuj istniejące)
-                      if entities: # Dodaj tylko jeśli znaleziono encje
-                           if chunk.metadata is None: # Upewnij się, że metadata istnieje
-                                chunk.metadata = {}
-                           chunk.metadata["entities"] = entities
-                           # logger.debug(f"   Znaleziono encje w chunku: {entities}") # Opcjonalne logowanie
-                      processed_splits.append(chunk)
-                 logger.info(f"✅ Zakończono NER dla {len(processed_splits)} chunków.")
-                 splits_to_save = processed_splits
-            else:
-                 logger.warning("⚠️ Model spaCy niezaładowany. Pomijanie kroku NER.")
-                 splits_to_save = all_splits # Zapisz oryginalne chunki bez NER
-            # --------------------------------------
+            # --- Usunięto przetwarzanie NER PRZED zapisem - robimy to teraz podczas ekstrakcji grafu ---
+            # Pozostawiamy tylko logikę zapisu oryginalnych chunków
+            splits_to_save = all_splits
+            # ---------------------------------------------------------------------------------------
 
-            # Wygeneruj embeddingi i zapisz do Qdrant (przetworzone lub oryginalne chunki)
+            # Wygeneruj embeddingi i zapisz do Qdrant (oryginalne chunki)
             logger.info("🧠 Generowanie embeddingów i zapisywanie do Qdrant")
             self.qdrant_connector.add_documents(splits_to_save)
 
@@ -183,21 +169,25 @@ class RAGChatbot:
         try:
             logger.info(f"❓ Otrzymałem pytanie: {question}")
 
-            # Wyszukaj podobne dokumenty w Qdrant
+            # === POCZĄTEK ZMIANY ===
+            # Wyszukaj podobne dokumenty w Qdrant (używając metody, która istnieje)
             logger.info(f"🔍 Wyszukiwanie {self.top_k} podobnych dokumentów w Qdrant")
-            relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k)
+            relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k) # Używamy similarity_search
 
             if not relevant_docs:
                 logger.info("❌ Nie znaleziono żadnych dokumentów pasujących do pytania")
                 return {"content": "Nie znaleziono żadnych dokumentów pasujących do pytania.", "metadata": None}, [], None
 
+            # `relevant_docs` zawiera już listę dokumentów
             logger.info(f"🎯 Znaleziono {len(relevant_docs)} dokumentów pasujących do pytania przed rerankingiem")
+            # === KONIEC ZMIANY ===
 
             # Reranking dokumentów
             logger.info(f"🔄 Reranking dokumentów (top {self.top_k_reranker}, próg istotności {self.relevance_threshold})")
+            # Reranker oczekuje listy stringów (treści dokumentów)
             reranked_scored_docs = self.reranker.rerank(
                 question,
-                [doc.page_content for doc in relevant_docs],
+                [doc.page_content for doc in relevant_docs], # Przekazujemy tylko treści
                 self.top_k_reranker
             )
 
@@ -205,6 +195,7 @@ class RAGChatbot:
             context_parts = []
             top_sources = []
             added_sources = set()
+            # Mapowanie treści na metadane dla łatwiejszego dostępu
             content_to_metadata = {doc.page_content: doc.metadata for doc in relevant_docs}
 
             logger.info(f"📝 Budowanie kontekstu i listy źródeł (max 3) z rerankowanych dokumentów...")
@@ -213,16 +204,18 @@ class RAGChatbot:
                     context_parts.append(content)
                     metadata = content_to_metadata.get(content)
                     if metadata:
-                        source = metadata.get("source", "nieznane źródło")
+                        # Preferuj 'source', fallback na 'file_path' lub 'filename'
+                        source = metadata.get("source", metadata.get("file_path", metadata.get("filename", "nieznane źródło")))
                         if source not in added_sources:
                              if len(top_sources) < 3:
                                 top_sources.append(source)
                                 added_sources.add(source)
                 else:
-                    break # Wyniki są posortowane
+                    # logger.debug(f"   Dokument odrzucony przez próg rerankera (score: {score:.4f}): {content[:100]}...") # Opcjonalny debug
+                    pass # Nie dodajemy, ale kontynuujemy pętlę, by sprawdzić inne (na wypadek gdyby nie były idealnie posortowane)
 
             logger.info(f"✅ Zbudowano kontekst z {len(context_parts)} chunków.")
-            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia.")
+            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia: {top_sources}")
 
             if not context_parts:
                 logger.info("❌ Brak dokumentów spełniających próg istotności po rerankingu")
@@ -237,7 +230,7 @@ class RAGChatbot:
                  system_prompt_override = ""
 
             response_dict = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
-            sources = top_sources
+            sources = top_sources # Używamy zebranych źródeł
 
             logger.info("✅ Odpowiedź została pomyślnie wygenerowana wraz z metadanymi")
 
@@ -245,16 +238,17 @@ class RAGChatbot:
             graph_data = None
             answer_text_content = None
             if response_dict and response_dict.get("content"):
-                 if isinstance(response_dict["content"], AIMessage):
-                      answer_text_content = response_dict["content"].content
-                 elif isinstance(response_dict["content"], str):
-                      # Sprawdź, czy to nie jest komunikat o błędzie
+                 content_data = response_dict["content"]
+                 if isinstance(content_data, AIMessage):
+                      answer_text_content = content_data.content
+                 elif isinstance(content_data, str):
+                      # Sprawdź, czy to nie jest komunikat o błędzie (brak metadanych)
                       if response_dict.get("metadata") is not None:
-                           answer_text_content = response_dict["content"]
+                           answer_text_content = content_data
                       else:
                            logger.warning("Pomijanie ekstrakcji grafu z komunikatu o błędzie LLM.")
                  else:
-                      logger.warning(f"Nieoczekiwany typ treści odpowiedzi: {type(response_dict['content'])}. Pomijanie ekstrakcji grafu.")
+                      logger.warning(f"Nieoczekiwany typ treści odpowiedzi: {type(content_data)}. Pomijanie ekstrakcji grafu.")
             else:
                  logger.warning("Brak treści w odpowiedzi LLM. Pomijanie ekstrakcji grafu.")
 
@@ -262,23 +256,24 @@ class RAGChatbot:
             if answer_text_content:
                  logger.info("🕸️ Próba ekstrakcji grafu wiedzy z odpowiedzi LLM...")
                  try:
-                      # === TUTAJ JEST WYWOŁANIE METODY ===
+                      # Wywołanie metody ekstrakcji grafu
                       graph = self._extract_graph_from_response(answer_text_content)
-                      # ====================================
+
                       if graph and graph.nodes:
+                           # Serializacja grafu do formatu node-link oczekiwanego przez streamlit-agraph
                            graph_data = nx.node_link_data(graph)
-                           logger.info(f"✅ Pomyślnie wyekstrahowano graf z {len(graph.nodes)} węzłami i {len(graph.edges)} krawędziami.")
+                           logger.info(f"✅ Pomyślnie wyekstrahowano i zserializowano graf z {len(graph.nodes)} węzłami i {len(graph.edges)} krawędziami.")
                       else:
                            logger.info("ℹ️ Nie udało się wyekstrahować znaczących relacji do grafu z odpowiedzi lub LLM zwrócił pustą listę.")
                  except Exception as graph_e:
                       # Logujemy konkretny błąd, który wystąpił TUTAJ
-                      logger.error(f"❌ Błąd podczas ekstrakcji lub serializacji grafu wiedzy: {graph_e}", exc_info=True) # Dodano exc_info dla pełnego śladu
+                      logger.error(f"❌ Błąd podczas ekstrakcji lub serializacji grafu wiedzy: {graph_e}", exc_info=True)
             # -----------------------------------------
 
             return response_dict, sources, graph_data
 
         except Exception as e:
-            logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}", exc_info=True) # Dodano exc_info
+            logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}", exc_info=True)
             return {"content": f"Wystąpił błąd podczas przetwarzania pytania: {e}", "metadata": None}, [], None
 
 
@@ -308,78 +303,98 @@ class RAGChatbot:
         response_time = 0.0
 
         try:
-            model_name = getattr(self.llm, 'model', "N/A")
+            # Próba uzyskania nazwy modelu z obiektu, jeśli istnieje
+            model_name = getattr(self.llm, 'model_name', getattr(self.llm, 'model', "N/A"))
 
             prompt_to_send = f"""{system_prompt_text}
 
             --- DOSTARCZONY KONTEKST ---
             {context}
+            --- KONIEC KONTEKSTU ---
 
             --- PYTANIE UŻYTKOWNIKA ---
             {question}
+            --- KONIEC PYTANIA ---
 
-            --- ODPOWIEDŹ ANALITYKA ---
+            --- ODPOWIEDŹ ANALITYKA (bazująca WYŁĄCZNIE na powyższym kontekście): ---
             """
             logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do LLM...")
+            # logger.debug(f"   Pełny prompt (fragment): {prompt_to_send[:500]}...") # Opcjonalny debug
 
             start_time = time.time()
+            # Używamy invoke, oczekujemy obiektu AIMessage lub podobnego
             response = self.llm.invoke(prompt_to_send)
             end_time = time.time()
             response_time = end_time - start_time
 
-            response_content = response
+            response_content = response # Przechowujemy cały obiekt odpowiedzi
             logger.info(f"⬅️ Otrzymano odpowiedź od LLM w {response_time:.2f}s.")
 
+            # Wyciąganie metadanych z obiektu odpowiedzi LangChain
             try:
+                # Sprawdź response_metadata dla nazwy modelu i użycia tokenów
                 resp_meta = getattr(response, 'response_metadata', {})
-                model_name_from_direct_key = resp_meta.get('model')
-
-                # Priorytet dla 'system_fingerprint' jeśli jest dostępny (jak w twoich logach)
-                sys_fingerprint = resp_meta.get('system_fingerprint')
-                if sys_fingerprint:
-                    model_name = sys_fingerprint
-                    logger.info(f"📊 Nazwa modelu (z response_metadata['system_fingerprint']): {model_name}")
-                elif model_name_from_direct_key:
-                    model_name = model_name_from_direct_key
-                    logger.info(f"📊 Nazwa modelu (z response_metadata['model']): {model_name}")
-                elif hasattr(self.llm, 'model') and self.llm.model != "local-model":
-                    model_name = self.llm.model
-                    logger.info(f"📊 Nazwa modelu (z obiektu self.llm - placeholder?): {model_name}")
-                else:
-                    logger.warning("⚠️ Nie udało się uzyskać nazwy modelu z response_metadata ani obiektu LLM.")
-                    model_name = "N/A" # Ostateczny fallback
-
-                usage_meta = getattr(response, 'usage_metadata', None)
-                if usage_meta and 'completion_tokens' in usage_meta:
-                    token_count = usage_meta.get('completion_tokens')
-                    logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata): {token_count}")
-                elif resp_meta and 'token_usage' in resp_meta:
-                    token_usage = resp_meta.get('token_usage', {})
-                    token_count = token_usage.get('completion_tokens')
-                    if token_count:
-                         logger.info(f"📊 Użycie tokenów (odpowiedź, z response_metadata): {token_count}")
+                if resp_meta:
+                    # Model
+                    # Czasami model jest w 'model_name', czasami w 'model'
+                    model_name_from_meta = resp_meta.get('model_name', resp_meta.get('model'))
+                    if model_name_from_meta:
+                        model_name = model_name_from_meta
+                        logger.info(f"📊 Nazwa modelu (z response_metadata): {model_name}")
                     else:
-                         logger.warning("⚠️ Nie znaleziono 'completion_tokens' w response_metadata['token_usage'].")
-                         # Spróbujmy pobrać z ogólnego 'total_tokens', jeśli 'completion_tokens' brak
-                         total_tokens = token_usage.get('total_tokens')
-                         if total_tokens:
-                             logger.info(f"📊 Użycie tokenów (całkowite, z response_metadata): {total_tokens}")
-                             token_count = total_tokens # Użyjemy tego jako fallback, choć to nie to samo
-                         else:
-                             logger.warning("⚠️ Nie znaleziono 'total_tokens' w response_metadata['token_usage'].")
+                         logger.warning("⚠️ Nie znaleziono nazwy modelu w response_metadata.")
+
+                    # Tokeny (szukamy w 'token_usage')
+                    token_usage = resp_meta.get('token_usage', {})
+                    if token_usage:
+                        token_count = token_usage.get('completion_tokens')
+                        if token_count is not None:
+                             logger.info(f"📊 Użycie tokenów (odpowiedź, z response_metadata): {token_count}")
+                        else:
+                             logger.warning("⚠️ Nie znaleziono 'completion_tokens' w response_metadata['token_usage'].")
+                             # Fallback na total_tokens, jeśli completion_tokens brak
+                             total_tokens = token_usage.get('total_tokens')
+                             if total_tokens is not None:
+                                 logger.info(f"📊 Użycie tokenów (całkowite, z response_metadata): {total_tokens}")
+                                 token_count = total_tokens # Użyj jako fallback
+                             else:
+                                 logger.warning("⚠️ Nie znaleziono 'total_tokens' w response_metadata['token_usage'].")
+                    else:
+                         logger.warning("⚠️ Nie znaleziono 'token_usage' w response_metadata.")
                 else:
-                    logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów w 'usage_metadata' ani 'response_metadata'.")
+                     logger.warning("⚠️ Brak 'response_metadata' w obiekcie odpowiedzi LLM.")
+
+                # Sprawdź usage_metadata jako alternatywę (nowsze wersje Langchain?)
+                usage_meta = getattr(response, 'usage_metadata', None)
+                if usage_meta and token_count is None: # Sprawdzamy tylko jeśli nie znaleźliśmy w response_metadata
+                    token_count_usage = usage_meta.get('completion_tokens')
+                    if token_count_usage is not None:
+                        token_count = token_count_usage
+                        logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata): {token_count}")
+                    else:
+                        logger.warning("⚠️ Nie znaleziono 'completion_tokens' w usage_metadata.")
+                        total_tokens_usage = usage_meta.get('total_tokens')
+                        if total_tokens_usage is not None:
+                            logger.info(f"📊 Użycie tokenów (całkowite, z usage_metadata): {total_tokens_usage}")
+                            token_count = total_tokens_usage # Fallback
+                        else:
+                            logger.warning("⚠️ Nie znaleziono 'total_tokens' w usage_metadata.")
+                elif token_count is None:
+                    logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów ani w 'response_metadata', ani w 'usage_metadata'.")
+
 
             except AttributeError as attr_err:
-                 logger.warning(f"⚠️ Obiekt odpowiedzi nie ma oczekiwanych atrybutów metadanych ({attr_err}).")
+                 logger.warning(f"⚠️ Obiekt odpowiedzi nie ma oczekiwanych atrybutów metadanych ({attr_err}). Typ obiektu: {type(response)}")
             except Exception as meta_e:
                  logger.warning(f"⚠️ Nieoczekiwany błąd podczas pobierania metadanych z odpowiedzi: {meta_e}.")
 
         except Exception as e:
             error_msg = f"Wystąpił błąd podczas generowania odpowiedzi przez LLM: {e}"
             logger.error(f"❌ {error_msg}", exc_info=True) # Dodano exc_info
+            # Zwracamy błąd jako string, bez metadanych
             return {"content": error_msg, "metadata": None}
 
+        # Zwracamy cały obiekt odpowiedzi LangChain w 'content'
         return {
             "content": response_content,
             "metadata": {
@@ -389,38 +404,40 @@ class RAGChatbot:
             }
         }
 
-    # ========================================================================
-    # == TUTAJ JEST DEFINICJA METODY _extract_graph_from_response ==
-    # == Upewnij się, że jest wcięta na tym samym poziomie co inne metody ==
-    # ========================================================================
+
     def _extract_graph_from_response(self, text: str):
         """
-        Używa LLM do ekstrakcji relacji z tekstu odpowiedzi i buduje graf NetworkX.
-        Koncentruje się na relacjach osobowych, czasowych, adresowych i między dokumentami.
+        Używa LLM do ekstrakcji relacji z tekstu odpowiedzi i buduje graf NetworkX,
+        dodając typy NER do węzłów za pomocą spaCy.
 
         Args:
             text (str): Tekst odpowiedzi wygenerowanej przez LLM.
 
         Returns:
-            networkx.Graph or None: Zbudowany graf lub None w przypadku błędu/braku relacji.
+            networkx.DiGraph or None: Zbudowany graf lub None w przypadku błędu/braku relacji.
         """
         # Sprawdzenie, czy LLM istnieje i tekst nie jest pusty
         if not hasattr(self, 'llm') or not text:
             logger.warning("⚠️ Pomijanie ekstrakcji grafu: LLM nie istnieje lub tekst jest pusty.")
             return None
 
-        # Prosty prompt do ekstrakcji trójek
+        # Sprawdzenie, czy model spaCy jest dostępny (dla NER)
+        if not self.nlp:
+            logger.warning("⚠️ Model spaCy (self.nlp) nie jest załadowany. Graf zostanie utworzony bez typów NER.")
+
+        # Prompt do ekstrakcji trójek (bez zmian)
         extraction_prompt = f"""
         Przeanalizuj poniższy tekst i wyekstrahuj z niego relacje w formie trójek [podmiot, relacja, obiekt].
         Skup się na relacjach dotyczących:
         - Osób (np. kto co zrobił, kto gdzie pracuje, kto kogo zna).
-        - Czasu (np. co kiedy się wydarzyło).
-        - Adresów/Lokalizacji (np. co gdzie się znajduje).
+        - Organizacji (np. firma X zrobiła Y, relacje między firmami).
+        - Czasu (np. co kiedy się wydarzyło, daty spotkań).
+        - Adresów/Lokalizacji (np. co gdzie się znajduje, spotkanie w miejscu X).
         - Dokumentów (np. co jest wspomniane w dokumencie X, dokument Y dotyczy tematu Z).
 
-        Zwróć wynik **WYŁĄCZNIE** jako obiekt JSON zawierający klucz "triples", którego wartością jest lista znalezionych trójek. Przykład:
-        {{"triples": [["Jan Kowalski", "pracuje w", "XYZ Corp"], ["Raport.pdf", "opisuje", "Wyniki Q3"]]}}
-        Jeśli nie znajdziesz żadnych istotnych relacji pasujących do kryteriów, zwróć: {{"triples": []}}
+        Zwróć wynik **WYŁĄCZNIE** jako obiekt JSON zawierający klucz "triples", którego wartością jest lista znalezionych trójek. Każdy element trójki powinien być stringiem. Przykład:
+        {{"triples": [["Jan Kowalski", "pracuje w", "XYZ Corp"], ["Raport Finansowy Q3", "opisuje", "Wyniki sprzedaży"], ["Spotkanie", "odbędzie się", "15 Listopada"]]}}
+        Jeśli nie znajdziesz żadnych istotnych relacji pasujących do kryteriów, zwróć pustą listę: {{"triples": []}}
 
         Tekst do analizy:
         ---
@@ -431,11 +448,10 @@ class RAGChatbot:
         """
 
         try:
-            logger.info("➡️ Wywołanie LLM w celu ekstrakcji relacji dla grafu...")
-            extraction_response = self.llm.invoke(extraction_prompt)
+            logger.info("➡️ Wywołanie LLM w celu ekstrakcji relacji dla grafu (max_tokens=10000)...")
+            extraction_response = self.llm.invoke(extraction_prompt, config={"max_tokens": 10000})
             logger.info("⬅️ Otrzymano odpowiedź ekstrakcji.")
 
-            # Wyciągnij treść odpowiedzi
             response_text = ""
             if hasattr(extraction_response, 'content'):
                 response_text = extraction_response.content
@@ -445,31 +461,29 @@ class RAGChatbot:
                  logger.error(f"❌ Nieoczekiwany format odpowiedzi ekstrakcji LLM: {type(extraction_response)}")
                  return None
 
-            # Spróbuj sparsować JSON
-            logger.info(f"   Odpowiedź ekstrakcji (surowa): {response_text[:300]}...") # Zwiększono długość logu
+            logger.info(f"   Odpowiedź ekstrakcji (surowa): {response_text[:500]}...") # Zwiększono długość logu
 
-            # Czyszczenie potencjalnych ```json ... ```
+            # Czyszczenie odpowiedzi (usunięcie znaczników ```json, itp.)
             response_text_cleaned = response_text.strip()
             if response_text_cleaned.startswith("```json"):
-                response_text_cleaned = response_text_cleaned[7:].strip()
-                if response_text_cleaned.endswith("```"):
-                     response_text_cleaned = response_text_cleaned[:-3].strip()
-            elif response_text_cleaned.startswith("```"):
-                 # Czasami brakuje 'json'
-                 response_text_cleaned = response_text_cleaned[3:].strip()
+                 response_text_cleaned = response_text_cleaned[7:]
                  if response_text_cleaned.endswith("```"):
-                      response_text_cleaned = response_text_cleaned[:-3].strip()
-            # Dodatkowe sprawdzenie - czasami LLM zwraca tylko JSON bez ```
-            elif not (response_text_cleaned.startswith("{") and response_text_cleaned.endswith("}")):
-                 # Jeśli nie wygląda jak JSON, spróbuj znaleźć JSON wewnątrz tekstu
-                 json_start = response_text_cleaned.find('{')
-                 json_end = response_text_cleaned.rfind('}')
-                 if json_start != -1 and json_end != -1 and json_start < json_end:
-                      response_text_cleaned = response_text_cleaned[json_start:json_end+1]
-                      logger.info(f"   Znaleziono potencjalny JSON wewnątrz odpowiedzi: {response_text_cleaned[:100]}...")
-                 else:
-                      logger.error(f"❌ Odpowiedź ekstrakcji nie wygląda jak JSON i nie znaleziono w niej obiektu JSON: {response_text[:300]}...")
-                      return None # Nie udało się znaleźć JSON
+                      response_text_cleaned = response_text_cleaned[:-3]
+            elif response_text_cleaned.startswith("```"):
+                 response_text_cleaned = response_text_cleaned[3:]
+                 if response_text_cleaned.endswith("```"):
+                      response_text_cleaned = response_text_cleaned[:-3]
+
+            response_text_cleaned = response_text_cleaned.strip()
+            json_start = response_text_cleaned.find('{')
+            json_end = response_text_cleaned.rfind('}')
+
+            if json_start != -1 and json_end != -1 and json_start < json_end:
+                 response_text_cleaned = response_text_cleaned[json_start:json_end+1]
+                 logger.info("   Tekst po czyszczeniu i przycięciu do JSON: {...}")
+            else:
+                 logger.error(f"❌ Nie znaleziono poprawnej struktury JSON w odpowiedzi (po czyszczeniu): {response_text_cleaned[:500]}...")
+                 return None
 
             # Parsowanie JSON
             extracted_data = json.loads(response_text_cleaned)
@@ -480,48 +494,73 @@ class RAGChatbot:
                      logger.info("   LLM nie znalazł żadnych relacji do ekstrakcji (zwrócił pustą listę).")
                      return None # Zwracamy None, jeśli lista trójek jest pusta
 
-                # Zbuduj graf NetworkX
+                # --- Budowanie grafu NetworkX z dodaniem NER ---
                 G = nx.DiGraph()
-                triples_added = 0
+                nodes_added = set() # Zbiór do śledzenia dodanych węzłów, aby nie przetwarzać NER wielokrotnie
+                triples_added_count = 0 # Licznik poprawnie dodanych trójek
+
                 for triple in triples:
                     if isinstance(triple, list) and len(triple) == 3:
-                        # Oczyść dane wejściowe - usuń białe znaki z początku/końca
-                        subject = str(triple[0]).strip()
-                        relation = str(triple[1]).strip()
-                        obj = str(triple[2]).strip()
+                        # Oczyść i zwaliduj elementy trójki
+                        subject = str(triple[0]).strip() if triple[0] is not None else ""
+                        relation = str(triple[1]).strip() if triple[1] is not None else ""
+                        obj = str(triple[2]).strip() if triple[2] is not None else ""
 
-                        # Podstawowa walidacja - pomiń puste elementy
-                        if subject and relation and obj:
-                            G.add_node(subject, label=subject)
-                            G.add_node(obj, label=obj)
-                            G.add_edge(subject, obj, label=relation)
-                            triples_added += 1
-                        else:
-                            logger.warning(f"   Pominięto trójkę z pustymi elementami: {triple}")
+                        # Pomiń trójki z pustymi elementami kluczowymi
+                        if not subject or not relation or not obj:
+                            logger.warning(f"   Pominięto trójkę z brakującymi elementami: {triple}")
+                            continue
+
+                        # Przetwarzanie węzłów (Subject i Object)
+                        for node_text in [subject, obj]:
+                            if node_text not in nodes_added:
+                                ner_type = None # Domyślnie brak typu
+                                if self.nlp: # Sprawdź, czy model spaCy jest dostępny
+                                    try:
+                                        # Przetwórz tekst węzła przez spaCy
+                                        doc_node = self.nlp(node_text)
+                                        if doc_node.ents:
+                                            # Pobierz etykietę *pierwszej* znalezionej encji
+                                            # UWAGA: Modele 'pl_core_news' zwracają etykiety jak 'persName', 'orgName', 'geogName', 'placeName', 'date'
+                                            ner_type = doc_node.ents[0].label_
+                                            logger.info(f"   NER dla węzła '{node_text}': Rozpoznano typ '{ner_type}'")
+                                        else:
+                                            logger.info(f"   NER dla węzła '{node_text}': Nie rozpoznano konkretnej encji.")
+                                    except Exception as ner_exc:
+                                        logger.error(f"   Błąd podczas NER dla tekstu '{node_text}': {ner_exc}")
+                                        ner_type = "ERROR" # Oznacz błąd NER
+
+                                # Dodaj węzeł do grafu z etykietą i typem NER
+                                # Atrybut 'label' to tekst węzła, 'ner_type' to etykieta spaCy
+                                G.add_node(node_text, label=node_text, ner_type=ner_type)
+                                nodes_added.add(node_text) # Dodaj do zbioru przetworzonych
+
+                        # Dodaj krawędź do grafu z etykietą relacji
+                        G.add_edge(subject, obj, label=relation)
+                        triples_added_count += 1
+
                     else:
                         logger.warning(f"   Pominięto nieprawidłowy format trójki: {triple}")
 
-                if triples_added > 0:
-                     logger.info(f"   Dodano {triples_added} trójek do grafu.")
+                if triples_added_count > 0:
+                     logger.info(f"   Dodano {triples_added_count} poprawnych trójek do grafu.")
+                     # Zwróć zbudowany graf (zostanie zserializowany w metodzie query)
                      return G
                 else:
                      logger.info("   Nie dodano żadnych poprawnych trójek do grafu.")
                      return None # Zwracamy None, jeśli żadna trójka nie była poprawna
-
+                # --------------------------------------------------
             else:
-                logger.error(f"❌ Odpowiedź ekstrakcji LLM po czyszczeniu nie zawiera klucza 'triples' lub nie jest listą: {response_text_cleaned}")
+                logger.error(f"❌ Odpowiedź ekstrakcji LLM (po czyszczeniu) nie zawiera klucza 'triples' lub wartość nie jest listą: {response_text_cleaned}")
                 return None
 
         except json.JSONDecodeError as json_err:
-            logger.error(f"❌ Błąd dekodowania JSON z odpowiedzi ekstrakcji LLM (po czyszczeniu): {json_err}")
-            logger.error(f"   Tekst powodujący błąd: {response_text_cleaned}") # Loguj tekst, który zawiódł
+            logger.error(f"❌ Błąd dekodowania JSON z odpowiedzi ekstrakcji LLM: {json_err}")
+            logger.error(f"   Tekst powodujący błąd (po czyszczeniu): '{response_text_cleaned}'")
             return None
         except Exception as e:
-            logger.error(f"❌ Nieoczekiwany błąd podczas ekstrakcji grafu: {e}", exc_info=True) # Dodano exc_info
+            logger.error(f"❌ Nieoczekiwany błąd podczas ekstrakcji grafu: {e}", exc_info=True)
             return None
-    # ========================================================================
-    # == Koniec definicji metody _extract_graph_from_response ==
-    # ========================================================================
 
 
     def clear_database(self):
@@ -542,35 +581,6 @@ if __name__ == "__main__":
         chatbot = RAGChatbot()
         logger.info("✅ RAGChatbot zainicjalizowany pomyślnie.")
 
-        # Przykładowe użycie (opcjonalne, głównie dla testów)
-        # print("Próba przetworzenia dokumentu testowego (jeśli istnieje)...")
-        # if os.path.exists("test_document.txt"):
-        #     chatbot.process_document("test_document.txt")
-        # else:
-        #     print("   Plik 'test_document.txt' nie znaleziono. Pomiń przetwarzanie.")
-
-        # Przykładowe zapytanie (jeśli chatbot się zainicjalizował)
-        # print("\nPróba zadania pytania testowego...")
-        # test_question = "Co wiesz o RAG?"
-        # response_data, sources_list, graph_info = chatbot.query(test_question, "Odpowiedz zwięźle.")
-        #
-        # print(f"\nPytanie: {test_question}")
-        # if response_data and response_data.get('content'):
-        #     if isinstance(response_data['content'], AIMessage):
-        #         print(f"Odpowiedź: {response_data['content'].content}")
-        #     else:
-        #         print(f"Odpowiedź: {response_data['content']}") # Np. komunikat błędu
-        # else:
-        #     print("Odpowiedź: Brak odpowiedzi lub błąd.")
-        #
-        # if response_data and response_data.get('metadata'):
-        #     print(f"Metadane odpowiedzi: {response_data['metadata']}")
-        #
-        # print(f"Źródła: {sources_list}")
-        # print(f"Dane grafu: {'Dostępne' if graph_info else 'Brak'}")
-        # if graph_info:
-        #      print(f"   Węzły: {len(graph_info.get('nodes', []))}, Krawędzie: {len(graph_info.get('links', []))}")
-
     except ConnectionError as ce:
         logger.error(f"❌ Nie udało się uruchomić chatbota: {ce}")
         print(f"Krytyczny błąd: Nie można połączyć się z Qdrant. Sprawdź, czy Qdrant działa i jest dostępny. Szczegóły w logach.")
@@ -583,5 +593,5 @@ if __name__ == "__main__":
 
     print("\n----------------------------------------------------")
     print("Aby uruchomić interfejs użytkownika, uruchom w terminalu:")
-    print("streamlit run ui_streamlit.py")
+    print("streamlit run ui_streamlit.py") # Zakładając, że plik UI nazywa się ui_streamlit.py
     print("----------------------------------------------------")
