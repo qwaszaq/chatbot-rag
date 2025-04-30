@@ -16,6 +16,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Domyślny prompt systemowy (pobrany z app.py)
+DEFAULT_SYSTEM_PROMPT = """Rola:\n\nJesteś doświadczonym analitykiem tekstu. Otrzymujesz jeden lub kilka dokumentów jednocześnie (raporty, artykuły, prezentacje, sprawozdania, e-maile, pliki PDF, Word, itp.) oraz pytania od członków zespołu. Twoim zadaniem jest znalezienie konkretnych informacji w tych materiałach i udzielenie jasnych, precyzyjnych odpowiedzi.\n\n\n\n\nTwoje zadania:\n\n\n\n\nPrzeczytaj uważnie wszystkie dostarczone źródła.\n\nDla każdego pytania:\n\nZidentyfikuj i porównaj informacje we wszystkich dostępnych dokumentach.\n\nPodaj konkretną odpowiedź opartą wyłącznie na treści źródłowej.\n\nJeśli ta sama informacja występuje w kilku miejscach – wybierz najbardziej wiarygodną i aktualną wersję.\n\nJeśli są sprzeczne dane – zaznacz to i podaj możliwe wyjaśnienie.\n\nZawsze wskaż dokładne źródło w tekście (cytat, numer akapitu, nazwa pliku lub lokalizacja).\n\nJeżeli odpowiedź nie występuje bezpośrednio w dokumentach, zaznacz to i dodaj krótką interpretację (jeśli to możliwe).\n\nFormat odpowiedzi dla każdego pytania:\n\n\n\n\nPytanie: [tu wpisz pytanie]\n\nOdpowiedź: [jasna, konkretna odpowiedź]\n\nŹródło w dokumentach: [cytat, numer akapitu, nazwa pliku, strona lub opis fragmentu]\n\nKomentarz (jeśli potrzebny): [jeśli są sprzeczności lub brak informacji – wyjaśnij to]\n\n\n\n\nRodzaje pytań, które możesz otrzymać (i jak na nie reagować):\n\n\n\n\nPytanie o osobę (np. „Kto jest szefem tej organizacji?”):\n\n→ Wskaż imię, nazwisko, stanowisko i dokument, w którym to się znajduje.\n\nPytanie o liczby (np. „Ile pieniędzy zostało zabezpieczonych?”):\n\n→ Podaj konkretną kwotę, powołując się na dane z odpowiedniego pliku. Jeśli kwoty różnią się – opisz to.\n\nPytanie o przyczyny, działania, efekty (np. „Dlaczego projekt się opóźnił?”):\n\n→ Podaj powody, działania lub skutki, nawet jeśli są rozproszone w różnych źródłach.\n\nPytania o fakty i szczegóły:\n\n→ Wydobądź najważniejsze detale z różnych dokumentów i połącz je w spójną odpowiedź.\n\nDostarczone materiały:\n\n[lista lub zestaw dokumentów i źródeł – np. Raport_finansowy_Q4.pdf, Spotkanie_zarządu_dnotatki.docx, E-mail_od_dostawcy.msg]\n\n\n\n\n📌 Przykład odpowiedzi z wieloma źródłami:\n\nPytanie: Ile pieniędzy zostało zabezpieczonych?\n\nOdpowiedź: Zabezpieczono 4,5 mln zł (Raport_finansowy_Q4.pdf), jednak w notatce ze spotkania (Spotkanie_zarządu_dnotatki.docx) pojawia się kwota 4,2 mln zł – możliwa aktualizacja danych w późniejszym okresie.\n\nŹródło w dokumentach:\n\n\n\nRaport_finansowy_Q4.pdf, strona 5: „Zabezpieczone środki wynoszą 4,5 mln zł.”\n\nSpotkanie_zarządu_dnotatki.docx, akapit 3: „Dysponujemy obecnie 4,2 mln zł zarezerwowanych środków.”\n\nKomentarz: Możliwa różnica wynika z częściowego wydatkowania środków po publikacji raportu."""
+
+
 def main():
     st.set_page_config(page_title="🤖 Chatbot RAG z Qdrant", layout="wide")
 
@@ -36,18 +40,15 @@ def main():
     with st.sidebar:
         st.header("📁 Zarządzanie dokumentami")
 
-        # Ładowanie z pliku lokalnego
-        uploaded_file = st.file_uploader("Wybierz dokument do przetworzenia", type=["pdf", "docx", "txt"])
+        # Ładowanie z pliku lokalnego (umożliwia wybór wielu plików)
+        uploaded_files = st.file_uploader(
+            "Wybierz dokumenty do przetworzenia",
+            type=["pdf", "docx", "txt"],
+            accept_multiple_files=True
+        )
 
-        if uploaded_file:
-            # Zapisz przesłany plik tymczasowo
-            with st.spinner("Zapisywanie dokumentu..."):
-                temp_dir = tempfile.mkdtemp()
-                file_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getvalue())
-                st.session_state.uploaded_file_path = file_path
-                logger.info(f"📥 Zapisano dokument: {file_path}")
+        # Logika przetwarzania plików zostanie przeniesiona do obsługi przycisku poniżej.
+        # Usunięto kod zapisujący pojedynczy plik tymczasowy tutaj.
 
         # Ładowanie z URL
         st.markdown("---")
@@ -83,19 +84,68 @@ def main():
 
 
         st.markdown("---")
-        if st.button("🧠 Przetwórz wybrany dokument"):
-            if hasattr(st.session_state, "uploaded_file_path") and st.session_state.uploaded_file_path:
-                with st.spinner("Przetwarzanie dokumentu..."):
-                    success = st.session_state.chatbot.process_document(st.session_state.uploaded_file_path)
-                    if success:
-                        st.success("✅ Dokument został pomyślnie przetworzony i zapisany do Qdrant")
-                        # Opcjonalnie posprzątaj tymczasowy plik po przetworzeniu
-                        # os.unlink(st.session_state.uploaded_file_path)
-                        # del st.session_state.uploaded_file_path
-                    else:
-                        st.error("❌ Wystąpił błąd podczas przetwarzania dokumentu")
+        if st.button("🧠 Przetwórz wybrane dokumenty"):
+            if uploaded_files: # Sprawdź, czy lista plików nie jest pusta
+                num_files = len(uploaded_files)
+                st.info(f"Rozpoczynam przetwarzanie {num_files} plików...")
+                processed_count = 0
+                error_count = 0
+
+                # Użyj paska postępu
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+
+                for i, uploaded_file in enumerate(uploaded_files):
+                    temp_dir = None # Inicjalizuj przed blokiem try
+                    try:
+                        # Utwórz tymczasowy katalog dla każdego pliku
+                        temp_dir = tempfile.mkdtemp()
+                        file_path = os.path.join(temp_dir, uploaded_file.name)
+                        status_text.text(f"Przetwarzanie pliku {i+1}/{num_files}: {uploaded_file.name}")
+
+                        # Zapisz plik tymczasowo
+                        with open(file_path, "wb") as f:
+                            f.write(uploaded_file.getvalue())
+                        logger.info(f"📥 Zapisano tymczasowy plik: {file_path}")
+
+                        # Przetwórz dokument za pomocą RAGChatbot
+                        with st.spinner(f"Przetwarzanie {uploaded_file.name}..."):
+                             success = st.session_state.chatbot.process_document(file_path)
+
+                        if success:
+                            logger.info(f"✅ Pomyślnie przetworzono: {uploaded_file.name}")
+                            processed_count += 1
+                        else:
+                            logger.error(f"❌ Błąd przetwarzania: {uploaded_file.name}")
+                            error_count += 1
+                            st.warning(f"Wystąpił błąd podczas przetwarzania pliku: {uploaded_file.name}")
+
+                    except Exception as e:
+                        logger.error(f"❌ Krytyczny błąd podczas obsługi pliku {uploaded_file.name}: {str(e)}")
+                        st.error(f"Wystąpił krytyczny błąd podczas obsługi pliku {uploaded_file.name}: {e}")
+                        error_count += 1
+                    finally:
+                        # Posprzątaj plik i katalog tymczasowy
+                        if temp_dir and os.path.exists(temp_dir):
+                            try:
+                                if 'file_path' in locals() and os.path.exists(file_path):
+                                    os.unlink(file_path)
+                                os.rmdir(temp_dir)
+                                logger.info(f"🧹 Posprzątano tymczasowe zasoby dla: {uploaded_file.name}")
+                            except Exception as cleanup_e:
+                                logger.error(f"🧹❌ Błąd podczas sprzątania zasobów tymczasowych dla {uploaded_file.name}: {cleanup_e}")
+                    # Aktualizuj pasek postępu
+                    progress_bar.progress((i + 1) / num_files)
+
+                # Podsumowanie po zakończeniu pętli
+                status_text.text("Zakończono przetwarzanie wszystkich plików.")
+                if processed_count > 0:
+                    st.success(f"✅ Pomyślnie przetworzono {processed_count} z {num_files} plików.")
+                if error_count > 0:
+                    st.error(f"❌ Wystąpiły błędy podczas przetwarzania {error_count} z {num_files} plików. Sprawdź logi po więcej szczegółów.")
+
             else:
-                st.warning("⚠️ Najpierw wybierz dokument do przetworzenia (z pliku lub URL)")
+                st.warning("⚠️ Najpierw wybierz dokumenty do przetworzenia.")
 
 
         st.markdown("---")
@@ -103,6 +153,17 @@ def main():
         st.session_state.top_k = st.slider("Liczba dokumentów do pobrania z Qdrant", 1, 200, 99)
         st.session_state.top_k_reranker = st.slider("Liczba dokumentów po rerankingu", 1, 100, 33)
         st.session_state.relevance_threshold = st.slider("Próg istotności rerankera", 0.0, 1.0, 0.0, 0.01)
+        st.markdown("---")
+        st.header("📝 Prompt systemowy")
+        # Inicjalizacja wartości w sesji, jeśli jeszcze nie istnieje
+        if 'system_prompt' not in st.session_state:
+            st.session_state.system_prompt = DEFAULT_SYSTEM_PROMPT
+        # Pole do edycji promptu
+        st.session_state.system_prompt = st.text_area(
+            "Edytuj prompt systemowy (instrukcję dla LLM):",
+            value=st.session_state.system_prompt,
+            height=300
+        )
         st.markdown("---")
         if st.button("🔄 Resetuj czat"):
             st.session_state.messages = []
@@ -147,8 +208,11 @@ def main():
                     st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
                     st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
 
-                    # Pobierz odpowiedź
-                    response, sources = st.session_state.chatbot.query(prompt)
+                    # Pobierz odpowiedź, przekazując aktualny prompt systemowy z sesji
+                    response, sources = st.session_state.chatbot.query(
+                        question=prompt,
+                        system_prompt_override=st.session_state.system_prompt # Przekazujemy prompt z GUI
+                    )
 
                     # Zapisz odpowiedź do historii (zapisujemy cały obiekt odpowiedzi)
                     st.session_state.messages.append({

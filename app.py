@@ -74,11 +74,7 @@ class RAGChatbot:
             # Dostosuj inne parametry według potrzeb
         )
 
-        # Szablon promptu dla LLM
-        self.prompt_template = PromptTemplate(
-            template="Użyj poniższego kontekstu do odpowiedzi na pytanie. Jeśli nie znasz odpowiedzi, powiedz, że nie wiesz.\nKontekst: {context}\nPytanie: {question}\nOdpowiedź:",
-            input_variables=["context", "question"],
-        )
+        # Usunięto definicję self.prompt_template, ponieważ prompt będzie przekazywany dynamicznie z UI
 
 
     def process_document(self, file_path):
@@ -128,12 +124,13 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
 
-    def query(self, question):
+    def query(self, question, system_prompt_override=None):
         """
         Udziela odpowiedzi na pytanie korzystając z RAG
 
         Args:
             question (str): Pytanie użytkownika
+            system_prompt_override (str, optional): Prompt systemowy do użycia zamiast domyślnego.
 
         Returns:
             str: Odpowiedź na pytanie
@@ -168,24 +165,51 @@ class RAGChatbot:
                 self.top_k_reranker
             )
 
-            # Filtracja po progu istotności
-            filtered_docs_content = [doc_content for doc_content, score in reranked_scored_docs if score > self.relevance_threshold]
-            logger.info(f"✅ Po rerankingu i filtrowaniu pozostawiono {len(filtered_docs_content)} dokumentów (powyżej progu istotności {self.relevance_threshold})")
+            # Przygotowanie kontekstu i listy TOP 3 źródeł na podstawie rerankingu
+            context_parts = []
+            top_sources = []
+            added_sources = set()
+            # Stwórz mapowanie content -> metadata dla łatwego dostępu
+            # Uwaga: To zakłada w miarę unikalne treści chunków. Jeśli chunki mają identyczną treść,
+            # to mapowanie weźmie metadane ostatniego napotkanego.
+            content_to_metadata = {doc.page_content: doc.metadata for doc in relevant_docs}
 
-            if not filtered_docs_content:
+            logger.info(f"📝 Budowanie kontekstu i listy źródeł (max 3) z rerankowanych dokumentów...")
+            for content, score in reranked_scored_docs:
+                if score > self.relevance_threshold:
+                    context_parts.append(content) # Dodaj do kontekstu
+                    metadata = content_to_metadata.get(content)
+                    if metadata:
+                        source = metadata.get("source", "nieznane źródło")
+                        if source not in added_sources:
+                             if len(top_sources) < 3: # Dodaj tylko top 3 unikalne źródła
+                                top_sources.append(source)
+                                added_sources.add(source)
+                    # Nie przerywamy pętli, aby zbudować pełny kontekst z dokumentów powyżej progu
+                else:
+                    # Wyniki są posortowane, więc możemy przerwać, gdy napotkamy wynik poniżej progu
+                    break
+
+            logger.info(f"✅ Zbudowano kontekst z {len(context_parts)} chunków.")
+            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia.")
+
+            if not context_parts:
                 logger.info("❌ Brak dokumentów spełniających próg istotności po rerankingu")
-                # Możemy spróbować wygenerować odpowiedź bez kontekstu, ale zwykle lepiej poinformować, że nie znaleziono istotnych informacji
                 return "Nie znaleziono wystarczająco istotnych informacji w dokumentach, aby odpowiedzieć na to pytanie.", []
 
-            # Przygotowanie kontekstu
-            context = "\n\n".join(filtered_docs_content)
+            # Połącz kontekst
+            context = "\n\n".join(context_parts)
 
-            # Wygeneruj odpowiedź za pomocą LLM
+            # Wygeneruj odpowiedź za pomocą LLM, przekazując prompt systemowy
             logger.info("🤖 Generowanie odpowiedzi za pomocą LLM")
-            answer = self._generate_answer(question, context)
+            if system_prompt_override is None:
+                 logger.warning("⚠️ Nie podano system_prompt_override do metody query. Używanie pustego promptu systemowego.")
+                 system_prompt_override = ""
 
-            # Pobierz źródła (na podstawie oryginalnych relevant_docs, aby uzyskać metadane)
-            sources = self.get_sources(relevant_docs)
+            answer = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
+
+            # Użyj listy top_sources zbudowanej wcześniej
+            sources = top_sources
 
             logger.info("✅ Odpowiedź została pomyślnie wygenerowana")
             return answer, sources
@@ -194,13 +218,14 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}")
             return f"Wystąpił błąd podczas przetwarzania pytania: {e}", []
 
-    def _generate_answer(self, question, context):
+    def _generate_answer(self, question, context, system_prompt_text):
         """
         Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM
 
         Args:
             question (str): Pytanie użytkownika
             context (str): Kontekst z dokumentów
+            system_prompt_text (str): Tekst promptu systemowego (instrukcji)
 
         Returns:
             str: Wygenerowana odpowiedź
@@ -211,12 +236,21 @@ class RAGChatbot:
              return "Model LLM nie został zainicjalizowany."
 
         try:
-            # Formatowanie promptu
-            prompt = self.prompt_template.format(context=context, question=question)
-            logger.info("➡️ Wysłanie promptu do LLM...")
+            # Ręczne budowanie promptu używając przekazanego system_prompt_text
+            prompt_to_send = f"""{system_prompt_text}
 
-            # Wywołanie modelu LLM
-            response = self.llm.invoke(prompt) # Używamy metody invoke z LangChain
+            --- DOSTARCZONY KONTEKST ---
+            {context}
+
+            --- PYTANIE UŻYTKOWNIKA ---
+            {question}
+
+            --- ODPOWIEDŹ ANALITYKA ---
+            """
+            logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do LLM...")
+
+            # Wywołanie modelu LLM z nowym promptem
+            response = self.llm.invoke(prompt_to_send) # Używamy nowej zmiennej prompt_to_send
 
             logger.info("⬅️ Otrzymano odpowiedź od LLM.")
             return response
@@ -226,22 +260,8 @@ class RAGChatbot:
             return f"Wystąpił błąd podczas generowania odpowiedzi przez LLM: {e}"
 
 
-    def get_sources(self, relevant_docs):
-        """
-        Pobiera unikalne źródła z listy dokumentów
+# Usunięto metodę get_sources, ponieważ logika została przeniesiona do metody query
 
-        Args:
-            relevant_docs (list[Document]): Lista obiektów Document
-
-        Returns:
-            list[str]: Lista unikalnych źródeł
-        """
-        sources = []
-        for doc in relevant_docs:
-            source = doc.metadata.get("source", "nieznane źródło")
-            if source not in sources:
-                sources.append(source)
-        return sources
 
 if __name__ == "__main__":
     # Przykład użycia
