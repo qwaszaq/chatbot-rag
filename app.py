@@ -3,6 +3,7 @@ Główny plik aplikacji chatbota RAG z Qdrant
 """
 import logging
 import os
+import time # Dodano import time
 from data_processing.document_loader import DocumentLoader
 from data_processing.text_splitter import TextSplitter
 from data_processing.embedding_generator import EmbeddingGenerator
@@ -206,13 +207,15 @@ class RAGChatbot:
                  logger.warning("⚠️ Nie podano system_prompt_override do metody query. Używanie pustego promptu systemowego.")
                  system_prompt_override = ""
 
-            answer = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
+            # Generowanie odpowiedzi zwraca teraz słownik z treścią i metadanymi
+            response_dict = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
 
             # Użyj listy top_sources zbudowanej wcześniej
             sources = top_sources
 
-            logger.info("✅ Odpowiedź została pomyślnie wygenerowana")
-            return answer, sources
+            logger.info("✅ Odpowiedź została pomyślnie wygenerowana wraz z metadanymi")
+            # Zwracamy słownik odpowiedzi i listę źródeł (top_sources)
+            return response_dict, sources # Zwracamy słownik, a nie tylko treść
 
         except Exception as e:
             logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}")
@@ -220,7 +223,8 @@ class RAGChatbot:
 
     def _generate_answer(self, question, context, system_prompt_text):
         """
-        Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM
+        Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM,
+        dołączając metadane dotyczące generowania.
 
         Args:
             question (str): Pytanie użytkownika
@@ -228,15 +232,27 @@ class RAGChatbot:
             system_prompt_text (str): Tekst promptu systemowego (instrukcji)
 
         Returns:
-            str: Wygenerowana odpowiedź
+            dict: Słownik zawierający treść odpowiedzi i metadane
+                  np. {"content": AIMessage(...), "metadata": {"model": "...", "tokens": ..., "time": ...}}
+                  W przypadku błędu zwraca słownik z komunikatem o błędzie.
         """
         # Dodano sprawdzenie, czy LLM jest zainicjalizowane przed użyciem
         if not hasattr(self, 'llm'):
-             logger.error("❌ Model LLM nie został zainicjalizowany.")
-             return "Model LLM nie został zainicjalizowany."
+             error_msg = "Model LLM nie został zainicjalizowany."
+             logger.error(f"❌ {error_msg}")
+             # Zwracamy słownik z błędem, zachowując spójny typ zwracany
+             return {"content": error_msg, "metadata": None}
+
+        response_content = None
+        token_count = None
+        model_name = "N/A" # Domyślna wartość
+        response_time = 0.0
 
         try:
-            # Ręczne budowanie promptu używając przekazanego system_prompt_text
+            # Pobierz nazwę modelu (jeśli dostępna)
+            model_name = getattr(self.llm, 'model', "N/A") # Użyj getattr dla bezpieczeństwa
+
+            # Ręczne budowanie promptu
             prompt_to_send = f"""{system_prompt_text}
 
             --- DOSTARCZONY KONTEKST ---
@@ -249,15 +265,74 @@ class RAGChatbot:
             """
             logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do LLM...")
 
-            # Wywołanie modelu LLM z nowym promptem
-            response = self.llm.invoke(prompt_to_send) # Używamy nowej zmiennej prompt_to_send
+            # Pomiar czasu i wywołanie LLM
+            start_time = time.time()
+            response = self.llm.invoke(prompt_to_send)
+            end_time = time.time()
+            response_time = end_time - start_time
 
-            logger.info("⬅️ Otrzymano odpowiedź od LLM.")
-            return response
+            response_content = response # Zachowaj cały obiekt odpowiedzi (np. AIMessage)
+            logger.info(f"⬅️ Otrzymano odpowiedź od LLM w {response_time:.2f}s.")
+
+            # --- Pobieranie metadanych z obiektu odpowiedzi ---
+            try:
+                # 1. Spróbuj pobrać nazwę modelu - priorytet dla klucza 'model' w response_metadata
+                resp_meta = getattr(response, 'response_metadata', {})
+                model_name_from_direct_key = resp_meta.get('model') # Bezpośredni dostęp do klucza 'model'
+
+                if model_name_from_direct_key:
+                    model_name = model_name_from_direct_key
+                    logger.info(f"📊 Nazwa modelu (z response_metadata['model']): {model_name}")
+                # Fallback 1: spróbuj system_fingerprint (jak w JSON z LM Studio)
+                elif 'system_fingerprint' in resp_meta and resp_meta['system_fingerprint']:
+                     model_name = resp_meta['system_fingerprint']
+                     logger.info(f"📊 Nazwa modelu (z response_metadata['system_fingerprint']): {model_name}")
+                # Fallback 2: spróbuj z atrybutu obiektu LLM (mało prawdopodobne, że zadziała poprawnie)
+                elif hasattr(self.llm, 'model') and self.llm.model != "local-model":
+                    model_name = self.llm.model
+                    logger.info(f"📊 Nazwa modelu (z obiektu self.llm - placeholder?): {model_name}")
+                else:
+                    logger.warning("⚠️ Nie udało się uzyskać nazwy modelu z response_metadata ani obiektu LLM.")
+                    model_name = "N/A" # Ostateczny fallback
+
+                # 2. Spróbuj pobrać liczbę tokenów (logika pozostaje ta sama)
+                # Sprawdź usage_metadata (nowszy standard LangChain)
+                usage_meta = getattr(response, 'usage_metadata', None)
+                if usage_meta and 'completion_tokens' in usage_meta:
+                    token_count = usage_meta.get('completion_tokens')
+                    logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata): {token_count}")
+                # Sprawdź token_usage w response_metadata (starszy/inny standard)
+                elif resp_meta and 'token_usage' in resp_meta:
+                    token_usage = resp_meta.get('token_usage', {})
+                    token_count = token_usage.get('completion_tokens')
+                    if token_count:
+                         logger.info(f"📊 Użycie tokenów (odpowiedź, z response_metadata): {token_count}")
+                    else:
+                         logger.warning("⚠️ Nie znaleziono 'completion_tokens' w response_metadata['token_usage'].")
+                else:
+                    logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów w 'usage_metadata' ani 'response_metadata'.")
+
+            except AttributeError as attr_err:
+                 logger.warning(f"⚠️ Obiekt odpowiedzi nie ma oczekiwanych atrybutów metadanych ({attr_err}).")
+            except Exception as meta_e:
+                 logger.warning(f"⚠️ Nieoczekiwany błąd podczas pobierania metadanych z odpowiedzi: {meta_e}.")
+            # -----------------------------------------------
+
         except Exception as e:
-            logger.error(f"❌ Błąd podczas generowania odpowiedzi przez LLM: {str(e)}")
-            # Zwracamy komunikat o błędzie LLM zamiast pustej odpowiedzi
-            return f"Wystąpił błąd podczas generowania odpowiedzi przez LLM: {e}"
+            error_msg = f"Wystąpił błąd podczas generowania odpowiedzi przez LLM: {e}"
+            logger.error(f"❌ {error_msg}")
+            # Zwracamy słownik z błędem
+            return {"content": error_msg, "metadata": None}
+
+        # Zwróć słownik z treścią i metadanymi
+        return {
+            "content": response_content,
+            "metadata": {
+                "model": model_name,
+                "tokens": token_count, # Może być None
+                "time": response_time
+            }
+        }
 
 
 # Usunięto metodę get_sources, ponieważ logika została przeniesiona do metody query
