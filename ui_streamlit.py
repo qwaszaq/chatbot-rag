@@ -167,6 +167,29 @@ def save_chat_history(chats_data, active_chat_id):
         logger.error(f"❌ Błąd podczas zapisywania historii do {CHAT_HISTORY_FILE}: {e}")
 # -----------------------------------------
 
+# Funkcja pomocnicza do mapowania źródła na ID punktu (wymaga dostosowania!)
+def find_point_id_for_source(source_name, qdrant_data):
+    """
+    Znajduje ID punktu Qdrant odpowiadające danej nazwie źródła.
+    UWAGA: To jest BARDZO uproszczona implementacja i może wymagać znaczących zmian
+           w zależności od tego, jak metadane są przechowywane w Qdrant i jak
+           źródła są zwracane przez funkcję query w app.py.
+           Może być konieczne przekazywanie ID punktów wraz ze źródłami z app.py.
+    """
+    if not qdrant_data: return None
+    
+    for item in qdrant_data:
+        # Sprawdź, czy payload istnieje i zawiera klucz 'metadata'
+        payload = item.get('payload')
+        if payload and isinstance(payload, dict):
+            metadata = payload.get('metadata')
+            if metadata and isinstance(metadata, dict):
+                 # Sprawdź różne możliwe klucze dla nazwy pliku
+                 source_in_meta = metadata.get('source', metadata.get('file_path', metadata.get('filename')))
+                 if source_in_meta and os.path.basename(source_in_meta) == source_name:
+                      return item.get('id')
+    return None # Nie znaleziono pasującego ID
+
 def main():
     
     st.title("🤖 Chatbot RAG z Qdrant")
@@ -353,6 +376,9 @@ def main():
                     qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True) 
                     if not qdrant_data:
                          st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
+                         # Wyzeruj wyniki klastrowania w stanie sesji
+                         st.session_state.cluster_assignments = None
+                         st.session_state.cluster_labels = None
                     else:
                          # Przygotuj dane dla scikit-learn
                          point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
@@ -379,19 +405,30 @@ def main():
                                               qdrant_data, # Przekazujemy pełne dane z payloadem
                                               st.session_state.chatbot.llm
                                           )
-                                          st.success("✅ Etykiety klastrów wygenerowane.")
+                                          if st.session_state.cluster_labels:
+                                               st.success("✅ Etykiety klastrów wygenerowane.")
+                                          else:
+                                               st.warning("⚠️ Nie udało się wygenerować etykiet dla klastrów.")
                                  else:
                                       st.warning("Nie można wygenerować etykiet klastrów (brak wyników klastrowania lub instancji LLM).")
                                       st.session_state.cluster_labels = None
 
                              else:
                                  st.error("❌ Wystąpił błąd podczas klastrowania.")
+                                 st.session_state.cluster_assignments = None
+                                 st.session_state.cluster_labels = None
                          else:
                               st.warning("⚠️ Brak wektorów w pobranych danych do klastrowania.")
+                              st.session_state.cluster_assignments = None
+                              st.session_state.cluster_labels = None
 
                 except Exception as cluster_e:
                     logger.error(f"❌ Błąd podczas procesu klastrowania: {cluster_e}", exc_info=True)
                     st.error(f"Wystąpił błąd: {cluster_e}")
+                    st.session_state.cluster_assignments = None
+                    st.session_state.cluster_labels = None
+            # Odśwież, aby pokazać wyniki
+            st.rerun() 
 
         # Wyświetlanie informacji o klastrach (jeśli istnieją)
         if st.session_state.cluster_assignments:
@@ -611,22 +648,28 @@ def main():
                    if sources_to_display:
                            with st.expander("Źródła"):
                                unique_sources = set()
+                               # TODO: Potrzebujemy lepszego sposobu mapowania źródła na ID punktu
+                               # Obecnie `sources_to_display` to tylko lista ścieżek/nazw plików
+                               # Musimy zmodyfikować `app.py`->`query`, aby zwracała również ID punktów dla źródeł
+                               # lub użyć `qdrant_data` (jeśli jest dostępne globalnie/w sesji) do wyszukania ID
+                               qdrant_data_available = st.session_state.get('qdrant_data_for_clustering') # Przykład, jeśli zapiszemy dane w sesji
+
                                for source in sources_to_display:
-                                    if isinstance(source, str): unique_sources.add(os.path.basename(source))
-                                    else: unique_sources.add(str(source))
-                               for base_name in sorted(list(unique_sources)):
-                                    # Dodanie informacji o klastrze do źródła, jeśli dostępna
+                                    source_name = os.path.basename(source) if isinstance(source, str) else str(source)
+                                    point_id = None 
+                                    # Przykładowa, prymitywna logika szukania ID (wymaga ulepszenia!)
+                                    # point_id = find_point_id_for_source(source_name, qdrant_data_available) 
+
                                     cluster_info_str = ""
-                                    # TODO: Potrzebujemy mapowania źródła/chunka na ID punktu Qdrant, aby znaleźć klaster
-                                    # point_id = find_point_id_for_source(base_name, sources_to_display) # Funkcja pomocnicza
-                                    # if st.session_state.cluster_assignments and point_id in st.session_state.cluster_assignments:
-                                    #    cluster_label_id = st.session_state.cluster_assignments[point_id]
-                                    #    cluster_name = f"Klaster {cluster_label_id}"
-                                    #    if st.session_state.cluster_labels and cluster_label_id in st.session_state.cluster_labels:
-                                    #        cluster_name = st.session_state.cluster_labels[cluster_label_id]
-                                    #    cluster_info_str = f" ({cluster_name})"
+                                    if st.session_state.cluster_assignments and point_id in st.session_state.cluster_assignments:
+                                        cluster_id = st.session_state.cluster_assignments[point_id]
+                                        if cluster_id != -1: # Ignoruj szum
+                                            cluster_name = f"Klaster {cluster_id}"
+                                            if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
+                                                cluster_name = st.session_state.cluster_labels[cluster_id]
+                                            cluster_info_str = f" ({cluster_name})"
                                     
-                                    st.markdown(f"- `{base_name}`{cluster_info_str}")
+                                    st.markdown(f"- `{source_name}`{cluster_info_str}")
 
 
                    # --- Sekcja wizualizacji grafu ---

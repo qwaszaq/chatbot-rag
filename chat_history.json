@@ -948,6 +948,501 @@
                         ]
                     },
                     "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Wygeneruj graf ilustrujący pełny cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\nOdpowiedź: Na podstawie dostarczonych dokumentów można zrekonstruować następujący cykl finansowania i legalizacji środków w \"Projekcie Beż\" prowadzonym przez A. Dąbrowską:\n\n1.  **Źródła Finansowania:** Początkowo fundusze pozyskiwane były poprzez wyłudzenie dotacji (4,8 mln PLN) z Narodowego Centrum Badań i Rozwoju (NCBR) oraz kredytu technologicznego z Banku Gospodarstwa Krajowego (BGK).\n2.  **Firma-słup:** Środki te przekazywane były do firmy \"BeigeLife Innovations\" prowadzonej przez A. Dąbrowską, a także do powiązanej kapitałowo spółki \"NeutralTech Solutions Ltd.\" z Cypru.\n3.  **Centralny Hub Finansowy:** Agnieszka Malinowska (\"Czas\"/\"Kosmiczna Rachunkowość\") pełniła rolę centralnego hubu finansowego grupy, zarządzając środkami w ramach fikcyjnej firmy \"Astro-Precision Logistics\" i ukrywając ich pochodzenie oraz cel.\n4.  **Legalizacja:** Środki legalizowane były poprzez sprzedaż za ETH i XMR, transfery międzynarodowe do rajów podatkowych (Seszele, Belize, Cypr, Liechtenstein, Vanuatu) oraz operacje gotówkowe.\n5.  **Potencjalni Odbiorcy Końcowi/Dalsze Transfery:** Dokumentacja nie precyzuje wprost, gdzie ostatecznie trafiły legalizowane środki, ale wskazuje na ich wykorzystanie do finansowania działalności całej ZGP \"Agnieszka\", a także potencjalnie do transferów do rajów podatkowych.\n\nŹródło w dokumentach:\n*   \"Wewnętrzna Komunikacja i Wsparcie\": „…laptop A. Malinowskiej (\"Czas\"/\"Kosmiczna Rachunkowość\"). Pliki nazwane konwencją \"Projekt [Dziwactwo/Metoda] AG\" zawierają szczegółowe kalkulacje zysków z działalności innych Agnieszek…”\n*   „2. Dowody finansowe”: „…analiza kont bankowych krajowych i zagranicznych (w tym w rajach podatkowych – Seszele, Belize, Cypr, Liechtenstein, Vanuatu; bank szwajcarski)...”\n*   \"III. Oskarżona AGNIESZKA DĄBROWSKA\": \"Przedłożyła podrobione dokumenty… oraz nierzetelne pisemne oświadczenia dotyczące okoliczności mających istotne znaczenie dla uzyskania wsparcia finansowego w postaci dotacji z Narodowego Centrum Badań i Rozwoju (NCBR) oraz kredytu technologicznego z Banku Gospodarstwa Krajowego (BGK) na łączną kwotę 4.800.000 PLN\"\n*   „Struktury Legalizacyjne i Kamuflujące”: \"Wykorzystanie fikcyjnych podmiotów zagranicznych (rajy podatkowe, firmy w Liechtensteinie/Szwajcarii) potwierdza międzynarodowy zasięg operacji legalizacyjnych.”\n\nKomentarz: Graficzny schemat ilustrujący ten cykl nie może zostać wygenerowany bezpośrednio na podstawie tekstu.  Dostarczone informacje pozwalają jedynie na zrekonstruowanie sekwencji zdarzeń i powiązań między podmiotami, co stanowi podstawę do stworzenia wizualnej reprezentacji tego procesu.\n",
+                    "sources": [
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt"
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Projekt Beż",
+                                "ner_type": null,
+                                "id": "Projekt Beż"
+                            },
+                            {
+                                "label": "A. Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "A. Dąbrowska"
+                            },
+                            {
+                                "label": "NCBR",
+                                "ner_type": "orgName",
+                                "id": "NCBR"
+                            },
+                            {
+                                "label": "Projektu Beż",
+                                "ner_type": null,
+                                "id": "Projektu Beż"
+                            },
+                            {
+                                "label": "BGK",
+                                "ner_type": "orgName",
+                                "id": "BGK"
+                            },
+                            {
+                                "label": "NeutralTech Solutions",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions"
+                            },
+                            {
+                                "label": "Projekcie Beż",
+                                "ner_type": null,
+                                "id": "Projekcie Beż"
+                            },
+                            {
+                                "label": "A. Malinowska",
+                                "ner_type": "persName",
+                                "id": "A. Malinowska"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "Astro-Precision Logistics",
+                                "ner_type": null,
+                                "id": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "BeigeLife Innovations",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd.",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "Środki",
+                                "ner_type": null,
+                                "id": "Środki"
+                            },
+                            {
+                                "label": "ETH",
+                                "ner_type": "orgName",
+                                "id": "ETH"
+                            },
+                            {
+                                "label": "XMR",
+                                "ner_type": "orgName",
+                                "id": "XMR"
+                            },
+                            {
+                                "label": "Seszele",
+                                "ner_type": "placeName",
+                                "id": "Seszele"
+                            },
+                            {
+                                "label": "Belize",
+                                "ner_type": "placeName",
+                                "id": "Belize"
+                            },
+                            {
+                                "label": "Cypr",
+                                "ner_type": "orgName",
+                                "id": "Cypr"
+                            },
+                            {
+                                "label": "Liechtenstein",
+                                "ner_type": "placeName",
+                                "id": "Liechtenstein"
+                            },
+                            {
+                                "label": "Vanuatu",
+                                "ner_type": "placeName",
+                                "id": "Vanuatu"
+                            },
+                            {
+                                "label": "Projekt AG",
+                                "ner_type": null,
+                                "id": "Projekt AG"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "ZGP Agnieszka",
+                                "ner_type": "orgName",
+                                "id": "ZGP Agnieszka"
+                            },
+                            {
+                                "label": "legalizowane środki",
+                                "ner_type": null,
+                                "id": "legalizowane środki"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "prowadzony przez",
+                                "source": "Projekt Beż",
+                                "target": "A. Dąbrowska"
+                            },
+                            {
+                                "label": "jest źródłem finansowania dla",
+                                "source": "NCBR",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "jest źródłem finansowania dla",
+                                "source": "BGK",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "firma-słup w",
+                                "source": "NeutralTech Solutions",
+                                "target": "Projekcie Beż"
+                            },
+                            {
+                                "label": "centralny hub finansowy w",
+                                "source": "A. Malinowska",
+                                "target": "Projekcie Beż"
+                            },
+                            {
+                                "label": "posiada laptopa z plikami",
+                                "source": "A. Malinowska",
+                                "target": "Projekt AG"
+                            },
+                            {
+                                "label": "zarządza środkami w ramach",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "prowadzona przez",
+                                "source": "BeigeLife Innovations",
+                                "target": "A. Dąbrowska"
+                            },
+                            {
+                                "label": "powiązana kapitałowo z",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "legalizowane poprzez sprzedaż za",
+                                "source": "Środki",
+                                "target": "ETH"
+                            },
+                            {
+                                "label": "legalizowane poprzez sprzedaż za",
+                                "source": "Środki",
+                                "target": "XMR"
+                            },
+                            {
+                                "label": "przekazywane do",
+                                "source": "Środki",
+                                "target": "Seszele"
+                            },
+                            {
+                                "label": "przekazywane do",
+                                "source": "Środki",
+                                "target": "Belize"
+                            },
+                            {
+                                "label": "przekazywane do",
+                                "source": "Środki",
+                                "target": "Cypr"
+                            },
+                            {
+                                "label": "przekazywane do",
+                                "source": "Środki",
+                                "target": "Liechtenstein"
+                            },
+                            {
+                                "label": "przekazywane do",
+                                "source": "Środki",
+                                "target": "Vanuatu"
+                            },
+                            {
+                                "label": "przedłożyła podrobione dokumenty do",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "NCBR"
+                            },
+                            {
+                                "label": "przedłożyła podrobione dokumenty do",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "BGK"
+                            },
+                            {
+                                "label": "finansowana z",
+                                "source": "ZGP Agnieszka",
+                                "target": "legalizowane środki"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\n"
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Wygeneruj graf ilustrujący pełny cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\nOdpowiedź: Cykl finansowania 'Projektu Beż' (prowadzonego przez Agnieszkę Dąbrowską) rozpoczyna się od **uzyskania dotacji oraz kredytu technologicznego**.  Agnieszka Dąbrowska, działając za pośrednictwem firmy \"BeigeLife Innovations\" sp. z o.o., *wyłudziła* 4.800.000 PLN na wsparcie finansowe w postaci **dotacji z Narodowego Centrum Badań i Rozwoju (NCBR) oraz kredytu technologicznego z Banku Gospodarstwa Krajowego (BGK)**, przedstawiając sfałszowane dokumenty, w tym wyniki badań klinicznych z fikcyjnego \"Instytutu Badań nad Neutralnością Barw\" w Bernie, zawyżone kosztorysy i nierzetelny biznesplan.  Środki te zostały następnie przekazane do **firmy-słupa \"NeutralTech Solutions Ltd.\" (z Cypru)**, która dostarczała m.in. linię produkcyjną za zawyżoną cenę. Następnie środki przechodziły przez centralny hub finansowy prowadzony przez **Agnieszkę Malinowską (\"Czas\"/\"Kosmiczna Rachunkowość\")**, która prowadziła \"księgowość projektów\" i ukrywała cel działań pod płaszczykiem absurdalnej narracji.  Zabezpieczone przepływy finansowe (kryptowalutowe, transfery międzynarodowe) wskazywały na możliwość dalszych transferów do **rajów podatkowych** (Seszele, Belize, Cypr, Liechtenstein, Vanuatu). Potencjalni odbiorcy końcowi lub miejsca dalszych transferów nie zostały w dokumentach jednoznacznie zidentyfikowane.\n\nŹródło w dokumentach:\n*   Raport śledczy: \"Wnioski o dotację i kredyt technologiczny złożone przez 'BeigeLife Innovations' zawierają rażące nierzetelności i fałszerstwa.\"\n*   Notatki ze przesłuchania Agnieszki Dąbrowskiej: \"To nie wyłudzenie, to inwestycja w przyszłość beżu.\" (potwierdza świadomość działania)\n*   Analiza przepływów finansowych: \"Środki z NCBR i BGK zostały przekazane do firmy 'NeutralTech Solutions Ltd.' na Cyprze\".\n*   Laptop Agnieszki Malinowskiej: Pliki \"Projekt [nazwa projektu] AG\" zawierają kalkulacje zysków i transferów środków.\n\nKomentarz: Graficzny schemat (którego nie mogę wygenerować tekstowo) powinien przedstawiać liniowy przepływ finansów, w którym NCBR/BGK → BeigeLife Innovations → NeutralTech Solutions Ltd. → Agnieszka Malinowska, a następnie potencjalnie do rajów podatkowych i niezidentyfikowanych odbiorców końcowych.  Dokumenty nie wskazują jednoznacznie na finalny cel tych transferów. Brak jest też informacji o konkretnych beneficjentach poza wskazanymi osobami w grupie.\n",
+                    "sources": [
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt"
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Projekt Beż",
+                                "ner_type": null,
+                                "id": "Projekt Beż"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "NCBR",
+                                "ner_type": "orgName",
+                                "id": "NCBR"
+                            },
+                            {
+                                "label": "Projektu Beż",
+                                "ner_type": null,
+                                "id": "Projektu Beż"
+                            },
+                            {
+                                "label": "BGK",
+                                "ner_type": "orgName",
+                                "id": "BGK"
+                            },
+                            {
+                                "label": "NeutralTech Solutions",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "BeigeLife Innovations sp. z o.o.",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations sp. z o.o."
+                            },
+                            {
+                                "label": "4.800.000 PLN",
+                                "ner_type": null,
+                                "id": "4.800.000 PLN"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd.",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "Cypru",
+                                "ner_type": "placeName",
+                                "id": "Cypru"
+                            },
+                            {
+                                "label": "środki",
+                                "ner_type": null,
+                                "id": "środki"
+                            },
+                            {
+                                "label": "księgowość projektów",
+                                "ner_type": null,
+                                "id": "księgowość projektów"
+                            },
+                            {
+                                "label": "raj podatkowy",
+                                "ner_type": null,
+                                "id": "raj podatkowy"
+                            },
+                            {
+                                "label": "Seszele",
+                                "ner_type": "placeName",
+                                "id": "Seszele"
+                            },
+                            {
+                                "label": "Belize",
+                                "ner_type": "placeName",
+                                "id": "Belize"
+                            },
+                            {
+                                "label": "Cypr",
+                                "ner_type": "orgName",
+                                "id": "Cypr"
+                            },
+                            {
+                                "label": "Liechtenstein",
+                                "ner_type": "placeName",
+                                "id": "Liechtenstein"
+                            },
+                            {
+                                "label": "Vanuatu",
+                                "ner_type": "placeName",
+                                "id": "Vanuatu"
+                            },
+                            {
+                                "label": "Raport śledczy",
+                                "ner_type": null,
+                                "id": "Raport śledczy"
+                            },
+                            {
+                                "label": "nierzetelności wniosków",
+                                "ner_type": null,
+                                "id": "nierzetelności wniosków"
+                            },
+                            {
+                                "label": "Notatki ze przesłuchania Agnieszki Dąbrowskiej",
+                                "ner_type": "persName",
+                                "id": "Notatki ze przesłuchania Agnieszki Dąbrowskiej"
+                            },
+                            {
+                                "label": "Analiza przepływów finansowych",
+                                "ner_type": null,
+                                "id": "Analiza przepływów finansowych"
+                            },
+                            {
+                                "label": "Laptop Agnieszki Malinowskiej",
+                                "ner_type": "persName",
+                                "id": "Laptop Agnieszki Malinowskiej"
+                            },
+                            {
+                                "label": "Projekt [nazwa projektu] AG",
+                                "ner_type": null,
+                                "id": "Projekt [nazwa projektu] AG"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "prowadzony przez",
+                                "source": "Projekt Beż",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "wyłudziła",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "4.800.000 PLN"
+                            },
+                            {
+                                "label": "jest źródłem finansowania",
+                                "source": "NCBR",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "jest źródłem finansowania",
+                                "source": "BGK",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "firma-słup dla",
+                                "source": "NeutralTech Solutions",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "prowadzi hub finansowy dla",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projektu Beż"
+                            },
+                            {
+                                "label": "prowadzi",
+                                "source": "Agnieszka Malinowska",
+                                "target": "księgowość projektów"
+                            },
+                            {
+                                "label": "prowadzona przez",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "uzyskała dotację od",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "NCBR"
+                            },
+                            {
+                                "label": "uzyskała kredyt technologiczny od",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "BGK"
+                            },
+                            {
+                                "label": "zlokalizowana w",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "Cypru"
+                            },
+                            {
+                                "label": "przekazane do",
+                                "source": "środki",
+                                "target": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "możliwe transfery do",
+                                "source": "raj podatkowy",
+                                "target": "Seszele"
+                            },
+                            {
+                                "label": "możliwe transfery do",
+                                "source": "raj podatkowy",
+                                "target": "Belize"
+                            },
+                            {
+                                "label": "możliwe transfery do",
+                                "source": "raj podatkowy",
+                                "target": "Cypr"
+                            },
+                            {
+                                "label": "możliwe transfery do",
+                                "source": "raj podatkowy",
+                                "target": "Liechtenstein"
+                            },
+                            {
+                                "label": "możliwe transfery do",
+                                "source": "raj podatkowy",
+                                "target": "Vanuatu"
+                            },
+                            {
+                                "label": "zawiera informacje o",
+                                "source": "Raport śledczy",
+                                "target": "nierzetelności wniosków"
+                            },
+                            {
+                                "label": "potwierdzają świadomość działania",
+                                "source": "Notatki ze przesłuchania Agnieszki Dąbrowskiej",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "informuje o transferze środków do",
+                                "source": "Analiza przepływów finansowych",
+                                "target": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "zawiera pliki",
+                                "source": "Laptop Agnieszki Malinowskiej",
+                                "target": "Projekt [nazwa projektu] AG"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
                 }
             ]
         },
