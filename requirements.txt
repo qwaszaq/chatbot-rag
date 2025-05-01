@@ -17,3 +17,6 @@ langchain-openai
 spacy>=3.0.0 # Dla NER
 networkx # Dla budowy grafu wiedzy
 streamlit-agraph # Dla wizualizacji grafu wiedzy
+scikit-learn # Dla klastrowania
+pandas # Do obsługi danych
+numpy # Wymagane przez pandas/scikit-learn

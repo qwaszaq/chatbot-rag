@@ -581,6 +581,7 @@ if __name__ == "__main__":
         chatbot = RAGChatbot()
         logger.info("✅ RAGChatbot zainicjalizowany pomyślnie.")
 
+        # Kod testowy przeniesiony do test_clustering_data.py
     except ConnectionError as ce:
         logger.error(f"❌ Nie udało się uruchomić chatbota: {ce}")
         print(f"Krytyczny błąd: Nie można połączyć się z Qdrant. Sprawdź, czy Qdrant działa i jest dostępny. Szczegóły w logach.")

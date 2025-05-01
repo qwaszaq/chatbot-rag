@@ -13,28 +13,19 @@ from streamlit_agraph import agraph, Node, Edge, Config # Dodano importy dla wiz
 import textwrap # Dodano import textwrap do zawijania etykiet
 # Dodano import dla obiektu odpowiedzi LLM z LangChain, aby móc sprawdzić jego typ
 from langchain_core.messages import AIMessage, HumanMessage
+import warnings # Dodano do obsługi FutureWarning
+import numpy as np # Dodano import numpy
+from clustering_module import perform_clustering # Import funkcji klastrowania
+from collections import Counter # Do zliczania punktów w klastrach
 
 # Konfiguracja logowania
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.INFO, 
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
 CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii
-
-# --- Mapowanie typów NER na kolory ---
-# Usunięto zdublowany fragment kodu (importy itp.)
-
-# Konfiguracja logowania
-# Już zdefiniowane wyżej, usunięcie duplikatu
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-# )
-# logger = logging.getLogger(__name__)
-
-# CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii - Już zdefiniowane wyżej
 
 # === POCZĄTEK POPRAWKI KOLORÓW ===
 # --- Mapowanie typów NER na kolory (DOSTOSOWANE DO pl_core_news_md/lg) ---
@@ -179,7 +170,7 @@ def main():
     
     st.title("🤖 Chatbot RAG z Qdrant")
 
-    # --- Inicjalizacja stanu sesji z pliku lub domyślnie ---
+    # --- Inicjalizacja stanu sesji ---
     if "chats" not in st.session_state:
          loaded_data = load_chat_history()
          if loaded_data:
@@ -215,8 +206,15 @@ def main():
 
     # Inicjalizacja wybranego trybu czatu w stanie sesji
     if 'selected_chat_mode' not in st.session_state:
-        # Zaktualizowano domyślny wybór, aby pasował do nowego klucza
         st.session_state.selected_chat_mode = "Analityk Tekstu (RAG)"
+    # Inicjalizacja stanu checkboxa do filtrowania małych grafów
+    if 'filter_small_graphs' not in st.session_state:
+        st.session_state.filter_small_graphs = True # Domyślnie filtruj (checkbox zaznaczony)
+    # Inicjalizacja stanu dla wyników klastrowania
+    if 'cluster_assignments' not in st.session_state:
+        st.session_state.cluster_assignments = None # Słownik {point_id: cluster_label}
+    if 'cluster_labels' not in st.session_state:
+        st.session_state.cluster_labels = None # Słownik {cluster_label: opis}
     # ---------------------------------------------------
 
     # --- Inicjalizacja chatbota ---
@@ -241,6 +239,9 @@ def main():
             st.session_state.chats[new_chat_id] = {"name": f"Czat {chat_count}", "messages": []}
             st.session_state.active_chat_id = new_chat_id
             if "editing_chat_id" in st.session_state: del st.session_state.editing_chat_id
+            # Resetuj wyniki klastrowania przy tworzeniu nowego czatu
+            st.session_state.cluster_assignments = None
+            st.session_state.cluster_labels = None
             save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
             st.rerun()
 
@@ -263,6 +264,9 @@ def main():
                     st.session_state.active_chat_id = chat_id
                     if "editing_chat_id" in st.session_state: del st.session_state.editing_chat_id
                     if "chat_to_delete_id" in st.session_state: del st.session_state.chat_to_delete_id
+                    # Resetuj klastry przy zmianie czatu? Można to zmienić.
+                    st.session_state.cluster_assignments = None
+                    st.session_state.cluster_labels = None
                     st.rerun()
             with col2:
                  if st.button("✏️", key=f"edit_{chat_id}", help="Edytuj nazwę czatu"):
@@ -307,7 +311,6 @@ def main():
                        del st.session_state.chat_to_delete_id
                        if st.session_state.active_chat_id == deleted_chat_id:
                             if st.session_state.chats:
-                                 # Ustaw na pierwszy czat z posortowanej listy
                                  st.session_state.active_chat_id = sorted(st.session_state.chats.keys(), key=lambda k: st.session_state.chats[k]['name'])[0]
                             else:
                                  if "active_chat_id" in st.session_state: del st.session_state.active_chat_id
@@ -319,28 +322,104 @@ def main():
                        st.rerun()
 
         st.markdown("---")
-        # ZMIANA: Dodano opcję "Zwykły Chat"
         st.header("🎭 Wybierz Tryb Czatu")
         ALL_CHAT_MODES = ["Zwykły Chat"] + list(AVAILABLE_PROMPTS.keys())
         st.session_state.selected_chat_mode = st.radio(
             "Wybierz tryb:",
             options=ALL_CHAT_MODES,
             key="mode_selector",
-            index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode) # Zapewnia zapamiętanie wyboru
+            index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode)
         )
-        # Pokaż podgląd promptu tylko jeśli wybrany tryb to nie "Zwykły Chat"
         if st.session_state.selected_chat_mode != "Zwykły Chat":
             with st.expander("Podgląd wybranego promptu systemowego"):
                  st.markdown(f"```\n{AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]}\n```")
         st.markdown("---")
-        # KONIEC ZMIANY
 
         st.header("⚙️ Ustawienia RAG")
-        # Użycie kluczy sesji dla suwaków
         st.session_state.top_k = st.slider("Liczba dok. z Qdrant", 1, 200, st.session_state.get('top_k', 99))
         st.session_state.top_k_reranker = st.slider("Liczba dok. po rerankingu", 1, 100, st.session_state.get('top_k_reranker', 33))
         st.session_state.relevance_threshold = st.slider("Próg istotności rerankera", 0.0, 1.0, st.session_state.get('relevance_threshold', 0.0), 0.01)
         st.markdown("---")
+
+        # === DODANO SEKCJE KLASTROWANIA ===
+        st.header("🔬 Analiza Klastrowania")
+        # Opcje klastrowania (można rozbudować o wybór algorytmu, parametrów)
+        num_clusters_kmeans = st.number_input("Liczba klastrów (dla K-Means):", min_value=2, max_value=50, value=8, step=1)
+        
+        if st.button("🚀 Analizuj / Odśwież Klastry"):
+            with st.spinner("Pobieranie danych i wykonywanie klastrowania..."):
+                try:
+                    # Krok 1: Pobierz dane
+                    # Pobieramy z payloadem, żeby mieć tekst do generowania etykiet (Krok 4)
+                    qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True) 
+                    if not qdrant_data:
+                         st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
+                    else:
+                         # Przygotuj dane dla scikit-learn
+                         point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
+                         embeddings_matrix = np.array([d['vector'] for d in qdrant_data if d.get('vector') is not None])
+                         
+                         if embeddings_matrix.shape[0] > 0:
+                             # Krok 2: Wykonaj klastrowanie (używamy K-Means)
+                             cluster_labels_array = perform_clustering(
+                                 embeddings_matrix, 
+                                 algorithm='kmeans', 
+                                 n_clusters=num_clusters_kmeans
+                             )
+                             
+                             if cluster_labels_array is not None:
+                                 # Krok 3: Zapisz wyniki w stanie sesji
+                                 st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
+                                 # Resetuj etykiety klastrów (do wygenerowania w Kroku 4)
+                                 st.session_state.cluster_labels = None 
+                                 st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array))} klastrów dla {len(point_ids)} punktów.")
+                                 # Można dodać wywołanie generowania etykiet (Krok 4) tutaj
+                                 # st.session_state.cluster_labels = generate_cluster_labels(...)
+                             else:
+                                 st.error("❌ Wystąpił błąd podczas klastrowania.")
+                         else:
+                              st.warning("⚠️ Brak wektorów w pobranych danych do klastrowania.")
+
+                except Exception as cluster_e:
+                    logger.error(f"❌ Błąd podczas procesu klastrowania: {cluster_e}", exc_info=True)
+                    st.error(f"Wystąpił błąd: {cluster_e}")
+
+        # Wyświetlanie informacji o klastrach (jeśli istnieją)
+        if st.session_state.cluster_assignments:
+             with st.expander("Wyniki Klastrowania", expanded=False):
+                 try:
+                     # Zliczanie punktów w każdym klastrze
+                     cluster_counts = Counter(st.session_state.cluster_assignments.values())
+                     num_clusters_found = len(cluster_counts)
+                     st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
+                     
+                     # Sortowanie klastrów po ID (opcjonalnie, dla porządku)
+                     sorted_clusters = sorted(cluster_counts.items())
+                     
+                     for cluster_id, count in sorted_clusters:
+                          label_text = f"Klaster {cluster_id}"
+                          # Można dodać wygenerowane etykiety, jeśli istnieją
+                          # if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
+                          #     label_text += f": {st.session_state.cluster_labels[cluster_id]}"
+                          st.markdown(f"- {label_text}: {count} punktów")
+                 except Exception as e:
+                      logger.error(f"Błąd wyświetlania wyników klastrowania: {e}")
+                      st.error("Błąd przy wyświetlaniu podsumowania klastrów.")
+
+                 # TODO: Dodać możliwość przeglądania punktów w klastrze
+                 st.caption("_Wyświetlanie szczegółów klastrów - do implementacji_")
+        st.markdown("---")
+        # === KONIEC SEKCJI KLASTROWANIA ===
+
+        st.header("📊 Ustawienia Grafu")
+        # Checkbox do filtrowania grafów wg liczby węzłów
+        st.session_state.filter_small_graphs = st.checkbox(
+            "Filtruj małe grafy (min. 3 węzły)",
+            value=st.session_state.filter_small_graphs, 
+            key="filter_small_graphs_checkbox" 
+        )
+        st.markdown("---")
+
 
         st.header("📁 Zarządzanie dokumentami")
 
@@ -410,7 +489,6 @@ def main():
                  if files_to_process:
                       num_files = len(files_to_process)
                       st.info(f"Rozpoczynam przetwarzanie {num_files} plików...")
-                      # ... (reszta logiki przetwarzania plików bez zmian) ...
                       processed_count = 0
                       error_count = 0
                       progress_bar = st.progress(0)
@@ -453,29 +531,20 @@ def main():
                       status_text.text("Zakończono przetwarzanie plików.")
                       if processed_count > 0: st.success(f"✅ Przetworzono pomyślnie {processed_count} z {num_files} plików.")
                       if error_count > 0: st.error(f"❌ Wystąpiły błędy dla {error_count} z {num_files} plików.")
+                      # Po przetworzeniu dokumentów, resetuj klastry, bo dane się zmieniły
+                      st.session_state.cluster_assignments = None
+                      st.session_state.cluster_labels = None
+
 
                  # --- Przetwarzanie URL ---
                  if url_to_process:
                       st.info(f"Rozpoczynam przetwarzanie dokumentu z URL: {url_to_process}")
                       with st.spinner("Przetwarzanie URL..."):
                           try:
-                              # Zakładamy, że RAGChatbot ma metodę process_document_from_url
-                              # lub że process_document potrafi wykryć URL
-                              # Wymaga to implementacji w app.py
-                              # Poniżej przykładowa logika, jeśli process_document nie obsługuje URL
-                              # documents = st.session_state.chatbot.document_loader.load_from_url(url_to_process)
-                              # if documents:
-                              #     all_splits = []
-                              #     for doc in documents:
-                              #         splits = st.session_state.chatbot.text_splitter.split_document(doc)
-                              #         all_splits.extend(splits)
-                              #     if all_splits:
-                              #         st.session_state.chatbot.qdrant_connector.add_documents(all_splits)
-                              #         st.success(f"✅ Dokument z URL przetworzony pomyślnie.")
-                              #     else: st.error("❌ Nie udało się podzielić dokumentu z URL.")
-                              # else: st.error("❌ Nie udało się załadować dokumentu z URL.")
-                              # --- Tymczasowe ostrzeżenie ---
                               st.warning("Przetwarzanie z URL nie jest jeszcze w pełni zaimplementowane w tym przycisku.")
+                              # Po przetworzeniu dokumentów z URL, resetuj klastry
+                              st.session_state.cluster_assignments = None
+                              st.session_state.cluster_labels = None
                           except Exception as e:
                               logger.error(f"❌ Błąd przetwarzania URL: {str(e)}", exc_info=True)
                               st.error(f"Błąd podczas przetwarzania URL: {e}")
@@ -487,6 +556,9 @@ def main():
                  st.session_state.chats[st.session_state.active_chat_id]["messages"] = []
                  save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
                  logger.info(f"Wyczyszczono historię aktywnego czatu: {st.session_state.active_chat_id}")
+                 # Resetuj klastry przy resetowaniu czatu
+                 st.session_state.cluster_assignments = None
+                 st.session_state.cluster_labels = None
             else:
                  logger.warning("Nie można zresetować czatu - brak aktywnego czatu.")
             st.rerun()
@@ -529,66 +601,93 @@ def main():
                                     if isinstance(source, str): unique_sources.add(os.path.basename(source))
                                     else: unique_sources.add(str(source))
                                for base_name in sorted(list(unique_sources)):
-                                    st.markdown(f"- `{base_name}`")
+                                    # Dodanie informacji o klastrze do źródła, jeśli dostępna
+                                    cluster_info_str = ""
+                                    # TODO: Potrzebujemy mapowania źródła/chunka na ID punktu Qdrant, aby znaleźć klaster
+                                    # point_id = find_point_id_for_source(base_name, sources_to_display) # Funkcja pomocnicza
+                                    # if st.session_state.cluster_assignments and point_id in st.session_state.cluster_assignments:
+                                    #    cluster_label = st.session_state.cluster_assignments[point_id]
+                                    #    cluster_info_str = f" (Klaster {cluster_label})"
+                                    
+                                    st.markdown(f"- `{base_name}`{cluster_info_str}")
+
 
                    # --- Sekcja wizualizacji grafu ---
                    if graph_data_to_display:
-                        toggle_key = f"graph_toggle_{active_chat_id}_{message_index}"
-                        # Domyślnie zwinięty (value=False)
-                        if st.toggle("Wyświetl Graf Wiedzy", key=toggle_key, value=False):
-                             try:
-                                 nodes = []
-                                 edges = []
-                                 if isinstance(graph_data_to_display, dict) and 'nodes' in graph_data_to_display and 'links' in graph_data_to_display:
-                                     # Blok obliczania rozmiaru węzłów
-                                     try:
-                                         temp_G = nx.node_link_graph(graph_data_to_display, directed=True, multigraph=False)
-                                         degrees = dict(temp_G.degree())
-                                         max_degree = 0
-                                         if degrees and any(d > 0 for d in degrees.values()): max_degree = max(degrees.values())
-                                         BASE_NODE_SIZE = 15
-                                         LARGE_NODE_SIZE = 30
-                                         logger.debug(f"Rozmiar grafu dla indeksu {message_index}. Max degree: {max_degree}")
-                                     except Exception as graph_reconstruction_e:
-                                         logger.error(f"Błąd rekonstrukcji grafu dla indeksu {message_index}: {graph_reconstruction_e}")
-                                         degrees, max_degree, BASE_NODE_SIZE, LARGE_NODE_SIZE = {}, 0, 15, 15
+                        # Logika filtrowania grafu wg liczby węzłów z checkboxem
+                        MIN_NODES_TO_DISPLAY = 3 
+                        num_nodes_in_graph = 0
+                        should_render_graph_section = False 
 
-                                     # Tworzenie węzłów
-                                     for node_data in graph_data_to_display.get('nodes', []):
-                                          node_id = node_data.get('id', str(uuid.uuid4()))
-                                          label = node_data.get('label', node_id)
-                                          wrapped_label = textwrap.fill(label, width=20, replace_whitespace=False, drop_whitespace=False)
-                                          ner_type = node_data.get('ner_type')
-                                          # === POPRAWNE POBIERANIE KOLORU ===
-                                          node_color = NER_COLORS.get(ner_type, DEFAULT_NODE_COLOR)
-                                          # ==================================
-                                          node_size = BASE_NODE_SIZE
-                                          current_degree = degrees.get(node_id, 0)
-                                          if max_degree > 0 and current_degree == max_degree: node_size = LARGE_NODE_SIZE
-                                          tooltip = f"{label}" + (f" ({ner_type})" if ner_type else "")
-                                          nodes.append(Node(id=node_id, label=wrapped_label, size=node_size, color=node_color, title=tooltip))
+                        if isinstance(graph_data_to_display, dict) and 'nodes' in graph_data_to_display and 'links' in graph_data_to_display:
+                             num_nodes_in_graph = len(graph_data_to_display.get('nodes', []))
+                             # Pokaż graf jeśli checkbox odznaczony LUB (checkbox zaznaczony ORAZ liczba węzłów >= 3)
+                             should_render_graph_section = not st.session_state.filter_small_graphs or num_nodes_in_graph >= MIN_NODES_TO_DISPLAY
+                        else:
+                             logger.warning(f"Nieprawidłowy format graph_data_to_display dla indeksu {message_index}")
 
-                                     # Tworzenie krawędzi
-                                     for link_data in graph_data_to_display.get('links', []):
-                                          source_id, target_id = link_data.get('source'), link_data.get('target')
-                                          if source_id and target_id:
-                                               # Pobierz etykietę i skonwertuj na małe litery
-                                               edge_label = link_data.get('label', '')
-                                               display_label = edge_label.lower() # Konwersja na małe litery
-                                               edges.append(Edge(source=source_id, target=target_id, label=display_label, color="#cccccc")) # Użyj display_label
+                        if should_render_graph_section:
+                            toggle_key = f"graph_toggle_{active_chat_id}_{message_index}"
+                            if st.toggle("Wyświetl Graf Wiedzy", key=toggle_key, value=False):
+                                try:
+                                    nodes_agraph = []
+                                    edges_agraph = []
 
-                                     # Konfiguracja grafu (hierarchiczna, statyczna)
-                                     config = Config(width='100%', height=600, directed=True, physics=False, hierarchical=True, layout={'hierarchical': {'direction': 'UD', 'sortMethod': 'hubsize'}}, nodeHighlightBehavior=True, highlightColor='#F7A7A6', collapsible=False)
+                                    # Rekonstrukcja grafu NetworkX (tylko do potencjalnego obliczenia rozmiaru)
+                                    degrees = {}
+                                    max_degree = 0
+                                    temp_G = nx.DiGraph()
+                                    try:
+                                        with warnings.catch_warnings():
+                                            warnings.simplefilter("ignore", FutureWarning)
+                                            temp_G = nx.node_link_graph(graph_data_to_display, directed=True, multigraph=False)
+                                        degrees = dict(temp_G.degree())
+                                        if degrees and any(d > 0 for d in degrees.values()): max_degree = max(degrees.values())
+                                    except Exception as graph_reconstruction_e:
+                                        logger.error(f"Błąd rekonstrukcji grafu dla indeksu {message_index}: {graph_reconstruction_e}")
+                                        degrees, max_degree = {}, 0 # Reset stopni przy błędzie
 
-                                     # Wyświetlanie grafu
-                                     if nodes:
-                                          with st.spinner("Ładowanie grafu..."):
-                                               agraph(nodes=nodes, edges=edges, config=config)
-                                     else: st.caption("_Brak węzłów do wyświetlenia w grafie._")
-                                 else: st.caption("_Nieprawidłowy format danych grafu._")
-                             except Exception as e:
-                                 logger.error(f"Błąd podczas renderowania grafu dla indeksu {message_index}: {e}", exc_info=True)
-                                 st.error("Wystąpił błąd podczas wyświetlania grafu.")
+                                    # Blok obliczania rozmiaru węzłów
+                                    BASE_NODE_SIZE = 15
+                                    LARGE_NODE_SIZE = 30
+
+                                    # Tworzenie węzłów (wszystkich z danych)
+                                    for node_data in graph_data_to_display.get('nodes', []):
+                                         node_id = node_data.get('id', str(uuid.uuid4()))
+                                         label = node_data.get('label', node_id)
+                                         wrapped_label = textwrap.fill(label, width=20, replace_whitespace=False, drop_whitespace=False)
+                                         ner_type = node_data.get('ner_type')
+                                         node_color = NER_COLORS.get(ner_type, DEFAULT_NODE_COLOR)
+                                         node_size = BASE_NODE_SIZE
+                                         current_degree = degrees.get(node_id, 0)
+                                         if max_degree > 0 and current_degree == max_degree: node_size = LARGE_NODE_SIZE
+                                         tooltip = f"{label}" + (f" ({ner_type})" if ner_type else "")
+                                         nodes_agraph.append(Node(id=node_id, label=wrapped_label, size=node_size, color=node_color, title=tooltip))
+
+                                    # Tworzenie krawędzi (wszystkich z danych)
+                                    for link_data in graph_data_to_display.get('links', []):
+                                         source_id, target_id = link_data.get('source'), link_data.get('target')
+                                         if source_id and target_id:
+                                              edge_label = link_data.get('label', '')
+                                              display_label = edge_label.lower()
+                                              edges_agraph.append(Edge(source=source_id, target=target_id, label=display_label, color="#cccccc"))
+
+                                    # Konfiguracja grafu
+                                    config = Config(width='100%', height=600, directed=True, physics=False, hierarchical=True, layout={'hierarchical': {'direction': 'UD', 'sortMethod': 'hubsize'}}, nodeHighlightBehavior=True, highlightColor='#F7A7A6', collapsible=False)
+
+                                    # Wyświetlanie grafu
+                                    if nodes_agraph:
+                                         with st.spinner("Ładowanie grafu..."):
+                                              agraph(nodes=nodes_agraph, edges=edges_agraph, config=config)
+                                    else:
+                                         st.caption("_Brak węzłów do wyświetlenia w grafie._")
+                                except Exception as e:
+                                    logger.error(f"Błąd podczas renderowania grafu dla indeksu {message_index}: {e}", exc_info=True)
+                                    st.error("Wystąpił błąd podczas wyświetlania grafu.")
+                        # Informacja, jeśli graf został ukryty z powodu filtrowania
+                        elif num_nodes_in_graph > 0: # Tylko jeśli graf istniał, ale był za mały
+                             st.caption(f"_Graf został ukryty (zawiera {num_nodes_in_graph} węzłów, wymagane >= {MIN_NODES_TO_DISPLAY}). Odznacz opcję 'Filtruj małe grafy' w panelu bocznym, aby go zobaczyć._")
+                        # Nie pokazujemy nic, jeśli graph_data_to_display było None lub nieprawidłowe
                    # ------------------------------------
 
     # --- Obsługa nowej wiadomości ---
@@ -601,9 +700,7 @@ def main():
 
     # --- Logika generowania odpowiedzi ---
     current_chat_messages = st.session_state.chats[st.session_state.active_chat_id].get("messages", [])
-    # Sprawdź, czy ostatnia wiadomość jest od użytkownika
     if current_chat_messages and current_chat_messages[-1]["role"] == "user":
-        # Prosta logika zapobiegająca podwójnemu generowaniu
         needs_response = True
         if len(current_chat_messages) > 1 and current_chat_messages[-2]["role"] == "assistant":
              if "prompt_answered" in current_chat_messages[-2] and current_chat_messages[-2]["prompt_answered"] == current_chat_messages[-1]["content"]:
@@ -619,13 +716,10 @@ def main():
                         response_content_str = ""
                         sources = []
                         graph_data = None
-                        prompt_answered = last_user_prompt # Zapamiętaj prompt
+                        prompt_answered = last_user_prompt
 
-                        # === Warunek dla trybu czatu ===
                         if st.session_state.selected_chat_mode == "Zwykły Chat":
                             logger.info("💬 Tryb: Zwykły Chat - wywołanie LLM bez RAG")
-                            # Bezpośrednie wywołanie LLM
-                            # TODO: Dodać historię czatu do invoke dla lepszego kontekstu
                             plain_response = st.session_state.chatbot.llm.invoke(last_user_prompt)
                             if hasattr(plain_response, 'content'):
                                 response_content_str = plain_response.content
@@ -638,48 +732,38 @@ def main():
 
                         else: # Tryb RAG
                             logger.info(f"⚙️ Tryb: RAG ({st.session_state.selected_chat_mode})")
-                            # Sprawdź, czy dla tego promptu RAG już odpowiedział (dodatkowe zabezpieczenie w logice RAG)
-                            # Ustaw parametry RAG
                             st.session_state.chatbot.top_k = st.session_state.top_k
                             st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
                             st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
-                            # Pobierz wybrany prompt systemowy
                             selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]
-                            # Wywołanie pełnej logiki RAG (query)
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
                                 system_prompt_override=selected_prompt_text
                             )
-                            # Wyciągnij treść z odpowiedzi RAG
                             if isinstance(response_dict.get("content"), AIMessage):
                                  response_content_str = response_dict.get("content").content
                             elif isinstance(response_dict.get("content"), str):
                                  response_content_str = response_dict.get("content")
                             else:
                                  response_content_str = str(response_dict.get("content",""))
-                        # ==================================
 
-                        # Dodaj odpowiedź asystenta jako NOWĄ wiadomość
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": response_content_str,
                             "sources": sources,
                             "graph_data": graph_data,
-                            "prompt_answered": prompt_answered # Zapisz prompt, na który odpowiedziano
+                            "prompt_answered": prompt_answered
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-                        st.rerun() # Odśwież po dodaniu
+                        st.rerun()
 
                     except StopIteration as si:
-                        # To nie jest błąd, tylko sygnał, że odpowiedź RAG już istniała
                         logger.debug(f"Przerwano generowanie odpowiedzi: {si}")
-                        # Nie rób nic, nie dodawaj wiadomości, nie odświeżaj
                         pass
 
                     except Exception as e:
                         logger.error(f"❌ Błąd podczas przetwarzania pytania w trybie '{st.session_state.selected_chat_mode}': {str(e)}", exc_info=True)
                         error_message = f"Wystąpił błąd: {e}"
-                        # Dodaj wiadomość o błędzie
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": error_message,
@@ -688,11 +772,7 @@ def main():
                             "prompt_answered": last_user_prompt
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-                        st.rerun() # Odśwież
-
-            # Koniec bloku 'if needs_response:'
-        # Koniec bloku 'if ostatnia wiadomość od usera:'
+                        st.rerun()
 
 if __name__ == "__main__":
-    # Usunięto nest_asyncio - zwykle nie jest potrzebne w Streamlit
     main()

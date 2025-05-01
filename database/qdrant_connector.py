@@ -182,3 +182,72 @@ class QdrantConnector:
         except Exception as e:
             logger.error(f"❌ Błąd podczas czyszczenia (usuwania/tworzenia) kolekcji '{collection_name}': {str(e)}")
             return False
+
+    # === POPRAWNIE DODANA METODA ===
+    def get_all_data_for_clustering(self, limit=None, with_vectors=True, with_payload=True):
+        """
+        Pobiera dane punktów (ID, wektory, payload/metadane) z kolekcji Qdrant,
+        używając metody scroll do efektywnego pobierania dużych zbiorów.
+
+        Args:
+            limit (int, optional): Maksymalna liczba punktów do pobrania. Domyślnie None (pobierz wszystkie).
+            with_vectors (bool): Czy pobierać wektory embeddingów. Domyślnie True.
+            with_payload (bool): Czy pobierać payload (metadane). Domyślnie True.
+
+        Returns:
+            list[dict]: Lista słowników, gdzie każdy słownik reprezentuje punkt
+                        i zawiera klucze 'id', 'vector', 'payload'.
+                        Zwraca pustą listę w przypadku błędu lub braku punktów.
+        """
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można pobrać danych.")
+            return []
+        
+        logger.info(f"⬇️ Pobieranie danych z kolekcji '{self.collection_name}' do klastrowania (limit: {limit})...")
+        all_points_data = []
+        next_page_offset = None
+        processed_count = 0
+
+        try:
+            while True:
+                # Używamy scroll API do pobierania partiami
+                # Poprawka: import rest musi być w zasięgu
+                from qdrant_client.http import models as rest 
+                response, next_page_offset = self.client.scroll(
+                    collection_name=self.collection_name,
+                    limit=min(1000, limit - processed_count) if limit is not None else 1000, # Poprawka obsługi limitu
+                    offset=next_page_offset,
+                    with_payload=with_payload,
+                    with_vectors=with_vectors,
+                )
+                
+                if not response: # Jeśli nie ma więcej wyników
+                    break
+
+                # Przetwarzanie pobranych rekordów
+                for record in response:
+                     point_data = {
+                         "id": record.id,
+                         # Używamy getattr z domyślną wartością None, na wypadek gdyby wektor/payload nie został pobrany
+                         "vector": getattr(record, 'vector', None) if with_vectors else None, 
+                         "payload": getattr(record, 'payload', None) if with_payload else None
+                     }
+                     all_points_data.append(point_data)
+                     processed_count += 1
+
+                # Sprawdź, czy osiągnięto limit
+                if limit is not None and processed_count >= limit:
+                    logger.info(f"   Osiągnięto limit {limit} pobranych punktów.")
+                    break
+                
+                # Jeśli next_page_offset jest None, to koniec danych
+                if next_page_offset is None:
+                    break
+            
+            logger.info(f"✅ Pomyślnie pobrano {len(all_points_data)} punktów z kolekcji '{self.collection_name}'.")
+            return all_points_data
+
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas pobierania danych z Qdrant za pomocą scroll: {str(e)}")
+            return [] # Zwróć pustą listę w przypadku błędu
+    # === KONIEC POPRAWNIE DODANEJ METODY ===
