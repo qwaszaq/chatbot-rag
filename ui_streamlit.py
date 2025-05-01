@@ -15,7 +15,8 @@ import textwrap # Dodano import textwrap do zawijania etykiet
 from langchain_core.messages import AIMessage, HumanMessage
 import warnings # Dodano do obsługi FutureWarning
 import numpy as np # Dodano import numpy
-from clustering_module import perform_clustering # Import funkcji klastrowania
+# Zaktualizowano importy z clustering_module
+from clustering_module import perform_clustering, generate_cluster_labels_llm 
 from collections import Counter # Do zliczania punktów w klastrach
 
 # Konfiguracja logowania
@@ -343,14 +344,12 @@ def main():
 
         # === DODANO SEKCJE KLASTROWANIA ===
         st.header("🔬 Analiza Klastrowania")
-        # Opcje klastrowania (można rozbudować o wybór algorytmu, parametrów)
-        num_clusters_kmeans = st.number_input("Liczba klastrów (dla K-Means):", min_value=2, max_value=50, value=8, step=1)
+        num_clusters_kmeans = st.number_input("Liczba klastrów (dla K-Means):", min_value=2, max_value=50, value=8, step=1, key="kmeans_clusters")
         
-        if st.button("🚀 Analizuj / Odśwież Klastry"):
+        if st.button("🚀 Analizuj / Odśwież Klastry", key="analyze_clusters_button"):
             with st.spinner("Pobieranie danych i wykonywanie klastrowania..."):
                 try:
-                    # Krok 1: Pobierz dane
-                    # Pobieramy z payloadem, żeby mieć tekst do generowania etykiet (Krok 4)
+                    # Krok 1: Pobierz dane (z payloadem do etykiet)
                     qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True) 
                     if not qdrant_data:
                          st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
@@ -360,7 +359,7 @@ def main():
                          embeddings_matrix = np.array([d['vector'] for d in qdrant_data if d.get('vector') is not None])
                          
                          if embeddings_matrix.shape[0] > 0:
-                             # Krok 2: Wykonaj klastrowanie (używamy K-Means)
+                             # Krok 2: Wykonaj klastrowanie
                              cluster_labels_array = perform_clustering(
                                  embeddings_matrix, 
                                  algorithm='kmeans', 
@@ -368,13 +367,23 @@ def main():
                              )
                              
                              if cluster_labels_array is not None:
-                                 # Krok 3: Zapisz wyniki w stanie sesji
+                                 # Krok 3: Zapisz wyniki
                                  st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
-                                 # Resetuj etykiety klastrów (do wygenerowania w Kroku 4)
-                                 st.session_state.cluster_labels = None 
                                  st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array))} klastrów dla {len(point_ids)} punktów.")
-                                 # Można dodać wywołanie generowania etykiet (Krok 4) tutaj
-                                 # st.session_state.cluster_labels = generate_cluster_labels(...)
+                                 
+                                 # Krok 4: Generuj etykiety (jeśli są dane i LLM)
+                                 if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
+                                     with st.spinner("Generowanie etykiet dla klastrów..."):
+                                          st.session_state.cluster_labels = generate_cluster_labels_llm(
+                                              st.session_state.cluster_assignments,
+                                              qdrant_data, # Przekazujemy pełne dane z payloadem
+                                              st.session_state.chatbot.llm
+                                          )
+                                          st.success("✅ Etykiety klastrów wygenerowane.")
+                                 else:
+                                      st.warning("Nie można wygenerować etykiet klastrów (brak wyników klastrowania lub instancji LLM).")
+                                      st.session_state.cluster_labels = None
+
                              else:
                                  st.error("❌ Wystąpił błąd podczas klastrowania.")
                          else:
@@ -386,21 +395,26 @@ def main():
 
         # Wyświetlanie informacji o klastrach (jeśli istnieją)
         if st.session_state.cluster_assignments:
-             with st.expander("Wyniki Klastrowania", expanded=False):
+             with st.expander("Wyniki Klastrowania", expanded=True): # Domyślnie rozwinięte po analizie
                  try:
                      # Zliczanie punktów w każdym klastrze
                      cluster_counts = Counter(st.session_state.cluster_assignments.values())
+                     # Usuń klaster -1 (szum/outliers) jeśli istnieje, do osobnego raportowania
+                     noise_points = cluster_counts.pop(-1, 0) 
                      num_clusters_found = len(cluster_counts)
-                     st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
                      
-                     # Sortowanie klastrów po ID (opcjonalnie, dla porządku)
+                     st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
+                     if noise_points > 0:
+                         st.write(f"Liczba punktów szumu/outlierów: {noise_points}")
+                     
+                     # Sortowanie klastrów po ID 
                      sorted_clusters = sorted(cluster_counts.items())
                      
                      for cluster_id, count in sorted_clusters:
+                          # Użyj wygenerowanej etykiety, jeśli dostępna
                           label_text = f"Klaster {cluster_id}"
-                          # Można dodać wygenerowane etykiety, jeśli istnieją
-                          # if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
-                          #     label_text += f": {st.session_state.cluster_labels[cluster_id]}"
+                          if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
+                              label_text += f": **{st.session_state.cluster_labels[cluster_id]}**"
                           st.markdown(f"- {label_text}: {count} punktów")
                  except Exception as e:
                       logger.error(f"Błąd wyświetlania wyników klastrowania: {e}")
@@ -606,8 +620,11 @@ def main():
                                     # TODO: Potrzebujemy mapowania źródła/chunka na ID punktu Qdrant, aby znaleźć klaster
                                     # point_id = find_point_id_for_source(base_name, sources_to_display) # Funkcja pomocnicza
                                     # if st.session_state.cluster_assignments and point_id in st.session_state.cluster_assignments:
-                                    #    cluster_label = st.session_state.cluster_assignments[point_id]
-                                    #    cluster_info_str = f" (Klaster {cluster_label})"
+                                    #    cluster_label_id = st.session_state.cluster_assignments[point_id]
+                                    #    cluster_name = f"Klaster {cluster_label_id}"
+                                    #    if st.session_state.cluster_labels and cluster_label_id in st.session_state.cluster_labels:
+                                    #        cluster_name = st.session_state.cluster_labels[cluster_label_id]
+                                    #    cluster_info_str = f" ({cluster_name})"
                                     
                                     st.markdown(f"- `{base_name}`{cluster_info_str}")
 
