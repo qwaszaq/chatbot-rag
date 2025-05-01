@@ -27,13 +27,14 @@ CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii
 # Usunięto zdublowany fragment kodu (importy itp.)
 
 # Konfiguracja logowania
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Już zdefiniowane wyżej, usunięcie duplikatu
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
+# logger = logging.getLogger(__name__)
 
-CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii
+# CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii - Już zdefiniowane wyżej
 
 # === POCZĄTEK POPRAWKI KOLORÓW ===
 # --- Mapowanie typów NER na kolory (DOSTOSOWANE DO pl_core_news_md/lg) ---
@@ -102,9 +103,10 @@ Odpowiedź: Zabezpieczono 4,5 mln zł środków finansowych (według Raport_fina
 *   Spotkanie_zarządu_dnotatki.docx, akapit 3: „Zarząd ABC Corp dysponuje obecnie 4,2 mln zł zarezerwowanych środków.”
 Komentarz: Możliwa różnica wynika z częściowego wydatkowania środków przez Zarząd ABC Corp po publikacji raportu."""
 
+# Zmieniono klucze, aby zawierały "(RAG)"
 AVAILABLE_PROMPTS = {
-    "Analityk Tekstu": PROMPT_ANALITYK_TEKSTU,
-    "Analityk Grafów": PROMPT_ANALITYK_GRAFOW
+    "Analityk Tekstu (RAG)": PROMPT_ANALITYK_TEKSTU,
+    "Analityk Grafów (RAG)": PROMPT_ANALITYK_GRAFOW
 }
 # ---------------------------------------
 
@@ -142,16 +144,15 @@ def save_chat_history(chats_data, active_chat_id):
                 msg_to_save = {"role": role}
 
                 # --- Logika zapisu treści ---
-                # Używamy teraz klucza 'content' zapisanego w poprzedniej iteracji
                 content_str = msg.get("content")
-
                 if content_str is not None:
                     msg_to_save["content"] = content_str
                 # ----------------------------
 
-                # --- Logika zapisu źródeł i grafu ---
+                # --- Logika zapisu źródeł, grafu i promptu ---
                 if "sources" in msg: msg_to_save["sources"] = msg["sources"]
                 if "graph_data" in msg: msg_to_save["graph_data"] = msg["graph_data"]
+                if "prompt_answered" in msg: msg_to_save["prompt_answered"] = msg["prompt_answered"] # Dodano zapis promptu
                 # ------------------------------------
 
                 if role and "content" in msg_to_save: # Zapisz tylko jeśli jest rola i treść
@@ -212,9 +213,10 @@ def main():
               logger.error("Stan awaryjny: Brak czatów i active_chat_id po inicjalizacji. Utworzono nowy domyślny czat.")
               save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
 
-    # Inicjalizacja wybranego promptu w stanie sesji
-    if 'selected_prompt_name' not in st.session_state:
-        st.session_state.selected_prompt_name = "Analityk Tekstu" # Domyślny wybór
+    # Inicjalizacja wybranego trybu czatu w stanie sesji
+    if 'selected_chat_mode' not in st.session_state:
+        # Zaktualizowano domyślny wybór, aby pasował do nowego klucza
+        st.session_state.selected_chat_mode = "Analityk Tekstu (RAG)"
     # ---------------------------------------------------
 
     # --- Inicjalizacja chatbota ---
@@ -317,16 +319,21 @@ def main():
                        st.rerun()
 
         st.markdown("---")
-        st.header("🎭 Wybierz Rolę (Prompt Systemowy)")
-        st.session_state.selected_prompt_name = st.radio(
-            "Wybierz prompt:",
-            options=list(AVAILABLE_PROMPTS.keys()),
-            key="prompt_selector",
-            index=list(AVAILABLE_PROMPTS.keys()).index(st.session_state.selected_prompt_name) # Zapewnia zapamiętanie wyboru
+        # ZMIANA: Dodano opcję "Zwykły Chat"
+        st.header("🎭 Wybierz Tryb Czatu")
+        ALL_CHAT_MODES = ["Zwykły Chat"] + list(AVAILABLE_PROMPTS.keys())
+        st.session_state.selected_chat_mode = st.radio(
+            "Wybierz tryb:",
+            options=ALL_CHAT_MODES,
+            key="mode_selector",
+            index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode) # Zapewnia zapamiętanie wyboru
         )
-        with st.expander("Podgląd wybranego promptu"):
-             st.markdown(f"```\n{AVAILABLE_PROMPTS[st.session_state.selected_prompt_name]}\n```")
+        # Pokaż podgląd promptu tylko jeśli wybrany tryb to nie "Zwykły Chat"
+        if st.session_state.selected_chat_mode != "Zwykły Chat":
+            with st.expander("Podgląd wybranego promptu systemowego"):
+                 st.markdown(f"```\n{AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]}\n```")
         st.markdown("---")
+        # KONIEC ZMIANY
 
         st.header("⚙️ Ustawienia RAG")
         # Użycie kluczy sesji dla suwaków
@@ -565,7 +572,10 @@ def main():
                                      for link_data in graph_data_to_display.get('links', []):
                                           source_id, target_id = link_data.get('source'), link_data.get('target')
                                           if source_id and target_id:
-                                               edges.append(Edge(source=source_id, target=target_id, label=link_data.get('label', ''), color="#cccccc"))
+                                               # Pobierz etykietę i skonwertuj na małe litery
+                                               edge_label = link_data.get('label', '')
+                                               display_label = edge_label.lower() # Konwersja na małe litery
+                                               edges.append(Edge(source=source_id, target=target_id, label=display_label, color="#cccccc")) # Użyj display_label
 
                                      # Konfiguracja grafu (hierarchiczna, statyczna)
                                      config = Config(width='100%', height=600, directed=True, physics=False, hierarchical=True, layout={'hierarchical': {'direction': 'UD', 'sortMethod': 'hubsize'}}, nodeHighlightBehavior=True, highlightColor='#F7A7A6', collapsible=False)
@@ -591,62 +601,97 @@ def main():
 
     # --- Logika generowania odpowiedzi ---
     current_chat_messages = st.session_state.chats[st.session_state.active_chat_id].get("messages", [])
-    # Sprawdź, czy ostatnia wiadomość jest od użytkownika i czy *nie jest* już przetworzona (nie ma klucza 'sources' lub 'graph_data' - uproszczenie)
-    if current_chat_messages and current_chat_messages[-1]["role"] == "user" and "sources" not in current_chat_messages[-1]:
-        last_user_prompt = current_chat_messages[-1]["content"]
-        response_placeholder = message_container.empty() # Użyj kontenera zdefiniowanego wyżej
-        with response_placeholder.chat_message("assistant"):
-            with st.spinner("Myślę..."):
-                try:
-                    # Ustaw parametry RAG
-                    st.session_state.chatbot.top_k = st.session_state.top_k
-                    st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
-                    st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
+    # Sprawdź, czy ostatnia wiadomość jest od użytkownika
+    if current_chat_messages and current_chat_messages[-1]["role"] == "user":
+        # Prosta logika zapobiegająca podwójnemu generowaniu
+        needs_response = True
+        if len(current_chat_messages) > 1 and current_chat_messages[-2]["role"] == "assistant":
+             if "prompt_answered" in current_chat_messages[-2] and current_chat_messages[-2]["prompt_answered"] == current_chat_messages[-1]["content"]:
+                 needs_response = False
+                 logger.debug("Odpowiedź na ten prompt już istnieje, pomijanie.")
 
-                    # Pobierz wybrany prompt
-                    selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_prompt_name]
+        if needs_response:
+            last_user_prompt = current_chat_messages[-1]["content"]
+            response_placeholder = message_container.empty()
+            with response_placeholder.chat_message("assistant"):
+                with st.spinner("Myślę..."):
+                    try:
+                        response_content_str = ""
+                        sources = []
+                        graph_data = None
+                        prompt_answered = last_user_prompt # Zapamiętaj prompt
 
-                    # Wywołanie query
-                    response_dict, sources, graph_data = st.session_state.chatbot.query(
-                        question=last_user_prompt,
-                        system_prompt_override=selected_prompt_text
-                    )
+                        # === Warunek dla trybu czatu ===
+                        if st.session_state.selected_chat_mode == "Zwykły Chat":
+                            logger.info("💬 Tryb: Zwykły Chat - wywołanie LLM bez RAG")
+                            # Bezpośrednie wywołanie LLM
+                            # TODO: Dodać historię czatu do invoke dla lepszego kontekstu
+                            plain_response = st.session_state.chatbot.llm.invoke(last_user_prompt)
+                            if hasattr(plain_response, 'content'):
+                                response_content_str = plain_response.content
+                            elif isinstance(plain_response, str):
+                                response_content_str = plain_response
+                            else:
+                                response_content_str = str(plain_response)
+                            sources = []
+                            graph_data = None
 
-                    # Wyciągnij treść z odpowiedzi
-                    response_content_str = ""
-                    if isinstance(response_dict.get("content"), AIMessage):
-                         response_content_str = response_dict.get("content").content
-                    elif isinstance(response_dict.get("content"), str):
-                         response_content_str = response_dict.get("content")
-                    else:
-                         response_content_str = str(response_dict.get("content","")) # Fallback
+                        else: # Tryb RAG
+                            logger.info(f"⚙️ Tryb: RAG ({st.session_state.selected_chat_mode})")
+                            # Sprawdź, czy dla tego promptu RAG już odpowiedział (dodatkowe zabezpieczenie w logice RAG)
+                            # Ustaw parametry RAG
+                            st.session_state.chatbot.top_k = st.session_state.top_k
+                            st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
+                            st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
+                            # Pobierz wybrany prompt systemowy
+                            selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]
+                            # Wywołanie pełnej logiki RAG (query)
+                            response_dict, sources, graph_data = st.session_state.chatbot.query(
+                                question=last_user_prompt,
+                                system_prompt_override=selected_prompt_text
+                            )
+                            # Wyciągnij treść z odpowiedzi RAG
+                            if isinstance(response_dict.get("content"), AIMessage):
+                                 response_content_str = response_dict.get("content").content
+                            elif isinstance(response_dict.get("content"), str):
+                                 response_content_str = response_dict.get("content")
+                            else:
+                                 response_content_str = str(response_dict.get("content",""))
+                        # ==================================
 
-                    # Zaktualizuj OSTATNIĄ wiadomość (która była promptem użytkownika)
-                    # To jest podejście alternatywne - modyfikujemy istniejącą listę
-                    # Lepszym może być DODANIE nowej wiadomości asystenta. Wróćmy do dodawania.
+                        # Dodaj odpowiedź asystenta jako NOWĄ wiadomość
+                        st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
+                            "role": "assistant",
+                            "content": response_content_str,
+                            "sources": sources,
+                            "graph_data": graph_data,
+                            "prompt_answered": prompt_answered # Zapisz prompt, na który odpowiedziano
+                        })
+                        save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
+                        st.rerun() # Odśwież po dodaniu
 
-                    # Dodaj odpowiedź asystenta jako NOWĄ wiadomość
-                    st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
-                        "role": "assistant",
-                        "content": response_content_str, # Zapisujemy tylko string treści
-                        "sources": sources,
-                        "graph_data": graph_data
-                    })
-                    save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-                    st.rerun()
+                    except StopIteration as si:
+                        # To nie jest błąd, tylko sygnał, że odpowiedź RAG już istniała
+                        logger.debug(f"Przerwano generowanie odpowiedzi: {si}")
+                        # Nie rób nic, nie dodawaj wiadomości, nie odświeżaj
+                        pass
 
-                except Exception as e:
-                    logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}", exc_info=True)
-                    error_message = f"Wystąpił błąd: {e}"
-                    # Dodaj wiadomość o błędzie jako NOWĄ wiadomość
-                    st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
-                        "role": "assistant",
-                        "content": error_message,
-                        "sources": [],
-                        "graph_data": None
-                    })
-                    save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-                    st.rerun() # Odśwież, aby pokazać błąd
+                    except Exception as e:
+                        logger.error(f"❌ Błąd podczas przetwarzania pytania w trybie '{st.session_state.selected_chat_mode}': {str(e)}", exc_info=True)
+                        error_message = f"Wystąpił błąd: {e}"
+                        # Dodaj wiadomość o błędzie
+                        st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
+                            "role": "assistant",
+                            "content": error_message,
+                            "sources": [],
+                            "graph_data": None,
+                            "prompt_answered": last_user_prompt
+                        })
+                        save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
+                        st.rerun() # Odśwież
+
+            # Koniec bloku 'if needs_response:'
+        # Koniec bloku 'if ostatnia wiadomość od usera:'
 
 if __name__ == "__main__":
     # Usunięto nest_asyncio - zwykle nie jest potrzebne w Streamlit

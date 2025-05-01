@@ -96,168 +96,72 @@
                     "content": "Pokaż graf powiązań między Oskarżonymi Agnieszkami, które stosowały podobne techniki fałszowania dokumentów ."
                 },
                 {
-                    "role": "assistant",
-                    "response_dict": {
-                        "content": "*   **Pytanie:** Pokaż graf powiązań między Oskarżonymi Agnieszkami, które stosowały podobne techniki fałszowania dokumentów.\n\n*   **Odpowiedź:** Zidentyfikowano następujące powiązania i relacje między oskarżonymi Agnieszkami dotyczące używania podobnych technik fałszowania dokumentów:\n\n    1.  **Agnieszka Jankowska ('Dźwięk')** i **Agnieszka Zając ('Guma')** współpracowały w pozyskiwaniu \"starych, bezwartościowych przedmiotów\" oraz wykorzystywały papier czerpany z znakiem wodnym w kształcie oscyloskopu do tworzenia fałszywych certyfikatów. (Raport, akapit 5).\n    2.  **Agnieszka Jankowska ('Dźwięk')** i **Agnieszka Malinowska ('Czas')**: A. Jankowska była zaangażowana w fałszowanie dokumentów na potrzeby grupy, a A. Malinowska pełniła rolę centralnego zarządzania finansami i księgowością (Raport, akapit 5).\n    3.  **Agnieszka Grabowska** tworzyła \"Mapy Oniryczne\" oferowane do sprzedaży z rysunkami przedstawiającymi fikcyjne lokalizacje oraz diagramami i obliczeniami dotyczącymi nieistniejących firm, co wskazuje na technikę fałszowania dokumentów mających na celu wprowadzenie w błąd. (Raport, akapit III).\n    4.  **Agnieszka Pawlak ('Kluczarka')**, jako licencjonowana rzeczoznawczyni majątkowa, poświadczyła nieprawdę w dokumentach (operatach szacunkowych), zawyżając lub zaniżając wartość nieruchomości dla korzyści finansowej grupy.  (Raport, akapit XIV).\n    5. **Agnieszka Kowalska (\"Kluczarka\")** i **Agnieszką Lisiecką**: wspólnie tworzyły fałszywą \"tkankę dowodową\". (Raport, akapit 4)\n\n*   **Źródło w dokumentach:**\n    *   Raport, akapit 5: Korespondencja między A. Jankowską i A. Zając oraz rola A. Malinowskiej.\n    *   Raport, akapit III: Opis działalności Agnieszki Grabowskiej.\n    *   Raport, akapit XIV: Działalność Agnieszki Pawlak jako rzeczoznawcy majątkowego.\n    *   Raport, akapit 4: Współpraca Agnieszki Kowalskiej i Lisieckiej w tworzeniu fałszywych dowodów.\n\n*   **Komentarz:** Powyższe relacje wskazują na powiązania między Agnieszkami wykorzystującymi techniki fałszowania dokumentów, takie jak tworzenie fałszywych certyfikatów, generowanie nieprawdziwych raportów i operaty szacunkowe oraz manipulowanie danymi finansowymi. Relacje te sugerują scentralizowany system zarządzania grupą, gdzie niektóre Agnieszki specjalizowały się w konkretnych obszarach fałszowania dokumentów, a inne pełniły funkcje wsparcia lub koordynacji.  Pojawia się również relacja zależności: Agnieszka Malinowska wydaje polecenia i zarządza finansami dla pozostałych Agnieszek, co sugeruje jej kluczową rolę w strukturze ZGP \"Agnieszka\".\n",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 791,
-                            "time": 87.57464504241943
-                        }
-                    },
-                    "sources": [
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp90w8apkm/code - 2025-04-25T232802.476.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp80f4hnqj/code - 2025-04-25T232209.257.txt"
-                    ],
-                    "graph_data": {
-                        "directed": true,
-                        "multigraph": false,
-                        "graph": {},
-                        "nodes": [
-                            {
-                                "label": "Agnieszka Jankowska ('Dźwięk')",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Jankowska ('Dźwięk')"
-                            },
-                            {
-                                "label": "Agnieszka Zając ('Guma')",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Zając ('Guma')"
-                            },
-                            {
-                                "label": "papier czerpany z znakiem wodnym w kształcie oscyloskopu",
-                                "ner_type": null,
-                                "id": "papier czerpany z znakiem wodnym w kształcie oscyloskopu"
-                            },
-                            {
-                                "label": "grupa",
-                                "ner_type": null,
-                                "id": "grupa"
-                            },
-                            {
-                                "label": "Agnieszka Malinowska ('Czas')",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Malinowska ('Czas')"
-                            },
-                            {
-                                "label": "centralnego zarządzania finansami i księgowością",
-                                "ner_type": null,
-                                "id": "centralnego zarządzania finansami i księgowością"
-                            },
-                            {
-                                "label": "Agnieszka Grabowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Grabowska"
-                            },
-                            {
-                                "label": "Mapy Oniryczne",
-                                "ner_type": null,
-                                "id": "Mapy Oniryczne"
-                            },
-                            {
-                                "label": "Agnieszka Pawlak ('Kluczarka')",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Pawlak ('Kluczarka')"
-                            },
-                            {
-                                "label": "dokumentach (operaty szacunkowe)",
-                                "ner_type": null,
-                                "id": "dokumentach (operaty szacunkowe)"
-                            },
-                            {
-                                "label": "Agnieszka Kowalska (\"Kluczarka\")",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Kowalska (\"Kluczarka\")"
-                            },
-                            {
-                                "label": "Agnieszką Lisiecką",
-                                "ner_type": "persName",
-                                "id": "Agnieszką Lisiecką"
-                            },
-                            {
-                                "label": "fałszywą 'tkankę dowodową'",
-                                "ner_type": null,
-                                "id": "fałszywą 'tkankę dowodową'"
-                            },
-                            {
-                                "label": "pozostałych Agnieszek",
-                                "ner_type": "geogName",
-                                "id": "pozostałych Agnieszek"
-                            }
-                        ],
-                        "links": [
-                            {
-                                "label": "współpracowała z",
-                                "source": "Agnieszka Jankowska ('Dźwięk')",
-                                "target": "Agnieszka Zając ('Guma')"
-                            },
-                            {
-                                "label": "wykorzystywała",
-                                "source": "Agnieszka Jankowska ('Dźwięk')",
-                                "target": "papier czerpany z znakiem wodnym w kształcie oscyloskopu"
-                            },
-                            {
-                                "label": "zaangażowana w fałszowanie dokumentów dla",
-                                "source": "Agnieszka Jankowska ('Dźwięk')",
-                                "target": "grupa"
-                            },
-                            {
-                                "label": "wykorzystywała",
-                                "source": "Agnieszka Zając ('Guma')",
-                                "target": "papier czerpany z znakiem wodnym w kształcie oscyloskopu"
-                            },
-                            {
-                                "label": "pełniła rolę",
-                                "source": "Agnieszka Malinowska ('Czas')",
-                                "target": "centralnego zarządzania finansami i księgowością"
-                            },
-                            {
-                                "label": "zarządzała finansami dla",
-                                "source": "Agnieszka Malinowska ('Czas')",
-                                "target": "pozostałych Agnieszek"
-                            },
-                            {
-                                "label": "tworzyła",
-                                "source": "Agnieszka Grabowska",
-                                "target": "Mapy Oniryczne"
-                            },
-                            {
-                                "label": "poświadczyła nieprawdę w",
-                                "source": "Agnieszka Pawlak ('Kluczarka')",
-                                "target": "dokumentach (operaty szacunkowe)"
-                            },
-                            {
-                                "label": "współtworzyła z",
-                                "source": "Agnieszka Kowalska (\"Kluczarka\")",
-                                "target": "Agnieszką Lisiecką"
-                            },
-                            {
-                                "label": "tworzyły",
-                                "source": "Agnieszka Kowalska (\"Kluczarka\")",
-                                "target": "fałszywą 'tkankę dowodową'"
-                            }
-                        ]
-                    }
-                },
-                {
                     "role": "user",
                     "content": "Pokaż graf powiązań między Oskarżonymi Agnieszkami, które stosowały podobne techniki fałszowania dokumentów ."
                 },
                 {
+                    "role": "user",
+                    "content": "kto zbierał kurz?"
+                },
+                {
+                    "role": "user",
+                    "content": "pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA (Wąs, Zadrzyńska, Bąk i inni) oraz prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie."
+                },
+                {
+                    "role": "user",
+                    "content": "Zmapuj powiązania komunikacyjne między Oskarżonymi Agnieszkami na podstawie zabezpieczonej korespondencji elektronicznej (maile, czaty, Signal, Threema), wskazując tematy rozmów (np. \"metody kamuflażu\", \"integracja metod\", \"wizualizacja danych\", \"transfer energii\")."
+                },
+                {
+                    "role": "user",
+                    "content": "pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA (Wąs, Zadrzyńska, Bąk i inni) oraz prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie."
+                },
+                {
+                    "role": "user",
+                    "content": "cześć"
+                },
+                {
                     "role": "assistant",
-                    "response_dict": {
-                        "content": "Pytanie: Pokaż graf powiązań między Oskarżonymi Agnieszkami, które stosowały podobne techniki fałszowania dokumentów.\n\nOdpowiedź: Na podstawie dostarczonych materiałów, można zidentyfikować kilka grup Agnieszek, które wykorzystywały podobne techniki fałszowania dokumentów. Poniżej przedstawiam powiązania i techniki, na które wskazują źródła:\n\n*   **Grupa \"Toster/Antyki\":** Agnieszka Szymańska, Agnieszka Jankowska (wspólna rola - fałszowanie certyfikatów autentyczności). Technika: Tworzenie fałszywych certyfikatów autentyczności dla antyków (tosery, sample audio), wykorzystanie fikcyjnych postaci (\"Prof. Gustave de la Mâche\") i legend dotyczących pochodzenia przedmiotów (np. Nikola Tesla, Maria Skłodowska-Curie).\n*   **Grupa \"Raporty/PIA\":** Agnieszka Piotrowska (fałszowanie raportów PIA - Public Information Agency), wykorzystywanie absurdalnej narracji o \"agentach skrzydlatych\" i tworzenie dokumentacji dezinformacyjnej.\n*   **Grupa \"Beżowy Spokój\":** Agnieszkę Dąbrowską (podrobienie wyników badań klinicznych, kosztorysów linii produkcyjnych oraz biznesplanu). Technika: Tworzenie fałszywych dokumentów dotyczących rzekomych badań i produktów.\n*   **Grupa \"Papier/Znak wodny\":** Agnieszka Jankowska, Agnieszkę Zając (wspólne używanie papieru czerpanego \"Fabriano 160g\" ze znakiem wodnym w kształcie oscyloskopu).\n*   **Grupa \"Fałszowanie Dokumentów i Legalizacja\":** Agnieszka Malinowska (centralna księgowa, zarządzanie finansami), Agnieszka Pawlak (rzeczoznawczyni majątkowa poświadczająca nieprawdę w dokumentach), Agnieszka Lisiecka (wspólne metody maskowania).\n\nŹródło w dokumentach:\n\n*   \"Dowody łączące Oskarzonych (Powiązania wewnątrz ZGP \"Agnieszka\"): Najistotniejszy element, który umożliwił postawienie zarzutu z art. 258 § 1 kk.\"\n*   \"Korespondencja\": Znaleziono bezpośrednią korespondencję między różnymi Oskarżonymi Agnieszkami... omawiającą \"projekty\", \"strategie\", \"metody\"...\n*   \"Wspólne Materiały/Narzędzia Fałszerstw i Konspiracji:\" Stosowanie tego samego typu papieru...\"\n*   Opis działań poszczególnych Agnieszek (Agnieszka Baranowska, Agnieszka Dąbrowska, Agnieszka Grabowska, etc.) w sekcjach V, III, XVI, XII.\n\nKomentarz: Graf powiązań byłby bardziej czytelny wizualnie, ale ze względu na format odpowiedzi, przedstawiono go w formie list punktowanych opisujących grupy i ich metody działania.  Szczegółowy graf wymagałby narzędzi do tworzenia diagramów i analizy relacji między postaciami, co wykracza poza możliwości tego tekstu. W materiale widoczna jest silna rola Agnieszki Malinowskiej jako centralnego punktu koordynującego działania różnych grup.",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 774,
-                            "time": 82.81895112991333
-                        }
-                    },
+                    "content": "\nPrzykro mi, ale Twoje pytanie \"cześć\" nie jest pytaniem dotyczącym zawartości dostarczonych dokumentów.\n\nJako analityk tekstu mogę odpowiedzieć tylko na pytania, które odnoszą się do informacji zawartych w przekazanych materiałach (w tym przypadku: Akty oskarżenia, wnioski o nagrodę, notatki służbowe).\n\nProszę zadać konkretne pytanie dotyczące informacji zawartych w tych dokumentach.",
                     "sources": [
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp90w8apkm/code - 2025-04-25T232802.476.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpxikr3m6o/code - 2025-04-25T223605.032.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp84ncn6_0/code - 2025-04-25T233201.834.txt",
                         "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp80f4hnqj/code - 2025-04-25T232209.257.txt"
+                    ],
+                    "graph_data": null
+                },
+                {
+                    "role": "user",
+                    "content": "czesc"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć! Jak mogę Ci pomóc? 😊\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "czesc"
+                },
+                {
+                    "role": "user",
+                    "content": "oko"
+                },
+                {
+                    "role": "assistant",
+                    "content": "\"Oko\" is the word for \"eye\" in several Slavic languages, including:\n\n*   **Croatian:** oko\n*   **Serbian:** око\n*   **Bosnian:** oko\n*   **Slovenian:** oko\n*   **Macedonian:** око\n\n\n\nIs there anything specific you'd like to know about the word \"oko\" or eyes in general?",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "oko"
+                },
+                {
+                    "role": "user",
+                    "content": "pokaż mi graf powiązań dla 'mózgu operacji'"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Pokaż mi graf powiązań dla \"mózgu operacji\".\n\nOdpowiedź: Zgodnie z analizą, choć Agnieszka Malinowska (\"Czas\") pełni funkcję centralną w finansach i koordynacji (\"księgowa i planistka\"), sugeruje się istnienie osoby \"zza kulis\", potencjalnego lidera grupy. Jednakże, na podstawie dostępnych danych, nie można jednoznacznie wskazać jednej osoby jako \"mózgu operacji\". Analiza wskazuje na rozproszony model zarządzania, gdzie wiele Agnieszek ma znaczący udział w różnych aspektach działalności ZGP \"Agnieszka\".\n\nKluczowe powiązania i role (w oparciu o analizę):\n\n*   **Agnieszka Malinowska (\"Czas\"):** **ZARZAĄDZA** finansami i koordynuje działania grupy, pełni rolę centralnej jednostki finansowej w ZGP \"Agnieszka\" (**Raport_finansowy_Q4.pdf, Spotkanie_zarządu_dnotatki.docx**).  **ODPOWIADA ZA** centralne zarządzanie finansami i planistyczne (\"Projekt X\", laptop A. Malinowskiej). **POSIADA** dostęp do szczegółowych kalkulacji zysków (np. \"Projekt Gołąb - Raporty PIA\").\n*   **Agnieszka Lisiecka (\"Chmura\"):** **PROGNOZUJE** obłoczne dane, **UŻYWA** skali SOL i analizuje dane meteorologiczne (**Spotkanie_zarządu_dnotatki.docx**).  **POWIĄZANA Z** A. Malinowską poprzez korespondencję omawiającą metody i transfery finansowe.\n*   **Agnieszka Ostrowska (\"Hipnos\"):** **WYKORZYSTUJE** technikę symulacji napadów snu (rzekoma narkolepsja) w negocjacjach, **WSPÓŁPRACOWAŁA** z dr Sennym (**Spotkanie_zarządu_dnotatki.docx, dowód z zabezpieczonego laptopa A. Ostrowskiej**).\n*   **Agnieszka Wojciechowska (\"Ruina\"):** **DZIAŁA NA SZKODĘ** SREH i **POSIADA** plany destabilizacji (Plan Działan_Tekstylia_Ldz), potencjalnie w celu korzyści dla grupy.\n*   **Agnieszka Pawlak (\"Cień\"):** **LEGALIZUJE** manipulacje wyceną, co wskazuje na jej rolę w ukrywaniu przestępstw finansowych.\n*   **Agnieszka K. (\"Instrukcja\"):** Używa specyficznego kodu operacyjnego zawartego w cytatach z instrukcji AGD – **SŁUŻĄCEGO DO KOMUNIKACJI W GRUPIE**.\n\nWszystkie wymienione osoby są połączone poprzez wspólną korespondencję, pliki i strategie kamuflażu, co sugeruje skoordynowane działanie w ramach ZGP \"Agnieszka\".  **Brak jednoznacznych dowodów wskazujących na jednego lidera**, a model zarządzania wydaje się być rozproszony.\n\nŹródło w dokumentach: Raport_finansowy_Q4.pdf, Spotkanie_zarządu_dnotatki.docx, Laptop A. Malinowskiej (\"Projekty X\"), korespondencja między Agnieszkami (Signal, Threema), dowody rzeczowe zabezpieczone w sprawie (laptop A. Ostrowskiej).\n\nKomentarz: Określenie \"mózgu operacji\" jest problematyczne w tym przypadku, ze względu na rozproszony model zarządzania i brak jednoznacznych dowodów wskazujących na dominującą rolę jednej osoby. Analiza sugeruje, że różne Agnieszkii specjalizowały się w określonych obszarach działalności, a ich działania były skoordynowane przez centralną jednostkę finansową (Agnieszka Malinowska). Dalsza analiza materiałów może ujawnić bardziej szczegółowe powiązania i wskazać na potencjalnego lidera.\n",
+                    "sources": [
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj7m_todo/code - 2025-04-25T230546.395.txt"
                     ],
                     "graph_data": {
                         "directed": true,
@@ -265,89 +169,9 @@
                         "graph": {},
                         "nodes": [
                             {
-                                "label": "Agnieszka Szymańska",
+                                "label": "Agnieszka Malinowska (\"Czas\")",
                                 "ner_type": "persName",
-                                "id": "Agnieszka Szymańska"
-                            },
-                            {
-                                "label": "Grupa Toster/Antyki",
-                                "ner_type": null,
-                                "id": "Grupa Toster/Antyki"
-                            },
-                            {
-                                "label": "Agnieszka Jankowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Jankowska"
-                            },
-                            {
-                                "label": "Tworzenie fałszywych certyfikatów autentyczności",
-                                "ner_type": null,
-                                "id": "Tworzenie fałszywych certyfikatów autentyczności"
-                            },
-                            {
-                                "label": "Prof. Gustave de la Mâche",
-                                "ner_type": "persName",
-                                "id": "Prof. Gustave de la Mâche"
-                            },
-                            {
-                                "label": "Agnieszka Piotrowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Piotrowska"
-                            },
-                            {
-                                "label": "Grupa Raporty/PIA",
-                                "ner_type": "orgName",
-                                "id": "Grupa Raporty/PIA"
-                            },
-                            {
-                                "label": "Wykorzystywanie absurdalnej narracji o 'agentach skrzydlatych'",
-                                "ner_type": null,
-                                "id": "Wykorzystywanie absurdalnej narracji o 'agentach skrzydlatych'"
-                            },
-                            {
-                                "label": "Tworzenie dokumentacji dezinformacyjnej",
-                                "ner_type": null,
-                                "id": "Tworzenie dokumentacji dezinformacyjnej"
-                            },
-                            {
-                                "label": "Agnieszka Dąbrowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Dąbrowska"
-                            },
-                            {
-                                "label": "Grupa Beżowy Spokój",
-                                "ner_type": null,
-                                "id": "Grupa Beżowy Spokój"
-                            },
-                            {
-                                "label": "Tworzenie fałszywych dokumentów dotyczących rzekomych badań i produktów",
-                                "ner_type": null,
-                                "id": "Tworzenie fałszywych dokumentów dotyczących rzekomych badań i produktów"
-                            },
-                            {
-                                "label": "Fabriano 160g",
-                                "ner_type": "persName",
-                                "id": "Fabriano 160g"
-                            },
-                            {
-                                "label": "Agnieszka Zając",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Zając"
-                            },
-                            {
-                                "label": "oscyloskop",
-                                "ner_type": null,
-                                "id": "oscyloskop"
-                            },
-                            {
-                                "label": "Agnieszka Malinowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Malinowska"
-                            },
-                            {
-                                "label": "centralna księgowa",
-                                "ner_type": null,
-                                "id": "centralna księgowa"
+                                "id": "Agnieszka Malinowska (\"Czas\")"
                             },
                             {
                                 "label": "finansami",
@@ -355,831 +179,44 @@
                                 "id": "finansami"
                             },
                             {
-                                "label": "Agnieszka Pawlak",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Pawlak"
+                                "label": "działania grupy",
+                                "ner_type": null,
+                                "id": "działania grupy"
                             },
                             {
-                                "label": "Grupa Fałszowanie Dokumentów i Legalizacja",
+                                "label": "centralnej jednostki finansowej w ZGP \"Agnieszka\"",
                                 "ner_type": "orgName",
-                                "id": "Grupa Fałszowanie Dokumentów i Legalizacja"
+                                "id": "centralnej jednostki finansowej w ZGP \"Agnieszka\""
                             },
                             {
-                                "label": "Agnieszka Lisiecka",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Lisiecka"
-                            },
-                            {
-                                "label": "wspólne metody maskowania",
+                                "label": "centralne zarządzanie finansami i planistyczne",
                                 "ner_type": null,
-                                "id": "wspólne metody maskowania"
+                                "id": "centralne zarządzanie finansami i planistyczne"
                             },
                             {
-                                "label": "Dowody",
+                                "label": "szczegółowych kalkulacji zysków",
                                 "ner_type": null,
-                                "id": "Dowody"
+                                "id": "szczegółowych kalkulacji zysków"
                             },
                             {
-                                "label": "Oskarżonych (Powiązania wewnątrz ZGP \"Agnieszka\")",
-                                "ner_type": "orgName",
-                                "id": "Oskarżonych (Powiązania wewnątrz ZGP \"Agnieszka\")"
+                                "label": "Agnieszka Lisiecka (\"Chmura\")",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka (\"Chmura\")"
                             },
                             {
-                                "label": "Korespondencja",
+                                "label": "obłoczne dane",
                                 "ner_type": null,
-                                "id": "Korespondencja"
+                                "id": "obłoczne dane"
                             },
                             {
-                                "label": "różnymi Oskarżonymi Agnieszkami",
+                                "label": "skali SOL",
                                 "ner_type": null,
-                                "id": "różnymi Oskarżonymi Agnieszkami"
+                                "id": "skali SOL"
                             },
                             {
-                                "label": "Wspólne Materiały/Narzędzia Fałszerstw i Konspiracji",
-                                "ner_type": "orgName",
-                                "id": "Wspólne Materiały/Narzędzia Fałszerstw i Konspiracji"
-                            },
-                            {
-                                "label": "Opis działań",
+                                "label": "dane meteorologiczne",
                                 "ner_type": null,
-                                "id": "Opis działań"
-                            },
-                            {
-                                "label": "Agnieszka Baranowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Baranowska"
-                            },
-                            {
-                                "label": "Agnieszka Grabowska",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Grabowska"
-                            }
-                        ],
-                        "links": [
-                            {
-                                "label": "fałszowanie certyfikatów autentyczności",
-                                "source": "Agnieszka Szymańska",
-                                "target": "Grupa Toster/Antyki"
-                            },
-                            {
-                                "label": "technika",
-                                "source": "Grupa Toster/Antyki",
-                                "target": "Tworzenie fałszywych certyfikatów autentyczności"
-                            },
-                            {
-                                "label": "wykorzystuje fikcyjne postacie",
-                                "source": "Grupa Toster/Antyki",
-                                "target": "Prof. Gustave de la Mâche"
-                            },
-                            {
-                                "label": "fałszowanie certyfikatów autentyczności",
-                                "source": "Agnieszka Jankowska",
-                                "target": "Grupa Toster/Antyki"
-                            },
-                            {
-                                "label": "używa papieru czerpanego",
-                                "source": "Agnieszka Jankowska",
-                                "target": "Fabriano 160g"
-                            },
-                            {
-                                "label": "używa znaku wodnego",
-                                "source": "Agnieszka Jankowska",
-                                "target": "oscyloskop"
-                            },
-                            {
-                                "label": "fałszowanie raportów PIA",
-                                "source": "Agnieszka Piotrowska",
-                                "target": "Grupa Raporty/PIA"
-                            },
-                            {
-                                "label": "technika",
-                                "source": "Grupa Raporty/PIA",
-                                "target": "Wykorzystywanie absurdalnej narracji o 'agentach skrzydlatych'"
-                            },
-                            {
-                                "label": "technika",
-                                "source": "Grupa Raporty/PIA",
-                                "target": "Tworzenie dokumentacji dezinformacyjnej"
-                            },
-                            {
-                                "label": "podrobienie biznesplanu",
-                                "source": "Agnieszka Dąbrowska",
-                                "target": "Grupa Beżowy Spokój"
-                            },
-                            {
-                                "label": "technika",
-                                "source": "Grupa Beżowy Spokój",
-                                "target": "Tworzenie fałszywych dokumentów dotyczących rzekomych badań i produktów"
-                            },
-                            {
-                                "label": "używa papieru czerpanego",
-                                "source": "Agnieszka Zając",
-                                "target": "Fabriano 160g"
-                            },
-                            {
-                                "label": "używa znaku wodnego",
-                                "source": "Agnieszka Zając",
-                                "target": "oscyloskop"
-                            },
-                            {
-                                "label": "rola",
-                                "source": "Agnieszka Malinowska",
-                                "target": "centralna księgowa"
-                            },
-                            {
-                                "label": "zarządza",
-                                "source": "Agnieszka Malinowska",
-                                "target": "finansami"
-                            },
-                            {
-                                "label": "poświadcza nieprawdę w dokumentach",
-                                "source": "Agnieszka Pawlak",
-                                "target": "Grupa Fałszowanie Dokumentów i Legalizacja"
-                            },
-                            {
-                                "label": "stosuje",
-                                "source": "Agnieszka Lisiecka",
-                                "target": "wspólne metody maskowania"
-                            },
-                            {
-                                "label": "łączą",
-                                "source": "Dowody",
-                                "target": "Oskarżonych (Powiązania wewnątrz ZGP \"Agnieszka\")"
-                            },
-                            {
-                                "label": "między",
-                                "source": "Korespondencja",
-                                "target": "różnymi Oskarżonymi Agnieszkami"
-                            },
-                            {
-                                "label": "stosuje papier",
-                                "source": "Wspólne Materiały/Narzędzia Fałszerstw i Konspiracji",
-                                "target": "Fabriano 160g"
-                            },
-                            {
-                                "label": "dotyczy",
-                                "source": "Opis działań",
-                                "target": "Agnieszka Baranowska"
-                            },
-                            {
-                                "label": "dotyczy",
-                                "source": "Opis działań",
-                                "target": "Agnieszka Dąbrowska"
-                            },
-                            {
-                                "label": "dotyczy",
-                                "source": "Opis działań",
-                                "target": "Agnieszka Grabowska"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "role": "user",
-                    "content": "kto zbierał kurz?"
-                },
-                {
-                    "role": "assistant",
-                    "response_dict": {
-                        "content": "Pytanie: Kto zbierał kurz?\n\nOdpowiedź: Agnieszka Nowak, zwaną \"Pyłem\", zbierała kurz ze szczelin między płytkami podłogowymi za pomocą pędzelka i małej łopatki, umieszczając go w woreczkach strunowych. Zgłoszenie o jej zachowaniu zostało złożone przez pracownika Metra Warszawskiego.\n\nŹródło w dokumentach: NOTATKA SŁUŻBOWA (Komenda Stołeczna Policji, Wydział Prewencji), akapit 2: \"Otrzymano zgłoszenie od pracownika Metra Warszawskiego o kobiecie, która na peronie stacji, w oczekiwaniu na pociąg, zbierała kurz ze szczelin między płytkami podłogowymi za pomocą pędzelka i małej łopatki, umieszczając go w woreczkach strunowych.\"\n\nKomentarz: Z notatki wynika, że Agnieszka Nowak była osobą, która wykazywała podejrzane zachowanie związane z zbieraniem kurzu.",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 237,
-                            "time": 35.27044892311096
-                        }
-                    },
-                    "sources": [
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpmya_vy2h/code - 2025-04-25T221653.096.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp80f4hnqj/code - 2025-04-25T232209.257.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt"
-                    ],
-                    "graph_data": {
-                        "directed": true,
-                        "multigraph": false,
-                        "graph": {},
-                        "nodes": [
-                            {
-                                "label": "Agnieszka Nowak",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Nowak"
-                            },
-                            {
-                                "label": "ze szczelin między płytkami podłogowymi",
-                                "ner_type": null,
-                                "id": "ze szczelin między płytkami podłogowymi"
-                            },
-                            {
-                                "label": "Pyłem",
-                                "ner_type": null,
-                                "id": "Pyłem"
-                            },
-                            {
-                                "label": "Pracownik Metra Warszawskiego",
-                                "ner_type": null,
-                                "id": "Pracownik Metra Warszawskiego"
-                            },
-                            {
-                                "label": "zachowaniu Agnieszki Nowak",
-                                "ner_type": "persName",
-                                "id": "zachowaniu Agnieszki Nowak"
-                            },
-                            {
-                                "label": "Zgłoszenie",
-                                "ner_type": null,
-                                "id": "Zgłoszenie"
-                            },
-                            {
-                                "label": "pracownika Metra Warszawskiego",
-                                "ner_type": null,
-                                "id": "pracownika Metra Warszawskiego"
-                            },
-                            {
-                                "label": "NOTATKA SŁUŻBOWA",
-                                "ner_type": "persName",
-                                "id": "NOTATKA SŁUŻBOWA"
-                            },
-                            {
-                                "label": "Komenda Stołeczna Policji, Wydział Prewencji",
-                                "ner_type": "orgName",
-                                "id": "Komenda Stołeczna Policji, Wydział Prewencji"
-                            }
-                        ],
-                        "links": [
-                            {
-                                "label": "zbierała kurz",
-                                "source": "Agnieszka Nowak",
-                                "target": "ze szczelin między płytkami podłogowymi"
-                            },
-                            {
-                                "label": "znana jako",
-                                "source": "Agnieszka Nowak",
-                                "target": "Pyłem"
-                            },
-                            {
-                                "label": "złożył zgłoszenie o",
-                                "source": "Pracownik Metra Warszawskiego",
-                                "target": "zachowaniu Agnieszki Nowak"
-                            },
-                            {
-                                "label": "zostało złożone przez",
-                                "source": "Zgłoszenie",
-                                "target": "pracownika Metra Warszawskiego"
-                            },
-                            {
-                                "label": "źródło w dokumentach",
-                                "source": "NOTATKA SŁUŻBOWA",
-                                "target": "Komenda Stołeczna Policji, Wydział Prewencji"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "role": "user",
-                    "content": "pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA (Wąs, Zadrzyńska, Bąk i inni) oraz prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie."
-                },
-                {
-                    "role": "assistant",
-                    "response_dict": {
-                        "content": "Pytanie: Pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA oraz prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie.\n\nOdpowiedź: Na podstawie dostarczonych dokumentów można zrekonstruować następujący graf powiązań osobowych, ograniczając się do informacji zawartych w załączniku:\n\n**Policja/CBŚP/CBA:**\n*   **nadkom. Janusz Wąs:** Zespół Śledczy CBŚP (początkowo), następnie Wydział Operacyjno-Analityczny CBA, kieruje śledztwem. Podpisywał protokoły przesłuchań i decyzje dotyczące zarzutów.\n*   **asp. sztab. Krystyna Zadrzyńska:** Zespół Śledczy CBŚP (początkowo), następnie Wydział Operacyjno-Analityczny CBA, uczestniczka zespołu śledczego, podpisywała protokoły przesłuchań i decyzje dotyczące zarzutów.\n*   **sierż. Marek Bąk:** Zespół Śledczy CBŚP (początkowo), następnie Wydział Operacyjno-Analityczny CBA, uczestnik zespołu śledczego, podpisywał protokoły przesłuchań i decyzje dotyczące zarzutów.\n*   **Generał Brygady Andrzej Czujny:** Szef CBA, zatwierdza raporty i wnioski dotyczące sprawy ZGP \"Agnieszka\".\n\n**Prokuratura:**\n*   **[Imię Nazwisko] (Prokurator):** Prokuratura Regionalna w Warszawie (Delegatura w [Miasto Siedziby CBA]), przekazuje sprawę do prokuratury z wnioskiem o akt oskarżenia.  Zleca tymczasowe aresztowanie.\n*   **Prokurator:** Wnioskował o uhonorowanie funkcjonariuszy CBŚP i CBA zaangażowanych w sprawę.\n\n**Sądy:**\n*   **Sąd [Nazwa Sądu]:** Wydaje postanowienie o tymczasowym aresztowaniu Agnieszki [NAZWISKO USTALONE]. (sygn. akt [Sygnatura])\n*   **Sąd Okręgowy w Warszawie:** Postępowanie sygn. akt II K [numer_sprawy].2024 zakończyło się prawomocnym wyrokiem skazującym w pierwszej instancji.\n\n**Adwokaci:**\n*   **mec. Piotr Paragraf:** Obrońca z urzędu dla Agnieszki Baranowskiej i Agnieszki Kowerskiej.\n*   **mec. Paweł Obrońca:** Obrońca z wyboru dla Agnieszki Dąbrowskiej.\n*   **mec. Zuzanna Prawo:** Obrońca z urzędu dla Agnieszki Grabowskiej i Agnieszki Kowalskiej.\n*   **mec. Anna Adwokat:** Obrońca z wyboru dla Agnieszki Jankowskiej.\n*   **mec. Adam Paragraf:** Obrońca z urzędu dla Agnieszki Kwiatkowskiej.\n\n**Pozostali:**\n* **Steiner:** Wymieniony w kontekście powiązań międzynarodowych (kontakty personalne). Rola nie jest sprecyzowana.\n\nŹródło w dokumentach: Cały załącznik \"ANALIZA OPERACYJNA - HIPOTEZY...\". Szczegółowe informacje o rolach i jednostkach znajdują się w różnych fragmentach raportu, opisujących przebieg śledztwa i udział poszczególnych osób.\nKomentarz: Graf powiązań jest ograniczony do informacji zawartych w dostarczonym dokumencie. Nie zawiera on pełnego obrazu wszystkich zaangażowanych stron i ich relacji.  Dokument wskazuje na przejęcie sprawy przez CBA, co sugeruje początkowe prowadzenie śledztwa przez CBŚP.",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 899,
-                            "time": 82.28014612197876
-                        }
-                    },
-                    "sources": [
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpo9w_9xup/code - 2025-04-25T230017.454.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp84ncn6_0/code - 2025-04-25T233201.834.txt"
-                    ],
-                    "graph_data": {
-                        "directed": true,
-                        "multigraph": false,
-                        "graph": {},
-                        "nodes": [
-                            {
-                                "label": "nadkom. Janusz Wąs",
-                                "ner_type": "persName",
-                                "id": "nadkom. Janusz Wąs"
-                            },
-                            {
-                                "label": "Zespół Śledczy CBŚP",
-                                "ner_type": "orgName",
-                                "id": "Zespół Śledczy CBŚP"
-                            },
-                            {
-                                "label": "Wydział Operacyjno-Analityczny CBA",
-                                "ner_type": "orgName",
-                                "id": "Wydział Operacyjno-Analityczny CBA"
-                            },
-                            {
-                                "label": "śledztwem",
-                                "ner_type": null,
-                                "id": "śledztwem"
-                            },
-                            {
-                                "label": "protokoły przesłuchań",
-                                "ner_type": null,
-                                "id": "protokoły przesłuchań"
-                            },
-                            {
-                                "label": "decyzje dotyczące zarzutów",
-                                "ner_type": null,
-                                "id": "decyzje dotyczące zarzutów"
-                            },
-                            {
-                                "label": "asp. sztab. Krystyna Zadrzyńska",
-                                "ner_type": "persName",
-                                "id": "asp. sztab. Krystyna Zadrzyńska"
-                            },
-                            {
-                                "label": "zespołu śledczego",
-                                "ner_type": null,
-                                "id": "zespołu śledczego"
-                            },
-                            {
-                                "label": "sierż. Marek Bąk",
-                                "ner_type": "persName",
-                                "id": "sierż. Marek Bąk"
-                            },
-                            {
-                                "label": "Generał Brygady Andrzej Czujny",
-                                "ner_type": "persName",
-                                "id": "Generał Brygady Andrzej Czujny"
-                            },
-                            {
-                                "label": "CBA",
-                                "ner_type": "orgName",
-                                "id": "CBA"
-                            },
-                            {
-                                "label": "raporty",
-                                "ner_type": null,
-                                "id": "raporty"
-                            },
-                            {
-                                "label": "wnioski",
-                                "ner_type": null,
-                                "id": "wnioski"
-                            },
-                            {
-                                "label": "[Imię Nazwisko] (Prokurator)",
-                                "ner_type": null,
-                                "id": "[Imię Nazwisko] (Prokurator)"
-                            },
-                            {
-                                "label": "Prokuratura Regionalna w Warszawie",
-                                "ner_type": "orgName",
-                                "id": "Prokuratura Regionalna w Warszawie"
-                            },
-                            {
-                                "label": "[Miasto Siedziby CBA]",
-                                "ner_type": "orgName",
-                                "id": "[Miasto Siedziby CBA]"
-                            },
-                            {
-                                "label": "sprawę",
-                                "ner_type": null,
-                                "id": "sprawę"
-                            },
-                            {
-                                "label": "tymczasowe aresztowanie",
-                                "ner_type": null,
-                                "id": "tymczasowe aresztowanie"
-                            },
-                            {
-                                "label": "Prokurator",
-                                "ner_type": null,
-                                "id": "Prokurator"
-                            },
-                            {
-                                "label": "uhonorowanie funkcjonariuszy CBŚP i CBA",
-                                "ner_type": "orgName",
-                                "id": "uhonorowanie funkcjonariuszy CBŚP i CBA"
-                            },
-                            {
-                                "label": "Sąd [Nazwa Sądu]",
-                                "ner_type": null,
-                                "id": "Sąd [Nazwa Sądu]"
-                            },
-                            {
-                                "label": "postanowienie o tymczasowym aresztowaniu Agnieszki [NAZWISKO USTALONE]",
-                                "ner_type": "persName",
-                                "id": "postanowienie o tymczasowym aresztowaniu Agnieszki [NAZWISKO USTALONE]"
-                            },
-                            {
-                                "label": "Sąd Okręgowy w Warszawie",
-                                "ner_type": "orgName",
-                                "id": "Sąd Okręgowy w Warszawie"
-                            },
-                            {
-                                "label": "II K [numer_sprawy].2024",
-                                "ner_type": null,
-                                "id": "II K [numer_sprawy].2024"
-                            },
-                            {
-                                "label": "mec. Piotr Paragraf",
-                                "ner_type": "persName",
-                                "id": "mec. Piotr Paragraf"
-                            },
-                            {
-                                "label": "Agnieszki Baranowskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Baranowskiej"
-                            },
-                            {
-                                "label": "Agnieszki Kowerskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Kowerskiej"
-                            },
-                            {
-                                "label": "mec. Paweł Obrońca",
-                                "ner_type": "persName",
-                                "id": "mec. Paweł Obrońca"
-                            },
-                            {
-                                "label": "Agnieszki Dąbrowskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Dąbrowskiej"
-                            },
-                            {
-                                "label": "mec. Zuzanna Prawo",
-                                "ner_type": "persName",
-                                "id": "mec. Zuzanna Prawo"
-                            },
-                            {
-                                "label": "Agnieszki Grabowskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Grabowskiej"
-                            },
-                            {
-                                "label": "Agnieszki Kowalskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Kowalskiej"
-                            },
-                            {
-                                "label": "mec. Anna Adwokat",
-                                "ner_type": "persName",
-                                "id": "mec. Anna Adwokat"
-                            },
-                            {
-                                "label": "Agnieszki Jankowskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Jankowskiej"
-                            },
-                            {
-                                "label": "mec. Adam Paragraf",
-                                "ner_type": "persName",
-                                "id": "mec. Adam Paragraf"
-                            },
-                            {
-                                "label": "Agnieszki Kwiatkowskiej",
-                                "ner_type": "persName",
-                                "id": "Agnieszki Kwiatkowskiej"
-                            },
-                            {
-                                "label": "Steiner",
-                                "ner_type": "persName",
-                                "id": "Steiner"
-                            },
-                            {
-                                "label": "międzynarodowe (kontakty personalne)",
-                                "ner_type": null,
-                                "id": "międzynarodowe (kontakty personalne)"
-                            }
-                        ],
-                        "links": [
-                            {
-                                "label": "pracuje w",
-                                "source": "nadkom. Janusz Wąs",
-                                "target": "Zespół Śledczy CBŚP"
-                            },
-                            {
-                                "label": "następnie pracuje w",
-                                "source": "nadkom. Janusz Wąs",
-                                "target": "Wydział Operacyjno-Analityczny CBA"
-                            },
-                            {
-                                "label": "kieruje",
-                                "source": "nadkom. Janusz Wąs",
-                                "target": "śledztwem"
-                            },
-                            {
-                                "label": "podpisywał",
-                                "source": "nadkom. Janusz Wąs",
-                                "target": "protokoły przesłuchań"
-                            },
-                            {
-                                "label": "podpisywał",
-                                "source": "nadkom. Janusz Wąs",
-                                "target": "decyzje dotyczące zarzutów"
-                            },
-                            {
-                                "label": "pracuje w",
-                                "source": "asp. sztab. Krystyna Zadrzyńska",
-                                "target": "Zespół Śledczy CBŚP"
-                            },
-                            {
-                                "label": "następnie pracuje w",
-                                "source": "asp. sztab. Krystyna Zadrzyńska",
-                                "target": "Wydział Operacyjno-Analityczny CBA"
-                            },
-                            {
-                                "label": "uczestniczka",
-                                "source": "asp. sztab. Krystyna Zadrzyńska",
-                                "target": "zespołu śledczego"
-                            },
-                            {
-                                "label": "podpisywała",
-                                "source": "asp. sztab. Krystyna Zadrzyńska",
-                                "target": "protokoły przesłuchań"
-                            },
-                            {
-                                "label": "podpisywała",
-                                "source": "asp. sztab. Krystyna Zadrzyńska",
-                                "target": "decyzje dotyczące zarzutów"
-                            },
-                            {
-                                "label": "pracuje w",
-                                "source": "sierż. Marek Bąk",
-                                "target": "Zespół Śledczy CBŚP"
-                            },
-                            {
-                                "label": "następnie pracuje w",
-                                "source": "sierż. Marek Bąk",
-                                "target": "Wydział Operacyjno-Analityczny CBA"
-                            },
-                            {
-                                "label": "uczestnik",
-                                "source": "sierż. Marek Bąk",
-                                "target": "zespołu śledczego"
-                            },
-                            {
-                                "label": "podpisywał",
-                                "source": "sierż. Marek Bąk",
-                                "target": "protokoły przesłuchań"
-                            },
-                            {
-                                "label": "podpisywał",
-                                "source": "sierż. Marek Bąk",
-                                "target": "decyzje dotyczące zarzutów"
-                            },
-                            {
-                                "label": "szef",
-                                "source": "Generał Brygady Andrzej Czujny",
-                                "target": "CBA"
-                            },
-                            {
-                                "label": "zatwierdza",
-                                "source": "Generał Brygady Andrzej Czujny",
-                                "target": "raporty"
-                            },
-                            {
-                                "label": "zatwierdza",
-                                "source": "Generał Brygady Andrzej Czujny",
-                                "target": "wnioski"
-                            },
-                            {
-                                "label": "pracuje w",
-                                "source": "[Imię Nazwisko] (Prokurator)",
-                                "target": "Prokuratura Regionalna w Warszawie"
-                            },
-                            {
-                                "label": "delegatura w",
-                                "source": "[Imię Nazwisko] (Prokurator)",
-                                "target": "[Miasto Siedziby CBA]"
-                            },
-                            {
-                                "label": "przekazuje",
-                                "source": "[Imię Nazwisko] (Prokurator)",
-                                "target": "sprawę"
-                            },
-                            {
-                                "label": "zleca",
-                                "source": "[Imię Nazwisko] (Prokurator)",
-                                "target": "tymczasowe aresztowanie"
-                            },
-                            {
-                                "label": "wnioskował o",
-                                "source": "Prokurator",
-                                "target": "uhonorowanie funkcjonariuszy CBŚP i CBA"
-                            },
-                            {
-                                "label": "wydaje",
-                                "source": "Sąd [Nazwa Sądu]",
-                                "target": "postanowienie o tymczasowym aresztowaniu Agnieszki [NAZWISKO USTALONE]"
-                            },
-                            {
-                                "label": "rozpatruje sprawę",
-                                "source": "Sąd Okręgowy w Warszawie",
-                                "target": "II K [numer_sprawy].2024"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Piotr Paragraf",
-                                "target": "Agnieszki Baranowskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Piotr Paragraf",
-                                "target": "Agnieszki Kowerskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Paweł Obrońca",
-                                "target": "Agnieszki Dąbrowskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Zuzanna Prawo",
-                                "target": "Agnieszki Grabowskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Zuzanna Prawo",
-                                "target": "Agnieszki Kowalskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Anna Adwokat",
-                                "target": "Agnieszki Jankowskiej"
-                            },
-                            {
-                                "label": "obrońca dla",
-                                "source": "mec. Adam Paragraf",
-                                "target": "Agnieszki Kwiatkowskiej"
-                            },
-                            {
-                                "label": "ma powiązania",
-                                "source": "Steiner",
-                                "target": "międzynarodowe (kontakty personalne)"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "role": "user",
-                    "content": "Zmapuj powiązania komunikacyjne między Oskarżonymi Agnieszkami na podstawie zabezpieczonej korespondencji elektronicznej (maile, czaty, Signal, Threema), wskazując tematy rozmów (np. \"metody kamuflażu\", \"integracja metod\", \"wizualizacja danych\", \"transfer energii\")."
-                },
-                {
-                    "role": "assistant",
-                    "response_dict": {
-                        "content": "Pytanie: Zmapuj powiązania komunikacyjne między Oskarżonymi Agnieszkami na podstawie zabezpieczonej korespondencji elektronicznej (maile, czaty, Signal, Threema), wskazując tematy rozmów (np. \"metody kamuflażu\", \"integracja metod\", \"wizualizacja danych\", \"transfer energii\").\n\nOdpowiedź: Zabezpieczona korespondencja ujawnia rozbudowane powiązania komunikacyjne między Agnieszkami, koncentrujące się wokół następujących tematów i konkretnych osobami:\n\n*   **A. Malinowska (\"Kosmiczna Rachunkowość\") – Centralny węzeł:**  Komunikowała się z A. Lisiecką, A. Jankowską, A. Zając, A. Ostrowską, A. Piotrowską oraz Agnieszka Grabowską (\"Oneironautka\"). Tematy rozmów obejmowały \"strategie maskowania\", \"integrację metod\", \"transfer wartości energetycznej między sferą obłoczną a cyfrową\",  \"projekt X”, kalkulacje finansowe (np. „Projekt Wełna - Przychody z Krupówek,” “Projekt Mapa - Przygoda/Inwestycje”), oraz instruktaż dotyczący \"metod komunikacyjnych utrudniających śledztwo\".\n*   **A. Lisiecka (\"Szeptucha Chmur\") & A. Jankowska:**  Korespondencja dotyczyła \"możliwości użycia metody Kluczarki do wstępnej oceny zamożności beneficjentów 'chmurnych prognoz'\" oraz „użycia papieru czerpanego ze znakiem wodnym” do projektów artystycznych.\n*   **A. Zając (\"Guma\"):**  Komunikowała się z A. Jankowską i A. Szymańską, pytając o \"możliwość zakupu starych, bezwartościowych przedmiotów\" oraz \"użycia papieru czerpanego\".\n*   **A. Piotrowska (\"Pigeon Intelligence Agency\") & A. Kowalska (\"Kluczarka\"):** Rozmowy dotyczyły możliwości wykorzystania bio-sygnałów roślin do komunikacji z gołębiami i analizy wibracji cienia nieruchomości, a także \"aurę wibracyjną\" kluczy.\n*   **A. Michalska (\"Chlorofil\") & A. Malinowska:** Korespondencja dotyczyła \"konwersji wartości cienia na waluty fiducjarne\".\n*   **Agnieszka Grabowska (“Oneironautka”)**:  Wymiana maili z A. Malinowską dotycząca \"metod wizualizacji danych przyszłościowych\" oraz możliwości „integracji wzorów dzianych z mapami onirycznymi”.\n*   **A. Majewska:** Komunikacja ze Stanisławem H. (prezes \"Hypnos Consulting Group\") poprzez Signal, obejmująca szczegółowe informacje o stanie technicznym latarni morskich i współrzędne GPS.\n\nŹródło w dokumentach:  Dowody łączące Oskarzonych (Powiązania wewnątrz ZGP \"Agnieszka\"): Korespondencja: Znaleziono bezpośrednią korespondencję między różnymi Oskarżonymi Agnieszkami (m.in. maile i czaty); Analiza zabezpieczonego laptopa Agnieszki Grabowskiej (“Oneironautka”); W zabezpieczonych plikach Agnieszki Malinowskiej (\"Kosmiczna Rachunkowość\");  Analiza zabezpieczonej korespondencji (z komputera Agnieszki Zielińskiej / \"Tkaczka\"), Analiza zabezpieczonego laptopa Agnieszki Piotrowskiej (“Pigeon Intelligence Agency”), Analiza zabezpieczonej korespondencji (z komputera Agnieszki Lisieckiej / \"Szeptucha Chmur\").\n\nKomentarz:  Podkreśla się, że w komunikacji występował specyficzny żargon łączący „dziwactwa” z finansami i strategiami. Analiza wskazuje na centralną rolę A. Malinowskiej jako koordynatora finansowego oraz osoby zarządzającej przepływem informacji między członkiniami grupy. Zabezpieczone komunikatory (Signal, Threema) sugerują użycie szyfrowanych kanałów komunikacji w celu utrudnienia śledztwa.\n",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 959,
-                            "time": 90.0432550907135
-                        }
-                    },
-                    "sources": [
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpqt_ncq6_/code - 2025-04-25T231136.881.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpbg6bc1au/code - 2025-04-25T230058.737.txt"
-                    ],
-                    "graph_data": {
-                        "directed": true,
-                        "multigraph": false,
-                        "graph": {},
-                        "nodes": [
-                            {
-                                "label": "A. Malinowska",
-                                "ner_type": "persName",
-                                "id": "A. Malinowska"
-                            },
-                            {
-                                "label": "A. Lisiecka",
-                                "ner_type": "persName",
-                                "id": "A. Lisiecka"
-                            },
-                            {
-                                "label": "A. Jankowską",
-                                "ner_type": "persName",
-                                "id": "A. Jankowską"
-                            },
-                            {
-                                "label": "A. Zając",
-                                "ner_type": "persName",
-                                "id": "A. Zając"
-                            },
-                            {
-                                "label": "A. Ostrowską",
-                                "ner_type": "persName",
-                                "id": "A. Ostrowską"
-                            },
-                            {
-                                "label": "A. Piotrowską",
-                                "ner_type": "persName",
-                                "id": "A. Piotrowską"
-                            },
-                            {
-                                "label": "Agnieszka Grabowską",
-                                "ner_type": "persName",
-                                "id": "Agnieszka Grabowską"
-                            },
-                            {
-                                "label": "Tematy rozmów",
-                                "ner_type": null,
-                                "id": "Tematy rozmów"
-                            },
-                            {
-                                "label": "metody kamuflażu",
-                                "ner_type": null,
-                                "id": "metody kamuflażu"
-                            },
-                            {
-                                "label": "integrację metod",
-                                "ner_type": null,
-                                "id": "integrację metod"
-                            },
-                            {
-                                "label": "wizualizacja danych",
-                                "ner_type": null,
-                                "id": "wizualizacja danych"
-                            },
-                            {
-                                "label": "transfer energii",
-                                "ner_type": null,
-                                "id": "transfer energii"
-                            },
-                            {
-                                "label": "A. Jankowska",
-                                "ner_type": "persName",
-                                "id": "A. Jankowska"
-                            },
-                            {
-                                "label": "Tematy rozmów (A. Lisiecka i A. Jankowska)",
-                                "ner_type": "persName",
-                                "id": "Tematy rozmów (A. Lisiecka i A. Jankowska)"
-                            },
-                            {
-                                "label": "możliwości użycia metody Kluczarki",
-                                "ner_type": null,
-                                "id": "możliwości użycia metody Kluczarki"
-                            },
-                            {
-                                "label": "użycie papieru czerpanego",
-                                "ner_type": null,
-                                "id": "użycie papieru czerpanego"
-                            },
-                            {
-                                "label": "A. Szymańską",
-                                "ner_type": "persName",
-                                "id": "A. Szymańską"
-                            },
-                            {
-                                "label": "Tematy rozmów (A. Zając)",
-                                "ner_type": "persName",
-                                "id": "Tematy rozmów (A. Zając)"
-                            },
-                            {
-                                "label": "możliwość zakupu starych przedmiotów",
-                                "ner_type": null,
-                                "id": "możliwość zakupu starych przedmiotów"
-                            },
-                            {
-                                "label": "A. Piotrowska",
-                                "ner_type": "persName",
-                                "id": "A. Piotrowska"
-                            },
-                            {
-                                "label": "A. Kowalska",
-                                "ner_type": "persName",
-                                "id": "A. Kowalska"
-                            },
-                            {
-                                "label": "Tematy rozmów (A. Piotrowska i A. Kowalska)",
-                                "ner_type": "persName",
-                                "id": "Tematy rozmów (A. Piotrowska i A. Kowalska)"
-                            },
-                            {
-                                "label": "bio-sygnały roślin",
-                                "ner_type": null,
-                                "id": "bio-sygnały roślin"
-                            },
-                            {
-                                "label": "analizę wibracji cienia nieruchomości",
-                                "ner_type": null,
-                                "id": "analizę wibracji cienia nieruchomości"
-                            },
-                            {
-                                "label": "\"aurę wibracyjną\" kluczy",
-                                "ner_type": null,
-                                "id": "\"aurę wibracyjną\" kluczy"
-                            },
-                            {
-                                "label": "A. Michalska",
-                                "ner_type": "persName",
-                                "id": "A. Michalska"
-                            },
-                            {
-                                "label": "Tematy rozmów (A. Michalska i A. Malinowska)",
-                                "ner_type": "persName",
-                                "id": "Tematy rozmów (A. Michalska i A. Malinowska)"
-                            },
-                            {
-                                "label": "konwersji wartości cienia na waluty fiducjarne",
-                                "ner_type": null,
-                                "id": "konwersji wartości cienia na waluty fiducjarne"
+                                "id": "dane meteorologiczne"
                             },
                             {
                                 "label": "A. Malinowską",
@@ -1187,213 +224,162 @@
                                 "id": "A. Malinowską"
                             },
                             {
-                                "label": "Tematy rozmów (Agnieszka Grabowska i A. Malinowska)",
+                                "label": "Agnieszka Ostrowska (\"Hipnos\")",
                                 "ner_type": "persName",
-                                "id": "Tematy rozmów (Agnieszka Grabowska i A. Malinowska)"
+                                "id": "Agnieszka Ostrowska (\"Hipnos\")"
                             },
                             {
-                                "label": "metod wizualizacji danych przyszłościowych",
+                                "label": "technikę symulacji napadów snu",
                                 "ner_type": null,
-                                "id": "metod wizualizacji danych przyszłościowych"
+                                "id": "technikę symulacji napadów snu"
                             },
                             {
-                                "label": "integracji wzorów dzianych z mapami onirycznymi",
+                                "label": "dr Sennym",
                                 "ner_type": null,
-                                "id": "integracji wzorów dzianych z mapami onirycznymi"
+                                "id": "dr Sennym"
                             },
                             {
-                                "label": "A. Majewska",
+                                "label": "Agnieszka Wojciechowska (\"Ruina\")",
                                 "ner_type": "persName",
-                                "id": "A. Majewska"
+                                "id": "Agnieszka Wojciechowska (\"Ruina\")"
                             },
                             {
-                                "label": "Stanisławem H.",
+                                "label": "SREH",
                                 "ner_type": "persName",
-                                "id": "Stanisławem H."
+                                "id": "SREH"
                             },
                             {
-                                "label": "Komunikacja (A. Majewska i Stanisław H.)",
+                                "label": "plany destabilizacji",
+                                "ner_type": null,
+                                "id": "plany destabilizacji"
+                            },
+                            {
+                                "label": "Agnieszka Pawlak (\"Cień\")",
                                 "ner_type": "persName",
-                                "id": "Komunikacja (A. Majewska i Stanisław H.)"
+                                "id": "Agnieszka Pawlak (\"Cień\")"
                             },
                             {
-                                "label": "informacje o stanie technicznym latarni morskich",
+                                "label": "manipulacje wyceną",
                                 "ner_type": null,
-                                "id": "informacje o stanie technicznym latarni morskich"
+                                "id": "manipulacje wyceną"
                             },
                             {
-                                "label": "współrzędne GPS",
+                                "label": "Agnieszka K. (\"Instrukcja\")",
+                                "ner_type": "persName",
+                                "id": "Agnieszka K. (\"Instrukcja\")"
+                            },
+                            {
+                                "label": "cytatach z instrukcji AGD",
                                 "ner_type": null,
-                                "id": "współrzędne GPS"
+                                "id": "cytatach z instrukcji AGD"
+                            },
+                            {
+                                "label": "cytaty z instrukcji AGD",
+                                "ner_type": null,
+                                "id": "cytaty z instrukcji AGD"
+                            },
+                            {
+                                "label": "komunikacji w grupie",
+                                "ner_type": null,
+                                "id": "komunikacji w grupie"
                             }
                         ],
                         "links": [
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "A. Lisiecka"
+                                "label": "ZARZAĄDZA",
+                                "source": "Agnieszka Malinowska (\"Czas\")",
+                                "target": "finansami"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "A. Jankowską"
+                                "label": "koordynuje",
+                                "source": "Agnieszka Malinowska (\"Czas\")",
+                                "target": "działania grupy"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "A. Zając"
+                                "label": "pełni rolę",
+                                "source": "Agnieszka Malinowska (\"Czas\")",
+                                "target": "centralnej jednostki finansowej w ZGP \"Agnieszka\""
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "A. Ostrowską"
+                                "label": "ODPOWIADA ZA",
+                                "source": "Agnieszka Malinowska (\"Czas\")",
+                                "target": "centralne zarządzanie finansami i planistyczne"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "A. Piotrowską"
+                                "label": "posiada dostęp do",
+                                "source": "Agnieszka Malinowska (\"Czas\")",
+                                "target": "szczegółowych kalkulacji zysków"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Malinowska",
-                                "target": "Agnieszka Grabowską"
+                                "label": "PROGNOZUJE",
+                                "source": "Agnieszka Lisiecka (\"Chmura\")",
+                                "target": "obłoczne dane"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Lisiecka",
-                                "target": "A. Jankowska"
+                                "label": "UŻYWA",
+                                "source": "Agnieszka Lisiecka (\"Chmura\")",
+                                "target": "skali SOL"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Zając",
-                                "target": "A. Jankowską"
+                                "label": "analizuje",
+                                "source": "Agnieszka Lisiecka (\"Chmura\")",
+                                "target": "dane meteorologiczne"
                             },
                             {
-                                "label": "komunikowała się z",
-                                "source": "A. Zając",
-                                "target": "A. Szymańską"
-                            },
-                            {
-                                "label": "komunikowała się z",
-                                "source": "Agnieszka Grabowską",
+                                "label": "POWIĄZANA Z",
+                                "source": "Agnieszka Lisiecka (\"Chmura\")",
                                 "target": "A. Malinowską"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów",
-                                "target": "metody kamuflażu"
+                                "label": "WYKORZYSTUJE",
+                                "source": "Agnieszka Ostrowska (\"Hipnos\")",
+                                "target": "technikę symulacji napadów snu"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów",
-                                "target": "integrację metod"
+                                "label": "WSPÓŁPRACOWAŁA",
+                                "source": "Agnieszka Ostrowska (\"Hipnos\")",
+                                "target": "dr Sennym"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów",
-                                "target": "wizualizacja danych"
+                                "label": "DZIAŁA NA SZKODĘ",
+                                "source": "Agnieszka Wojciechowska (\"Ruina\")",
+                                "target": "SREH"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów",
-                                "target": "transfer energii"
+                                "label": "POSIADA",
+                                "source": "Agnieszka Wojciechowska (\"Ruina\")",
+                                "target": "plany destabilizacji"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Lisiecka i A. Jankowska)",
-                                "target": "możliwości użycia metody Kluczarki"
+                                "label": "LEGALIZUJE",
+                                "source": "Agnieszka Pawlak (\"Cień\")",
+                                "target": "manipulacje wyceną"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Lisiecka i A. Jankowska)",
-                                "target": "użycie papieru czerpanego"
+                                "label": "używa kodu operacyjnego",
+                                "source": "Agnieszka K. (\"Instrukcja\")",
+                                "target": "cytatach z instrukcji AGD"
                             },
                             {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Zając)",
-                                "target": "możliwość zakupu starych przedmiotów"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Zając)",
-                                "target": "użycie papieru czerpanego"
-                            },
-                            {
-                                "label": "komunikowała się z",
-                                "source": "A. Piotrowska",
-                                "target": "A. Kowalska"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Piotrowska i A. Kowalska)",
-                                "target": "bio-sygnały roślin"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Piotrowska i A. Kowalska)",
-                                "target": "analizę wibracji cienia nieruchomości"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Piotrowska i A. Kowalska)",
-                                "target": "\"aurę wibracyjną\" kluczy"
-                            },
-                            {
-                                "label": "komunikowała się z",
-                                "source": "A. Michalska",
-                                "target": "A. Malinowska"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (A. Michalska i A. Malinowska)",
-                                "target": "konwersji wartości cienia na waluty fiducjarne"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (Agnieszka Grabowska i A. Malinowska)",
-                                "target": "metod wizualizacji danych przyszłościowych"
-                            },
-                            {
-                                "label": "obejmowały",
-                                "source": "Tematy rozmów (Agnieszka Grabowska i A. Malinowska)",
-                                "target": "integracji wzorów dzianych z mapami onirycznymi"
-                            },
-                            {
-                                "label": "komunikowała się z",
-                                "source": "A. Majewska",
-                                "target": "Stanisławem H."
-                            },
-                            {
-                                "label": "obejmowała",
-                                "source": "Komunikacja (A. Majewska i Stanisław H.)",
-                                "target": "informacje o stanie technicznym latarni morskich"
-                            },
-                            {
-                                "label": "obejmowała",
-                                "source": "Komunikacja (A. Majewska i Stanisław H.)",
-                                "target": "współrzędne GPS"
+                                "label": "służą do",
+                                "source": "cytaty z instrukcji AGD",
+                                "target": "komunikacji w grupie"
                             }
                         ]
-                    }
+                    },
+                    "prompt_answered": "pokaż mi graf powiązań dla 'mózgu operacji'"
                 },
                 {
                     "role": "user",
-                    "content": "pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA (Wąs, Zadrzyńska, Bąk i inni) oraz prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie."
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
                 },
                 {
                     "role": "assistant",
-                    "response_dict": {
-                        "content": "Pytanie: Pokaż graf powiązań osobowych dla wszystkich funkcjonariuszy Policji/CBŚP/CBA, prokuratorów i sędziów zaangażowanych w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki i przypisane role w śledztwie lub procesie.\n\nOdpowiedź: Poniżej przedstawiono graf powiązań osobowych zidentyfikowanych na podstawie dostarczonych dokumentów. Graf ten wskazuje relacje pomiędzy funkcjonariuszami Policji/CBŚP/CBA, prokuratorami i sędzią zaangażowanymi w sprawę ZGP \"Agnieszka\", uwzględniając ich jednostki oraz role w śledztwie i procesie:\n\n*   **Janusz Wąs (nadkomisarz)** JEST CZŁONKIEM Zespołu Śledczego CBŚP, a następnie PODLEGŁO mu prowadzenie dalszego śledztwa po przejęciu sprawy przez CBA. NADZOROWAŁ czynności w zakresie przesłuchań i zabezpieczania dowodów (Raport CBŚP, akapit 2).\n*   **Krystyna Zadrzyńska (aspirant sztabowy)** JEST CZŁONKIEM Zespołu Śledczego CBŚP, wspólnie z Januszem Wąsem i Markiem Bąkiem prowadziła początkowe śledztwo. NADZOROWAŁA czynności w zakresie przesłuchań i zabezpieczania dowodów (Raport CBŚP, akapit 2).\n*   **Marek Bąk (sierżant)** JEST CZŁONKIEM Zespołu Śledczego CBŚP, wspólnie z Januszem Wąsem i Krystyną Zadrzyńską prowadził początkowe śledztwo. NADZOROWAŁ czynności w zakresie przesłuchań i zabezpieczania dowodów (Raport CBŚP, akapit 2).\n*   **Andrzej Czujny (generał brygady)** JEST SZEFEM CBA, z jego inicjatywy sprawa ZGP \"Agnieszka\" została przekazana do CBA z uwagi na złożoność i komponent korupcyjny śledztwa. PODPISAŁ raport wstępnej analizy i wnioski o dalsze czynności (Raport CBŚP, sekcja \"CBA dysponuje...\" i \"Weryfikacja tych hipotez\").\n*   **Prokurator [Imię Nazwisko] z Prokuratury Regionalnej w Warszawie (Delegatura w Łodzi/Krakowie)** PRZEJĄŁ sprawę od CBA i wnioskował o akt oskarżenia oraz tymczasowe aresztowanie podejrzanych. WYDAWAŁ postanowienia dotyczące aresztu, prowadził postępowanie sądowe I instancji i wydał prawomocny wyrok skazujący (Raport CBŚP, sekcja \"Prokurator\").\n*   **Sędzia [Nazwa Sądu]** WYDAŁ postanowienie o tymczasowym areszcie Agnieszki [NAZWISKO USTALONE] (Raport CBŚP, 20. punkt).\n\nRelacje między jednostkami:\n*   Zespół Śledczy Centralnego Biura Śledczego Policji (CBŚP) INICJOWAŁ śledztwo i przekazał materiały do CBA.\n*   Centralne Biuro Antykorupcyjne (CBA) PRZEJMĄŁ sprawę od CBŚP z uwagi na jej złożoność i komponent korupcyjny, kontynuując śledztwo.\n*   Prokuratura Regionalna w Warszawie (Delegatura) PRZEJĘŁA sprawę od CBA i prowadziła postępowanie sądowe.\n\nŹródło w dokumentach: Raport CBŚP z dnia 10.07.2024, wszystkie sekcje dotyczące Zespołu Śledczego CBŚP, decyzje/zakończenia, Prokurator, oraz fragment \"CBA dysponuje...\".\nKomentarz: Graf ten opiera się WYŁĄCZNIE na informacjach zawartych w dostarczonym dokumencie. Nie uwzględnia ewentualnych relacji osobistych lub innych powiązań, które nie zostały wyraźnie wskazane w tekście.  Brak informacji o nazwisku prokuratora i sędziego uniemożliwia ich pełne zidentyfikowanie.\n",
-                        "metadata": {
-                            "model": "lmstudio-community/gemma-3-12b-it",
-                            "tokens": 988,
-                            "time": 90.75345778465271
-                        }
-                    },
+                    "content": "Pytanie: Wygeneruj graf ilustrujący pełny cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\nOdpowiedź: Na podstawie dostarczonych dokumentów, cykl finansowania i legalizacji środków dla \"Projektu Beż\" A. Dąbrowskiej można przedstawić następująco:\n\n1. **Źródła Finansowania:** Dotacje z Narodowego Centrum Badań i Rozwoju (NCBR) oraz kredyt technologiczny z Banku Gospodarstwa Krajowego (BGK) na łączną kwotę 4,8 mln PLN.\n2. **Firma-Słup:** Środki przekazywane były do firmy \"BeigeLife Innovations\" sp. z o.o., prowadzonej przez A. Dąbrowską, z siedzibą w Łódzkim Parku Technologicznym. Współpracowała również z firmą \"NeutralTech Solutions Ltd.\" z Cypru, od której zakupowano linię produkcyjną i inne wyposażenie (rzekomo za zawyżone ceny).\n3. **Centralny Hub Finansowy:** Agnieszka Malinowska (\"Czas\"/\"Kosmiczna Rachunkowość\") pełniła rolę centralnej księgowej grupy, zarządzając finansami poprzez fikcyjną firmę \"Astro-Precision Logistics\".  Przez jej system przepływały środki pochodzące z wyłudzeń (dotacje A. Dąbrowskiej), oszustw i innych przestępstw popełnianych przez członków ZGP \"Agnieszka\".\n4. **Dalsze Transfery/Odbiorcy Końcowi:** Środki legalizowane były poprzez transfery kryptowalutowe (XMR, ETH) oraz tradycyjne przelewy międzynarodowe do rajów podatkowych (Seszele, Belize, Cypr, Liechtenstein, Vanuatu), a następnie do kont bankowych w Szwajcarii. Ostateczni beneficjenci tych środków nie są w pełni zidentyfikowani w dostarczonych dokumentach.\n\nŹródło w dokumentach:\n\n*   Raport przesłuchania Agnieszki Dąbrowskiej: \"Wyłudzenie dotacji i kredytu technologicznego na łączną kwotę 4.800.000 PLN.\"\n*   Analiza przepływów finansowych:  \"Transfery kryptowalutowe (XMR, ETH), transfery międzynarodowe (Seszele, Belize, Cypr, Liechtenstein, Vanuatu; konta bankowe w Szwajcarii).\"\n*   Notatka służbowa CBŚP: \"Agnieszka Malinowska... centralne zarządzanie finansami i ich dalsza legalizacja\".\n*   Opis struktury grupy: „Wykorzystanie fikcyjnych podmiotów zagranicznych (rajy podatkowe, firmy w Liechtensteinie/Szwajcarii) potwierdza międzynarodowy zasięg operacji legalizacyjnych.”\n\nKomentarz: Graficzna reprezentacja tego cyklu wymagałaby wizualizacji przepływów i powiązań, co wykracza poza możliwości odpowiedzi tekstowej.  Dostępne dokumenty wskazują na złożony system finansowania i legalizacji środków, ale pełny obraz wymaga dalszego śledztwa i analizy.\n",
                     "sources": [
                         "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpo9w_9xup/code - 2025-04-25T230017.454.txt",
-                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp84ncn6_0/code - 2025-04-25T233201.834.txt"
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt"
                     ],
                     "graph_data": {
                         "directed": true,
@@ -1401,184 +387,567 @@
                         "graph": {},
                         "nodes": [
                             {
-                                "label": "Janusz Wąs",
-                                "ner_type": "persName",
-                                "id": "Janusz Wąs"
-                            },
-                            {
-                                "label": "Zespół Śledczy CBŚP",
-                                "ner_type": "orgName",
-                                "id": "Zespół Śledczy CBŚP"
-                            },
-                            {
-                                "label": "CBA",
-                                "ner_type": "orgName",
-                                "id": "CBA"
-                            },
-                            {
-                                "label": "przesłuchania i zabezpieczanie dowodów",
+                                "label": "Projekt Beż",
                                 "ner_type": null,
-                                "id": "przesłuchania i zabezpieczanie dowodów"
+                                "id": "Projekt Beż"
                             },
                             {
-                                "label": "Krystyna Zadrzyńska",
+                                "label": "A. Dąbrowska",
                                 "ner_type": "persName",
-                                "id": "Krystyna Zadrzyńska"
+                                "id": "A. Dąbrowska"
                             },
                             {
-                                "label": "Marek Bąk",
+                                "label": "NCBR",
+                                "ner_type": "orgName",
+                                "id": "NCBR"
+                            },
+                            {
+                                "label": "BGK",
+                                "ner_type": "orgName",
+                                "id": "BGK"
+                            },
+                            {
+                                "label": "4,8 mln PLN",
+                                "ner_type": null,
+                                "id": "4,8 mln PLN"
+                            },
+                            {
+                                "label": "BeigeLife Innovations sp. z o.o.",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations sp. z o.o."
+                            },
+                            {
+                                "label": "Łódzki Park Technologiczny",
+                                "ner_type": "orgName",
+                                "id": "Łódzki Park Technologiczny"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd.",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "Cypru",
+                                "ner_type": "placeName",
+                                "id": "Cypru"
+                            },
+                            {
+                                "label": "linię produkcyjną i wyposażenie",
+                                "ner_type": null,
+                                "id": "linię produkcyjną i wyposażenie"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
                                 "ner_type": "persName",
-                                "id": "Marek Bąk"
+                                "id": "Agnieszka Malinowska"
                             },
                             {
-                                "label": "Andrzej Czujny",
+                                "label": "centralnej księgowej",
+                                "ner_type": null,
+                                "id": "centralnej księgowej"
+                            },
+                            {
+                                "label": "Astro-Precision Logistics",
+                                "ner_type": null,
+                                "id": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "tak",
+                                "ner_type": null,
+                                "id": "tak"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
                                 "ner_type": "persName",
-                                "id": "Andrzej Czujny"
+                                "id": "Agnieszka Dąbrowska"
                             },
                             {
-                                "label": "Raport wstępnej analizy i wnioski o dalsze czynności",
+                                "label": "wyłudzenie dotacji i kredytu technologicznego",
                                 "ner_type": null,
-                                "id": "Raport wstępnej analizy i wnioski o dalsze czynności"
+                                "id": "wyłudzenie dotacji i kredytu technologicznego"
                             },
                             {
-                                "label": "Prokurator z Prokuratury Regionalnej w Warszawie",
+                                "label": "ZGP",
                                 "ner_type": "orgName",
-                                "id": "Prokurator z Prokuratury Regionalnej w Warszawie"
+                                "id": "ZGP"
                             },
                             {
-                                "label": "aresztu",
-                                "ner_type": null,
-                                "id": "aresztu"
-                            },
-                            {
-                                "label": "Sędzia [Nazwa Sądu]",
-                                "ner_type": null,
-                                "id": "Sędzia [Nazwa Sądu]"
-                            },
-                            {
-                                "label": "tymczasowym areszcie Agnieszki [NAZWISKO USTALONE]",
+                                "label": "Agnieszka",
                                 "ner_type": "persName",
-                                "id": "tymczasowym areszcie Agnieszki [NAZWISKO USTALONE]"
+                                "id": "Agnieszka"
                             },
                             {
-                                "label": "Zespół Śledczy Centralnego Biura Śledczego Policji (CBŚP)",
-                                "ner_type": "orgName",
-                                "id": "Zespół Śledczy Centralnego Biura Śledczego Policji (CBŚP)"
-                            },
-                            {
-                                "label": "Centralne Biuro Antykorupcyjne (CBA)",
-                                "ner_type": "orgName",
-                                "id": "Centralne Biuro Antykorupcyjne (CBA)"
-                            },
-                            {
-                                "label": "CBŚP",
+                                "label": "Środki",
                                 "ner_type": null,
-                                "id": "CBŚP"
+                                "id": "Środki"
                             },
                             {
-                                "label": "Prokuratura Regionalna w Warszawie (Delegatura)",
+                                "label": "Seszele",
+                                "ner_type": "placeName",
+                                "id": "Seszele"
+                            },
+                            {
+                                "label": "Belize",
+                                "ner_type": "placeName",
+                                "id": "Belize"
+                            },
+                            {
+                                "label": "Cypr",
                                 "ner_type": "orgName",
-                                "id": "Prokuratura Regionalna w Warszawie (Delegatura)"
+                                "id": "Cypr"
+                            },
+                            {
+                                "label": "Liechtenstein",
+                                "ner_type": "placeName",
+                                "id": "Liechtenstein"
+                            },
+                            {
+                                "label": "Vanuatu",
+                                "ner_type": "placeName",
+                                "id": "Vanuatu"
+                            },
+                            {
+                                "label": "Szwajcaria",
+                                "ner_type": "placeName",
+                                "id": "Szwajcaria"
+                            },
+                            {
+                                "label": "Transfery",
+                                "ner_type": null,
+                                "id": "Transfery"
+                            },
+                            {
+                                "label": "XMR, ETH",
+                                "ner_type": "orgName",
+                                "id": "XMR, ETH"
+                            },
+                            {
+                                "label": "Raport przesłuchania Agnieszki Dąbrowskiej",
+                                "ner_type": "persName",
+                                "id": "Raport przesłuchania Agnieszki Dąbrowskiej"
+                            },
+                            {
+                                "label": "Wyłudzenie dotacji i kredytu technologicznego",
+                                "ner_type": null,
+                                "id": "Wyłudzenie dotacji i kredytu technologicznego"
+                            },
+                            {
+                                "label": "Analiza przepływów finansowych",
+                                "ner_type": null,
+                                "id": "Analiza przepływów finansowych"
+                            },
+                            {
+                                "label": "Transfery kryptowalutowe (XMR, ETH), transfery międzynarodowe",
+                                "ner_type": "orgName",
+                                "id": "Transfery kryptowalutowe (XMR, ETH), transfery międzynarodowe"
+                            },
+                            {
+                                "label": "Notatka służbowa CBŚP",
+                                "ner_type": "orgName",
+                                "id": "Notatka służbowa CBŚP"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska - centralne zarządzanie finansami i ich dalsza legalizacja",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska - centralne zarządzanie finansami i ich dalsza legalizacja"
                             }
                         ],
                         "links": [
                             {
-                                "label": "jest członkiem",
-                                "source": "Janusz Wąs",
-                                "target": "Zespół Śledczy CBŚP"
+                                "label": "autor",
+                                "source": "Projekt Beż",
+                                "target": "A. Dąbrowska"
                             },
                             {
-                                "label": "podlega",
-                                "source": "Janusz Wąs",
-                                "target": "CBA"
+                                "label": "kwota finansowania",
+                                "source": "Projekt Beż",
+                                "target": "4,8 mln PLN"
                             },
                             {
-                                "label": "nadzorował czynności",
-                                "source": "Janusz Wąs",
-                                "target": "przesłuchania i zabezpieczanie dowodów"
+                                "label": "finansuje",
+                                "source": "NCBR",
+                                "target": "Projekt Beż"
                             },
                             {
-                                "label": "jest członkiem",
-                                "source": "Krystyna Zadrzyńska",
-                                "target": "Zespół Śledczy CBŚP"
+                                "label": "finansuje",
+                                "source": "BGK",
+                                "target": "Projekt Beż"
                             },
                             {
-                                "label": "wspólnie prowadziła śledztwo z",
-                                "source": "Krystyna Zadrzyńska",
-                                "target": "Janusz Wąs"
+                                "label": "prowadzona przez",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "A. Dąbrowska"
                             },
                             {
-                                "label": "wspólnie prowadziła śledztwo z",
-                                "source": "Krystyna Zadrzyńska",
-                                "target": "Marek Bąk"
+                                "label": "siedziba w",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "Łódzki Park Technologiczny"
                             },
                             {
-                                "label": "nadzorowała czynności",
-                                "source": "Krystyna Zadrzyńska",
-                                "target": "przesłuchania i zabezpieczanie dowodów"
+                                "label": "zakupuje od",
+                                "source": "BeigeLife Innovations sp. z o.o.",
+                                "target": "NeutralTech Solutions Ltd."
                             },
                             {
-                                "label": "jest członkiem",
-                                "source": "Marek Bąk",
-                                "target": "Zespół Śledczy CBŚP"
+                                "label": "z siedzibą w",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "Cypru"
                             },
                             {
-                                "label": "wspólnie prowadził śledztwo z",
-                                "source": "Marek Bąk",
-                                "target": "Janusz Wąs"
+                                "label": "sprzedaje",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "linię produkcyjną i wyposażenie"
                             },
                             {
-                                "label": "wspólnie prowadził śledztwo z",
-                                "source": "Marek Bąk",
-                                "target": "Krystyna Zadrzyńska"
+                                "label": "pełni rolę",
+                                "source": "Agnieszka Malinowska",
+                                "target": "centralnej księgowej"
                             },
                             {
-                                "label": "nadzorował czynności",
-                                "source": "Marek Bąk",
-                                "target": "przesłuchania i zabezpieczanie dowodów"
+                                "label": "zarządza finansami poprzez",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Astro-Precision Logistics"
                             },
                             {
-                                "label": "zainicjował przekazanie sprawy",
-                                "source": "Andrzej Czujny",
-                                "target": "CBA"
+                                "label": "firma fikcyjna",
+                                "source": "Astro-Precision Logistics",
+                                "target": "tak"
                             },
                             {
-                                "label": "podpisał",
-                                "source": "Andrzej Czujny",
-                                "target": "Raport wstępnej analizy i wnioski o dalsze czynności"
+                                "label": "popełnia przestępstwa",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "wyłudzenie dotacji i kredytu technologicznego"
                             },
                             {
-                                "label": "przejął sprawę od",
-                                "source": "Prokurator z Prokuratury Regionalnej w Warszawie",
-                                "target": "CBA"
+                                "label": "członek",
+                                "source": "ZGP",
+                                "target": "Agnieszka"
                             },
                             {
-                                "label": "wydał postanowienia dotyczące",
-                                "source": "Prokurator z Prokuratury Regionalnej w Warszawie",
-                                "target": "aresztu"
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Seszele"
                             },
                             {
-                                "label": "wydał postanowienie o",
-                                "source": "Sędzia [Nazwa Sądu]",
-                                "target": "tymczasowym areszcie Agnieszki [NAZWISKO USTALONE]"
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Belize"
                             },
                             {
-                                "label": "inicjował śledztwo i przekazał materiały do",
-                                "source": "Zespół Śledczy Centralnego Biura Śledczego Policji (CBŚP)",
-                                "target": "CBA"
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Cypr"
                             },
                             {
-                                "label": "przejęło sprawę od",
-                                "source": "Centralne Biuro Antykorupcyjne (CBA)",
-                                "target": "CBŚP"
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Liechtenstein"
                             },
                             {
-                                "label": "przejęła sprawę od",
-                                "source": "Prokuratura Regionalna w Warszawie (Delegatura)",
-                                "target": "CBA"
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Vanuatu"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Szwajcaria"
+                            },
+                            {
+                                "label": "wykorzystywane",
+                                "source": "Transfery",
+                                "target": "XMR, ETH"
+                            },
+                            {
+                                "label": "dotyczy",
+                                "source": "Raport przesłuchania Agnieszki Dąbrowskiej",
+                                "target": "Wyłudzenie dotacji i kredytu technologicznego"
+                            },
+                            {
+                                "label": "dotyczy",
+                                "source": "Analiza przepływów finansowych",
+                                "target": "Transfery kryptowalutowe (XMR, ETH), transfery międzynarodowe"
+                            },
+                            {
+                                "label": "dotyczy",
+                                "source": "Notatka służbowa CBŚP",
+                                "target": "Agnieszka Malinowska - centralne zarządzanie finansami i ich dalsza legalizacja"
                             }
                         ]
-                    }
+                    },
+                    "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Wygeneruj graf ilustrujący pełny cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalne odbiorcy końcowi lub dalsze transfery (np. do rajów podatkowych).\n\nOdpowiedź: Cykl finansowania \"Projektu Beż\" (prowadzonym przez Agnieszkę Dąbrowską) rozpoczyna się od uzyskania dotacji z Narodowego Centrum Badań i Rozwoju (NCBR) oraz kredytu technologicznego z Banku Gospodarstwa Krajowego (BGK) na łączną kwotę 4.800.000 PLN, uzyskanych na podstawie sfałszowanych dokumentów (Raport_finansowy_Q4.pdf, Spotkanie_zarządu_dnotatki.docx). Środki te zostały przekazane do firmy \"BeigeLife Innovations\" (należącej do A. Dąbrowskiej) i następnie kierowane przez firmę-słup \"NeutralTech Solutions Ltd.\" z Cypru. Kluczową rolę w procesie legalizacji odgrywała Agnieszka Malinowska (\"Czas\"/\"Kosmiczna Rachunkowość\"), zarządzająca finansami grupy, poprzez nierzetelne prowadzenie ksiąg firmy \"Astro-Precision Logistics\".  Dalsze transfery środków miały miejsce do rajów podatkowych (Seszele, Belize, Cypr, Liechtenstein, Vanuatu) oraz na konta bankowe w Szwajcarii. Odbiorcami końcowymi lub beneficjentami tych środków byli członkowie zorganizowanej grupy przestępczej \"Agnieszka\" (w tym A. Dąbrowska), a środki te były wykorzystywane do finansowania ich dalszej działalności przestępczej.\n\n**Kluczowe byty i relacje:**\n\n*   **Narodowe Centrum Badań i Rozwoju (NCBR)** DOTOWAŁO 4.800.000 PLN na \"innowacyjną żywność funkcjonalną\" prowadzoną przez A. Dąbrowską.\n*   **Bank Gospodarstwa Krajowego (BGK)** PRZEBUDOWAŁ kredyt technologiczny na kwotę częściową w stosunku do dotacji z NCBR.\n*   **Agnieszka Dąbrowska (\"Beż\")** UZYSKAŁA dotację i kredyt, przedstawiając fałszywe dokumenty i biznesplany.\n*   **\"BeigeLife Innovations\"** (firma należąca do A. Dąbrowskiej) OTRZYMAŁA dotację i kredyt.\n*   **NeutralTech Solutions Ltd.** (firma z Cypru) DZIAŁAŁA jako firma-słup, pośrednicząc w transferze środków.\n*   **Agnieszka Malinowska (\"Czas\"/\"Kosmiczna Rachunkowość\")** ZARZĄDZAŁA finansami grupy i legalizowała środki poprzez nierzetelne księgowości \"Astro-Precision Logistics\".\n*   **Rajskie jurysdykcje (Seszele, Belize, Cypr, Liechtenstein, Vanuatu)** STANOWIły miejsce ostatecznego transferu środków.\n*  **Szwajcarskie banki** PRZYJMOWAŁY środki z rajów podatkowych i finansowały działalność grupy.\n\nŹródło w dokumentach: Raport_finansowy_Q4.pdf, Spotkanie_zarządu_dnotatki.docx, analiza przepływów finansowych (zabezpieczone portfele kryptowalutowe), plik \"Plan Działan_Tekstylia_Ldz\" znaleziony na laptopie A. Malinowskiej,  Notatka Służbowa z 16.06.2024.\n\nKomentarz: Graficzny schemat relacji nie może zostać wygenerowany bezpośrednio w tej formie odpowiedzi tekstowej. Powyższa odpowiedź opisuje strukturę i relacje między bytami oraz przedstawia ich rolę w cyklu finansowania i legalizacji środków \"Projektu Beż\".  Dokładny graf mógłby wizualizować te relacje, pokazując przepływ pieniędzy pomiędzy poszczególnymi podmiotami.\n",
+                    "sources": [
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt"
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Projekt Beż",
+                                "ner_type": null,
+                                "id": "Projekt Beż"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "NCBR",
+                                "ner_type": "orgName",
+                                "id": "NCBR"
+                            },
+                            {
+                                "label": "BGK",
+                                "ner_type": "orgName",
+                                "id": "BGK"
+                            },
+                            {
+                                "label": "Raport_finansowy_Q4.pdf",
+                                "ner_type": null,
+                                "id": "Raport_finansowy_Q4.pdf"
+                            },
+                            {
+                                "label": "dotacji i kredytu",
+                                "ner_type": null,
+                                "id": "dotacji i kredytu"
+                            },
+                            {
+                                "label": "Spotkanie_zarządu_dnotatki.docx",
+                                "ner_type": null,
+                                "id": "Spotkanie_zarządu_dnotatki.docx"
+                            },
+                            {
+                                "label": "Środki",
+                                "ner_type": null,
+                                "id": "Środki"
+                            },
+                            {
+                                "label": "BeigeLife Innovations",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd.",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "firma-słup",
+                                "ner_type": null,
+                                "id": "firma-słup"
+                            },
+                            {
+                                "label": "Cypru",
+                                "ner_type": "placeName",
+                                "id": "Cypru"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "Astro-Precision Logistics",
+                                "ner_type": null,
+                                "id": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "Czas",
+                                "ner_type": null,
+                                "id": "Czas"
+                            },
+                            {
+                                "label": "Kosmiczna Rachunkowość",
+                                "ner_type": null,
+                                "id": "Kosmiczna Rachunkowość"
+                            },
+                            {
+                                "label": "Seszele",
+                                "ner_type": "placeName",
+                                "id": "Seszele"
+                            },
+                            {
+                                "label": "Belize",
+                                "ner_type": "placeName",
+                                "id": "Belize"
+                            },
+                            {
+                                "label": "Cypr",
+                                "ner_type": "orgName",
+                                "id": "Cypr"
+                            },
+                            {
+                                "label": "Liechtenstein",
+                                "ner_type": "placeName",
+                                "id": "Liechtenstein"
+                            },
+                            {
+                                "label": "Vanuatu",
+                                "ner_type": "placeName",
+                                "id": "Vanuatu"
+                            },
+                            {
+                                "label": "Szwajcaria",
+                                "ner_type": "placeName",
+                                "id": "Szwajcaria"
+                            },
+                            {
+                                "label": "zorganizowanej grupy przestępczej 'Agnieszka'",
+                                "ner_type": "persName",
+                                "id": "zorganizowanej grupy przestępczej 'Agnieszka'"
+                            },
+                            {
+                                "label": "dalszej działalności przestępczej",
+                                "ner_type": null,
+                                "id": "dalszej działalności przestępczej"
+                            },
+                            {
+                                "label": "Notatka Służbowa z 16.06.2024",
+                                "ner_type": "persName",
+                                "id": "Notatka Służbowa z 16.06.2024"
+                            },
+                            {
+                                "label": "Projektu Beż",
+                                "ner_type": null,
+                                "id": "Projektu Beż"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "prowadzony przez",
+                                "source": "Projekt Beż",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "uzyskuje dotację z",
+                                "source": "Projekt Beż",
+                                "target": "NCBR"
+                            },
+                            {
+                                "label": "uzyskuje kredyt z",
+                                "source": "Projekt Beż",
+                                "target": "BGK"
+                            },
+                            {
+                                "label": "jest członkiem",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "zorganizowanej grupy przestępczej 'Agnieszka'"
+                            },
+                            {
+                                "label": "finansuje",
+                                "source": "NCBR",
+                                "target": "Projekt Beż"
+                            },
+                            {
+                                "label": "udziela kredytu",
+                                "source": "BGK",
+                                "target": "Projekt Beż"
+                            },
+                            {
+                                "label": "jest podstawą dla",
+                                "source": "Raport_finansowy_Q4.pdf",
+                                "target": "dotacji i kredytu"
+                            },
+                            {
+                                "label": "jest podstawą dla",
+                                "source": "Spotkanie_zarządu_dnotatki.docx",
+                                "target": "dotacji i kredytu"
+                            },
+                            {
+                                "label": "przekazane do",
+                                "source": "Środki",
+                                "target": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Seszele"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Belize"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Cypr"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Liechtenstein"
+                            },
+                            {
+                                "label": "transferowane do",
+                                "source": "Środki",
+                                "target": "Vanuatu"
+                            },
+                            {
+                                "label": "transferowane na konta bankowe w",
+                                "source": "Środki",
+                                "target": "Szwajcaria"
+                            },
+                            {
+                                "label": "wykorzystywane do",
+                                "source": "Środki",
+                                "target": "dalszej działalności przestępczej"
+                            },
+                            {
+                                "label": "należy do",
+                                "source": "BeigeLife Innovations",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "działa jako",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "firma-słup"
+                            },
+                            {
+                                "label": "znajduje się w",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "Cypru"
+                            },
+                            {
+                                "label": "zarządza finansami grupy",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "pracuje pod pseudonimem",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Czas"
+                            },
+                            {
+                                "label": "pracuje pod pseudonimem",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Kosmiczna Rachunkowość"
+                            },
+                            {
+                                "label": "dotyczy",
+                                "source": "Notatka Służbowa z 16.06.2024",
+                                "target": "Projektu Beż"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
                 }
             ]
         },
