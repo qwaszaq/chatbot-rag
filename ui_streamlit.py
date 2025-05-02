@@ -149,10 +149,11 @@ def save_chat_history(chats_data, active_chat_id):
                     msg_to_save["content"] = content_str
                 # ----------------------------
 
-                # --- Logika zapisu źródeł, grafu i promptu ---
+                # --- Logika zapisu źródeł, grafu, promptu i metadanych ---
                 if "sources" in msg: msg_to_save["sources"] = msg["sources"]
                 if "graph_data" in msg: msg_to_save["graph_data"] = msg["graph_data"]
-                if "prompt_answered" in msg: msg_to_save["prompt_answered"] = msg["prompt_answered"] # Dodano zapis promptu
+                if "prompt_answered" in msg: msg_to_save["prompt_answered"] = msg["prompt_answered"]
+                if "metadata" in msg: msg_to_save["metadata"] = msg["metadata"] # DODANO: Zapis metadanych
                 # ------------------------------------
 
                 if role and "content" in msg_to_save: # Zapisz tylko jeśli jest rola i treść
@@ -188,57 +189,57 @@ def main():
     if "chats" not in st.session_state:
          loaded_data = load_chat_history()
          if loaded_data:
-              st.session_state.chats = loaded_data["chats"]
-              if loaded_data["active_chat_id"] in st.session_state.chats:
-                   st.session_state.active_chat_id = loaded_data["active_chat_id"]
+              # Przywróć stan z pliku
+              st.session_state.chats = loaded_data.get("chats", {})
+              active_chat_id_from_file = loaded_data.get("active_chat_id")
+              if active_chat_id_from_file and active_chat_id_from_file in st.session_state.chats:
+                   st.session_state.active_chat_id = active_chat_id_from_file
               elif st.session_state.chats:
                    st.session_state.active_chat_id = next(iter(st.session_state.chats))
                    logger.warning("Załadowany active_chat_id był nieprawidłowy. Ustawiono pierwszy dostępny.")
-              else:
+              else: # Plik istnieje, ale jest pusty lub uszkodzony
                    first_chat_id = str(uuid.uuid4())
                    st.session_state.chats = {first_chat_id: {"name": "Czat 1", "messages": []}}
                    st.session_state.active_chat_id = first_chat_id
-                   logger.info("Załadowano pustą historię, utworzono nowy domyślny czat.")
+                   logger.warning("Plik historii istniał, ale był pusty lub nieprawidłowy. Utworzono nowy domyślny czat.")
                    save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-         else:
+         else: # Plik nie istnieje lub błąd ładowania
               first_chat_id = str(uuid.uuid4())
               st.session_state.chats = {first_chat_id: {"name": "Czat 1", "messages": []}}
               st.session_state.active_chat_id = first_chat_id
               logger.info("Nie załadowano historii. Utworzono nowy domyślny czat.")
               save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
+    # Sprawdź, czy active_chat_id jest nadal prawidłowy po potencjalnym usunięciu czatu
     elif "active_chat_id" not in st.session_state or st.session_state.active_chat_id not in st.session_state.chats:
          if st.session_state.chats:
               st.session_state.active_chat_id = next(iter(st.session_state.chats))
               logger.warning(f"Active_chat_id brakujący lub nieprawidłowy po inicjalizacji. Ustawiono na: {st.session_state.active_chat_id}")
               save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-         else:
+         else: # Stan awaryjny - brak czatów
               first_chat_id = str(uuid.uuid4())
               st.session_state.chats = {first_chat_id: {"name": "Czat 1", "messages": []}}
               st.session_state.active_chat_id = first_chat_id
               logger.error("Stan awaryjny: Brak czatów i active_chat_id po inicjalizacji. Utworzono nowy domyślny czat.")
               save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
 
-    # Inicjalizacja wybranego trybu czatu w stanie sesji
+    # Inicjalizacja pozostałych kluczy stanu sesji
     if 'selected_chat_mode' not in st.session_state:
         st.session_state.selected_chat_mode = "Analityk Tekstu (RAG)"
-    # DODANO: Inicjalizacja stanu dla checkboxa Gemini API
     if 'use_gemini_api' not in st.session_state:
         st.session_state.use_gemini_api = False
-    # Inicjalizacja stanu checkboxa do filtrowania małych grafów
     if 'filter_small_graphs' not in st.session_state:
-        st.session_state.filter_small_graphs = True # Domyślnie filtruj (checkbox zaznaczony)
-    # Inicjalizacja stanu dla wyników klastrowania
+        st.session_state.filter_small_graphs = True
     if 'cluster_assignments' not in st.session_state:
-        st.session_state.cluster_assignments = None # Słownik {point_id: cluster_label}
+        st.session_state.cluster_assignments = None
     if 'cluster_labels' not in st.session_state:
-        st.session_state.cluster_labels = None # Słownik {cluster_label: opis}
-    if 'qdrant_data_cache' not in st.session_state: # Do przechowywania danych z Qdrant
+        st.session_state.cluster_labels = None
+    if 'qdrant_data_cache' not in st.session_state:
         st.session_state.qdrant_data_cache = None
-    if 'selected_cluster_id' not in st.session_state: # Do przechowywania wybranego klastra
+    if 'selected_cluster_id' not in st.session_state:
         st.session_state.selected_cluster_id = None
-    if 'cluster_summaries' not in st.session_state: # Do przechowywania podsumowań
+    if 'cluster_summaries' not in st.session_state:
         st.session_state.cluster_summaries = {}
-    if 'cluster_entities' not in st.session_state: # Do przechowywania encji
+    if 'cluster_entities' not in st.session_state:
         st.session_state.cluster_entities = {}
     # ---------------------------------------------------
 
@@ -352,7 +353,7 @@ def main():
         st.markdown("---")
         st.header("🤖 Wybór Modelu")
 
-        # DODANO: Checkbox do przełączania na Gemini API
+        # Checkbox do przełączania na Gemini API
         st.session_state.use_gemini_api = st.checkbox(
             "✨ Użyj Google Gemini API (pomija RAG)",
             key="gemini_api_checkbox",
@@ -360,15 +361,22 @@ def main():
             help="Jeśli zaznaczone, zapytania będą kierowane bezpośrednio do Google Gemini Flash API (wymaga klucza API). Pomija wyszukiwanie w dokumentach (RAG)."
         )
 
-        # Ukryj wybór trybu RAG, jeśli Gemini API jest aktywne
+        # Ukryj wybór trybu RAG i ustawienia, jeśli Gemini API jest aktywne
         if not st.session_state.use_gemini_api:
             st.header("🎭 Wybierz Tryb Czatu (Lokalny LLM)")
             ALL_CHAT_MODES = ["Zwykły Chat"] + list(AVAILABLE_PROMPTS.keys())
+            # Upewnij się, że wybrany tryb jest w opcjach, fallback na pierwszy
+            current_mode_index = 0
+            if st.session_state.selected_chat_mode in ALL_CHAT_MODES:
+                current_mode_index = ALL_CHAT_MODES.index(st.session_state.selected_chat_mode)
+            else:
+                st.session_state.selected_chat_mode = ALL_CHAT_MODES[0] # Fallback
+
             st.session_state.selected_chat_mode = st.radio(
                 "Wybierz tryb:",
                 options=ALL_CHAT_MODES,
                 key="mode_selector",
-                index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode)
+                index=current_mode_index
             )
             if st.session_state.selected_chat_mode != "Zwykły Chat":
                 with st.expander("Podgląd wybranego promptu systemowego"):
@@ -385,7 +393,7 @@ def main():
             st.markdown("---")
 
 
-        # === DODANO SEKCJE KLASTROWANIA ===
+        # === SEKCJA KLASTROWANIA ===
         st.header("🔬 Analiza Klastrowania")
         num_clusters_kmeans = st.number_input("Liczba klastrów (dla K-Means):", min_value=2, max_value=50, value=8, step=1, key="kmeans_clusters")
 
@@ -401,16 +409,13 @@ def main():
 
                     if not qdrant_data:
                          st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
-                         # Wyzeruj wyniki klastrowania w stanie sesji
                          st.session_state.cluster_assignments = None
                          st.session_state.cluster_labels = None
                     else:
-                         # Przygotuj dane dla scikit-learn
                          point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
                          embeddings_matrix = np.array([d['vector'] for d in qdrant_data if d.get('vector') is not None])
 
                          if embeddings_matrix.shape[0] > 0:
-                             # Krok 2: Wykonaj klastrowanie
                              cluster_labels_array = perform_clustering(
                                  embeddings_matrix,
                                  algorithm='kmeans',
@@ -418,26 +423,21 @@ def main():
                              )
 
                              if cluster_labels_array is not None:
-                                 # Krok 3: Zapisz wyniki
                                  st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
                                  st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array))} klastrów dla {len(point_ids)} punktów.")
 
-                                 # Krok 4: Generuj etykiety (jeśli są dane i LLM)
                                  if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
                                      with st.spinner("Generowanie etykiet dla klastrów..."):
                                           st.session_state.cluster_labels = generate_cluster_labels_llm(
                                               st.session_state.cluster_assignments,
-                                              st.session_state.qdrant_data_cache, # Użyj danych z cache
+                                              st.session_state.qdrant_data_cache,
                                               st.session_state.chatbot.llm
                                           )
-                                          if st.session_state.cluster_labels:
-                                               st.success("✅ Etykiety klastrów wygenerowane.")
-                                          else:
-                                               st.warning("⚠️ Nie udało się wygenerować etykiet dla klastrów.")
+                                          if st.session_state.cluster_labels: st.success("✅ Etykiety klastrów wygenerowane.")
+                                          else: st.warning("⚠️ Nie udało się wygenerować etykiet dla klastrów.")
                                  else:
-                                      st.warning("Nie można wygenerować etykiet klastrów (brak wyników klastrowania lub instancji LLM).")
+                                      st.warning("Nie można wygenerować etykiet (brak wyników klastrowania lub LLM).")
                                       st.session_state.cluster_labels = None
-
                              else:
                                  st.error("❌ Wystąpił błąd podczas klastrowania.")
                                  st.session_state.cluster_assignments = None
@@ -446,76 +446,55 @@ def main():
                               st.warning("⚠️ Brak wektorów w pobranych danych do klastrowania.")
                               st.session_state.cluster_assignments = None
                               st.session_state.cluster_labels = None
-
                 except Exception as cluster_e:
                     logger.error(f"❌ Błąd podczas procesu klastrowania: {cluster_e}", exc_info=True)
                     st.error(f"Wystąpił błąd: {cluster_e}")
                     st.session_state.cluster_assignments = None
                     st.session_state.cluster_labels = None
-                    st.session_state.qdrant_data_cache = None # Wyzeruj cache przy błędzie
-            # Odśwież, aby pokazać wyniki
+                    st.session_state.qdrant_data_cache = None
             st.rerun()
 
         # Wyświetlanie informacji o klastrach (jeśli istnieją)
-        cluster_summary_container = st.container() # Kontener dla podsumowania
+        cluster_summary_container = st.container()
         with cluster_summary_container:
              if st.session_state.cluster_assignments:
                  st.subheader("Wyniki Klastrowania")
                  try:
-                     # Zliczanie punktów w każdym klastrze
                      cluster_counts = Counter(st.session_state.cluster_assignments.values())
-                     # Usuń klaster -1 (szum/outliers) jeśli istnieje, do osobnego raportowania
                      noise_points = cluster_counts.pop(-1, 0)
                      num_clusters_found = len(cluster_counts)
-
                      st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
-                     if noise_points > 0:
-                         st.write(f"Liczba punktów szumu/outlierów: {noise_points}")
-
-                     # Sortowanie klastrów po ID
+                     if noise_points > 0: st.write(f"Liczba punktów szumu/outlierów: {noise_points}")
                      sorted_clusters = sorted(cluster_counts.items())
-
-                     # Mapowanie ID punktu na dane (dla szybkiego dostępu) - przeniesione niżej
-                     # point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
-
                      for cluster_id, count in sorted_clusters:
-                          # Użyj wygenerowanej etykiety, jeśli dostępna
                           label_text = f"Klaster {cluster_id}"
                           if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
                               label_text += f": **{st.session_state.cluster_labels[cluster_id]}**"
-
-                          # Użyj przycisku, aby umożliwić wybór klastra
                           if st.button(f"{label_text} ({count} punktów)", key=f"view_cluster_{cluster_id}"):
                               if st.session_state.selected_cluster_id == cluster_id:
-                                   st.session_state.selected_cluster_id = None # Odznacz, jeśli kliknięto ten sam
+                                   st.session_state.selected_cluster_id = None
                               else:
                                    st.session_state.selected_cluster_id = cluster_id
-                              # Wyczyść poprzednie dane przy wyborze nowego klastra
                               if st.session_state.selected_cluster_id is not None:
-                                   # Użyj selected_id, które właśnie ustawiliśmy
-                                   selected_id_local = st.session_state.selected_cluster_id # Zmieniono nazwę zmiennej
+                                   selected_id_local = st.session_state.selected_cluster_id
                                    if selected_id_local in st.session_state.cluster_summaries:
                                         del st.session_state.cluster_summaries[selected_id_local]
                                    if selected_id_local in st.session_state.cluster_entities:
                                        del st.session_state.cluster_entities[selected_id_local]
-                              st.rerun() # Odśwież, aby pokazać/ukryć szczegóły
-
+                              st.rerun()
                  except Exception as e:
                       logger.error(f"Błąd wyświetlania wyników klastrowania: {e}")
                       st.error("Błąd przy wyświetlaniu podsumowania klastrów.")
 
-        # Wyświetlanie szczegółów wybranego klastra (POZA expanderem podsumowania)
+        # Wyświetlanie szczegółów wybranego klastra
         if st.session_state.get('selected_cluster_id') is not None:
              selected_id = st.session_state.selected_cluster_id
-             # Sprawdź, czy dane klastrowania nadal istnieją (mogły zostać wyczyszczone)
              if st.session_state.cluster_assignments and any(cid == selected_id for cid in st.session_state.cluster_assignments.values()):
                   selected_label_text = f"Klaster {selected_id}"
                   if st.session_state.cluster_labels and selected_id in st.session_state.cluster_labels:
                        selected_label_text += f": **{st.session_state.cluster_labels[selected_id]}**"
-
                   st.subheader(f"Szczegóły - {selected_label_text}")
                   try:
-                      # Mapowanie ID punktu na dane (dla szybkiego dostępu w tej sekcji)
                       point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
                       cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
                       cluster_texts = [
@@ -523,79 +502,54 @@ def main():
                            for pid in cluster_point_ids
                            if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
                        ]
-
-                      # --- Przyciski i logika generowania podsumowania i encji ---
                       col1_details, col2_details = st.columns(2)
                       with col1_details:
                            if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
                                if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and cluster_texts:
-                                   with st.spinner(f"Generowanie podsumowania dla {selected_label_text}..."):
-                                       summary = generate_cluster_summary(
-                                           cluster_texts,
-                                           st.session_state.chatbot.llm
-                                       )
+                                   with st.spinner(f"Generowanie podsumowania..."):
+                                       summary = generate_cluster_summary(cluster_texts, st.session_state.chatbot.llm)
                                        st.session_state.cluster_summaries[selected_id] = summary
                                        st.rerun()
                                elif not cluster_texts:
-                                   st.warning("Brak tekstów w tym klastrze do wygenerowania podsumowania.")
-                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów w klastrze."
-                               else:
-                                   st.error("Nie można wygenerować podsumowania. Brakuje chatbota lub danych.")
+                                   st.warning("Brak tekstów w klastrze.")
+                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
+                               else: st.error("Błąd generowania podsumowania.")
                       with col2_details:
-                           # DODANO: Przycisk i logika dla encji
                            if st.button("🧐 Pokaż Kluczowe Obiekty", key=f"entities_{selected_id}", use_container_width=True):
                                 if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and cluster_texts:
-                                     if st.session_state.chatbot.nlp is None:
-                                         st.error("Model spaCy (nlp) nie jest załadowany. Nie można wyekstrahować encji.")
+                                     if st.session_state.chatbot.nlp is None: st.error("Model spaCy niedostępny.")
                                      else:
-                                         with st.spinner(f"Ekstrakcja kluczowych bytów dla {selected_label_text}..."):
-                                             entities = extract_key_entities(
-                                                 cluster_texts,
-                                                 st.session_state.chatbot.nlp
-                                             )
+                                         with st.spinner(f"Ekstrakcja bytów..."):
+                                             entities = extract_key_entities(cluster_texts, st.session_state.chatbot.nlp)
                                              st.session_state.cluster_entities[selected_id] = entities
-                                             st.rerun() # Odśwież, aby wyświetlić encje
+                                             st.rerun()
                                 elif not cluster_texts:
-                                     st.warning("Brak tekstów w tym klastrze do ekstrakcji encji.")
+                                     st.warning("Brak tekstów w klastrze.")
                                      st.session_state.cluster_entities[selected_id] = []
-                                else:
-                                     st.error("Nie można wyekstrahować encji. Brakuje chatbota, modelu nlp lub danych.")
-
-
-                      # Wyświetlanie podsumowania (jeśli istnieje)
+                                else: st.error("Błąd ekstrakcji bytów.")
                       if selected_id in st.session_state.cluster_summaries:
                            st.markdown("**Podsumowanie klastra:**")
                            st.markdown(st.session_state.cluster_summaries[selected_id])
                            st.markdown("---")
-
-                      # DODANO: Wyświetlanie kluczowych bytów (jeśli istnieją)
                       if selected_id in st.session_state.cluster_entities:
                            st.markdown("**Kluczowe Obiekty:**")
                            entities_list = st.session_state.cluster_entities[selected_id]
                            if entities_list:
                                for entity_text, entity_label, count in entities_list:
                                    st.markdown(f"- `{entity_text}` ({entity_label}): {count}")
-                           else:
-                               st.caption("_Nie znaleziono kluczowych bytów lub ekstrakcja nie została przeprowadzona._")
+                           else: st.caption("_Brak bytów lub błąd ekstrakcji._")
                            st.markdown("---")
-                      # --------------------------------------------------
-
-                      # Wyświetlanie listy punktów (chunków)
-                      if not cluster_point_ids:
-                          st.write("Brak punktów w tym klastrze.")
-                      elif not st.session_state.qdrant_data_cache:
-                          st.warning("Dane Qdrant nie są dostępne w cache. Odśwież klastry.")
+                      if not cluster_point_ids: st.write("Brak punktów w klastrze.")
+                      elif not st.session_state.qdrant_data_cache: st.warning("Cache danych Qdrant niedostępny.")
                       else:
                           st.write(f"Punkty ({len(cluster_point_ids)}):")
                           points_shown = 0
-                          MAX_POINTS_TO_SHOW = 20 # Ogranicznik dla wydajności UI
-                          # Użyj expandera do listy punktów, aby nie zajmowała za dużo miejsca
+                          MAX_POINTS_TO_SHOW = 20
                           with st.expander(f"Pokaż/Ukryj listę punktów ({min(len(cluster_point_ids), MAX_POINTS_TO_SHOW)} z {len(cluster_point_ids)})"):
                                for point_id in cluster_point_ids:
                                    if points_shown >= MAX_POINTS_TO_SHOW:
                                        st.caption(f"... i {len(cluster_point_ids) - MAX_POINTS_TO_SHOW} więcej.")
                                        break
-
                                    point_data = point_id_to_data.get(point_id)
                                    if point_data and point_data.get('payload'):
                                        payload = point_data['payload']
@@ -603,28 +557,21 @@ def main():
                                        content = payload.get('page_content', '_brak treści_')
                                        source_name = metadata.get('source', metadata.get('file_path', metadata.get('filename', 'nieznane źródło')))
                                        display_name = os.path.basename(source_name)
-
                                        st.markdown(f"**Źródło:** `{display_name}` (ID: `{point_id}`)")
                                        st.text_area(f"Treść fragmentu {point_id[:8]}...", value=content, height=100, disabled=True, key=f"chunk_{point_id}")
                                        st.markdown("---")
                                        points_shown += 1
-                                   else:
-                                       st.warning(f"Brak danych payload dla punktu {point_id}")
+                                   else: st.warning(f"Brak danych payload dla punktu {point_id}")
                   except Exception as detail_e:
                        logger.error(f"Błąd wyświetlania szczegółów klastra {selected_id}: {detail_e}")
                        st.error(f"Błąd przy wyświetlaniu szczegółów klastra {selected_id}.")
              else:
-                  # Jeśli wybrany klaster już nie istnieje (np. po odświeżeniu), wyczyść wybór
                   st.session_state.selected_cluster_id = None
-                  st.warning("Wybrany klaster nie jest już dostępny. Odśwież listę.")
-                  # st.rerun() # Usunięto rerun, aby uniknąć pętli odświeżania
-
-
+                  st.warning("Wybrany klaster nie jest już dostępny.")
         st.markdown("---")
         # === KONIEC SEKCJI KLASTROWANIA ===
 
         st.header("📊 Ustawienia Grafu")
-        # Checkbox do filtrowania grafów wg liczby węzłów
         st.session_state.filter_small_graphs = st.checkbox(
             "Filtruj małe grafy (min. 3 węzły)",
             value=st.session_state.filter_small_graphs,
@@ -815,8 +762,19 @@ def main():
                    content_to_display = message.get("content", "_Brak treści_")
                    sources_to_display = message.get("sources", []) # Oczekujemy listy słowników {'name': ..., 'id': ...} lub listy stringów (stara historia)
                    graph_data_to_display = message.get("graph_data")
+                   metadata_to_display = message.get("metadata") # DODANO: Pobierz metadane
 
                    st.markdown(content_to_display)
+
+                   # DODANO: Wyświetlanie metadanych, jeśli istnieją
+                   if metadata_to_display:
+                       model_name = metadata_to_display.get('model', 'N/A')
+                       tokens = metadata_to_display.get('tokens')
+                       resp_time = metadata_to_display.get('time')
+                       meta_parts = [f"Model: {model_name}"]
+                       if tokens is not None: meta_parts.append(f"Tokeny: {tokens}")
+                       if resp_time is not None: meta_parts.append(f"Czas: {resp_time:.2f}s")
+                       st.caption(" | ".join(meta_parts))
 
                    if sources_to_display:
                            with st.expander("Źródła"):
@@ -958,6 +916,7 @@ def main():
                 with st.spinner("Myślę..."):
                     try:
                         response_content_str = ""
+                        response_metadata = {} # DODANO: Słownik na metadane
                         sources = []
                         graph_data = None
                         prompt_answered = last_user_prompt
@@ -966,17 +925,23 @@ def main():
                         if st.session_state.use_gemini_api:
                             logger.info("✨ Tryb: Google Gemini API")
                             if st.session_state.chatbot.gemini_llm:
-                                gemini_response = st.session_state.chatbot.gemini_llm.invoke(last_user_prompt)
-                                if hasattr(gemini_response, 'content'):
-                                    response_content_str = gemini_response.content
-                                elif isinstance(gemini_response, str):
-                                    response_content_str = gemini_response
+                                # Wywołaj dedykowaną metodę dla Gemini
+                                response_dict = st.session_state.chatbot._generate_gemini_answer(last_user_prompt)
+                                if response_dict and response_dict.get("content"):
+                                    gemini_response = response_dict["content"]
+                                    if hasattr(gemini_response, 'content'):
+                                        response_content_str = gemini_response.content
+                                    elif isinstance(gemini_response, str):
+                                        response_content_str = gemini_response
+                                    else:
+                                        response_content_str = str(gemini_response)
+                                    response_metadata = response_dict.get("metadata", {}) # Pobierz metadane
+                                    logger.info("✅ Odpowiedź z Gemini API otrzymana.")
                                 else:
-                                    response_content_str = str(gemini_response)
-                                # W trybie Gemini API nie ma źródeł ani grafu
+                                     response_content_str = "Błąd: Otrzymano nieprawidłową odpowiedź z Gemini API."
+                                     logger.error(response_content_str)
                                 sources = []
                                 graph_data = None
-                                logger.info("✅ Odpowiedź z Gemini API otrzymana.")
                             else:
                                 response_content_str = "Błąd: Model Google Gemini nie został poprawnie zainicjalizowany."
                                 logger.error(response_content_str)
@@ -985,13 +950,20 @@ def main():
                         # Logika dla lokalnego LLM (Zwykły Chat lub RAG)
                         elif st.session_state.selected_chat_mode == "Zwykły Chat":
                             logger.info("💬 Tryb: Zwykły Chat (Lokalny LLM) - wywołanie LLM bez RAG")
-                            plain_response = st.session_state.chatbot.llm.invoke(last_user_prompt)
-                            if hasattr(plain_response, 'content'):
-                                response_content_str = plain_response.content
-                            elif isinstance(plain_response, str):
-                                response_content_str = plain_response
+                            # Użyj _generate_answer dla spójności metadanych
+                            response_dict = st.session_state.chatbot._generate_answer(last_user_prompt, "", "") # Pusty kontekst i prompt systemowy
+                            if response_dict and response_dict.get("content"):
+                                plain_response = response_dict["content"]
+                                if hasattr(plain_response, 'content'):
+                                    response_content_str = plain_response.content
+                                elif isinstance(plain_response, str):
+                                    response_content_str = plain_response
+                                else:
+                                    response_content_str = str(plain_response)
+                                response_metadata = response_dict.get("metadata", {})
                             else:
-                                response_content_str = str(plain_response)
+                                 response_content_str = "Błąd: Otrzymano nieprawidłową odpowiedź z lokalnego LLM."
+                                 logger.error(response_content_str)
                             sources = []
                             graph_data = None
                         else: # Tryb RAG z lokalnym LLM
@@ -1006,20 +978,29 @@ def main():
                                 system_prompt_override=selected_prompt_text,
                                 cluster_assignments=st.session_state.get('cluster_assignments') # Przekaż, jeśli istnieje
                             )
-                            if isinstance(response_dict.get("content"), AIMessage):
-                                 response_content_str = response_dict.get("content").content
-                            elif isinstance(response_dict.get("content"), str):
-                                 response_content_str = response_dict.get("content")
+                            # _generate_answer jest wywoływane wewnątrz query, więc response_dict już zawiera 'content' i 'metadata'
+                            if response_dict and response_dict.get("content"):
+                                rag_response_content = response_dict["content"]
+                                if isinstance(rag_response_content, AIMessage):
+                                     response_content_str = rag_response_content.content
+                                elif isinstance(rag_response_content, str):
+                                     response_content_str = rag_response_content
+                                else:
+                                     response_content_str = str(rag_response_content)
+                                response_metadata = response_dict.get("metadata", {})
                             else:
-                                 response_content_str = str(response_dict.get("content",""))
+                                 response_content_str = "Błąd: Otrzymano nieprawidłową odpowiedź z RAG."
+                                 logger.error(response_content_str)
 
-                        # Zapis odpowiedzi do historii
+
+                        # Zapis odpowiedzi do historii (z metadanymi)
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": response_content_str,
-                            "sources": sources, # Przekazujemy listę słowników lub pustą listę
-                            "graph_data": graph_data, # Przekazujemy dane grafu lub None
-                            "prompt_answered": prompt_answered
+                            "sources": sources,
+                            "graph_data": graph_data,
+                            "prompt_answered": prompt_answered,
+                            "metadata": response_metadata # DODANO: Zapis metadanych
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
                         st.rerun()
@@ -1029,14 +1010,15 @@ def main():
                         pass
 
                     except Exception as e:
-                        logger.error(f"❌ Błąd podczas przetwarzania pytania w trybie '{st.session_state.selected_chat_mode}': {str(e)}", exc_info=True)
+                        logger.error(f"❌ Błąd podczas przetwarzania pytania w trybie '{st.session_state.selected_chat_mode}' lub Gemini: {str(e)}", exc_info=True)
                         error_message = f"Wystąpił błąd: {e}"
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": error_message,
                             "sources": [],
                             "graph_data": None,
-                            "prompt_answered": last_user_prompt
+                            "prompt_answered": last_user_prompt,
+                            "metadata": {"model": "Błąd", "tokens": None, "time": 0.0} # Dodaj metadane błędu
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
                         st.rerun()

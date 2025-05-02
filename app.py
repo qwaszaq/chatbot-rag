@@ -92,7 +92,7 @@ class RAGChatbot:
         # DODANO: Inicjalizacja modelu Google Gemini
         try:
             self.gemini_llm = ChatGoogleGenerativeAI(
-                model="gemini-1.5-flash-preview-04-17", # Używamy wskazanego modelu flash
+                model="gemini-2.5-flash-preview-04-17", # Poprawiona nazwa modelu flash
                 google_api_key=GOOGLE_API_KEY,
                 temperature=0.7,
                 # convert_system_message_to_human=True # Może być potrzebne dla niektórych promptów systemowych
@@ -256,7 +256,7 @@ class RAGChatbot:
             logger.info(f"✅ Zbudowano początkowy kontekst z {len(context_parts)} chunków.")
             logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia: {top_sources}")
 
-            # === DODANO: Logika rozszerzania kontekstu na podstawie klastrów ===
+            # === Logika rozszerzania kontekstu na podstawie klastrów ===
             if cluster_assignments and initial_context_point_ids:
                 logger.info(f"🧩 Rozszerzanie kontekstu na podstawie klastrów (dominujące: {expand_context_clusters}, dodatkowe: {expand_context_docs})...")
                 # Znajdź klastry dla punktów w początkowym kontekście
@@ -363,7 +363,7 @@ class RAGChatbot:
 
     def _generate_answer(self, question, context, system_prompt_text):
         """
-        Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM,
+        Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM (lokalnego),
         dołączając metadane dotyczące generowania.
 
         Args:
@@ -377,7 +377,7 @@ class RAGChatbot:
                   W przypadku błędu zwraca słownik z komunikatem o błędzie.
         """
         if not hasattr(self, 'llm'):
-             error_msg = "Model LLM nie został zainicjalizowany."
+             error_msg = "Lokalny model LLM (self.llm) nie został zainicjalizowany."
              logger.error(f"❌ {error_msg}")
              return {"content": error_msg, "metadata": None}
 
@@ -388,7 +388,7 @@ class RAGChatbot:
 
         try:
             # Próba uzyskania nazwy modelu z obiektu, jeśli istnieje
-            model_name = getattr(self.llm, 'model_name', getattr(self.llm, 'model', "N/A"))
+            model_name = getattr(self.llm, 'model_name', getattr(self.llm, 'model', "Lokalny LLM (LM Studio)"))
 
             prompt_to_send = f"""{system_prompt_text}
 
@@ -402,7 +402,7 @@ class RAGChatbot:
 
             --- ODPOWIEDŹ ANALITYKA (bazująca WYŁĄCZNIE na powyższym kontekście): ---
             """
-            logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do LLM...")
+            logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do lokalnego LLM...")
             # logger.debug(f"   Pełny prompt (fragment): {prompt_to_send[:500]}...") # Opcjonalny debug
 
             start_time = time.time()
@@ -412,7 +412,7 @@ class RAGChatbot:
             response_time = end_time - start_time
 
             response_content = response # Przechowujemy cały obiekt odpowiedzi
-            logger.info(f"⬅️ Otrzymano odpowiedź od LLM w {response_time:.2f}s.")
+            logger.info(f"⬅️ Otrzymano odpowiedź od lokalnego LLM w {response_time:.2f}s.")
 
             # Wyciąganie metadanych z obiektu odpowiedzi LangChain
             try:
@@ -420,13 +420,12 @@ class RAGChatbot:
                 resp_meta = getattr(response, 'response_metadata', {})
                 if resp_meta:
                     # Model
-                    # Czasami model jest w 'model_name', czasami w 'model'
                     model_name_from_meta = resp_meta.get('model_name', resp_meta.get('model'))
                     if model_name_from_meta:
                         model_name = model_name_from_meta
                         logger.info(f"📊 Nazwa modelu (z response_metadata): {model_name}")
                     else:
-                         logger.warning("⚠️ Nie znaleziono nazwy modelu w response_metadata.")
+                         logger.warning("⚠️ Nie znaleziono nazwy modelu w response_metadata dla lokalnego LLM.")
 
                     # Tokeny (szukamy w 'token_usage')
                     token_usage = resp_meta.get('token_usage', {})
@@ -435,20 +434,19 @@ class RAGChatbot:
                         if token_count is not None:
                              logger.info(f"📊 Użycie tokenów (odpowiedź, z response_metadata): {token_count}")
                         else:
-                             logger.warning("⚠️ Nie znaleziono 'completion_tokens' w response_metadata['token_usage'].")
                              # Fallback na total_tokens, jeśli completion_tokens brak
                              total_tokens = token_usage.get('total_tokens')
                              if total_tokens is not None:
                                  logger.info(f"📊 Użycie tokenów (całkowite, z response_metadata): {total_tokens}")
                                  token_count = total_tokens # Użyj jako fallback
                              else:
-                                 logger.warning("⚠️ Nie znaleziono 'total_tokens' w response_metadata['token_usage'].")
+                                 logger.warning("⚠️ Nie znaleziono 'completion_tokens' ani 'total_tokens' w response_metadata['token_usage'] dla lokalnego LLM.")
                     else:
-                         logger.warning("⚠️ Nie znaleziono 'token_usage' w response_metadata.")
+                         logger.warning("⚠️ Nie znaleziono 'token_usage' w response_metadata dla lokalnego LLM.")
                 else:
-                     logger.warning("⚠️ Brak 'response_metadata' w obiekcie odpowiedzi LLM.")
+                     logger.warning("⚠️ Brak 'response_metadata' w obiekcie odpowiedzi lokalnego LLM.")
 
-                # Sprawdź usage_metadata jako alternatywę (nowsze wersje Langchain?)
+                # Sprawdź usage_metadata jako alternatywę
                 usage_meta = getattr(response, 'usage_metadata', None)
                 if usage_meta and token_count is None: # Sprawdzamy tylko jeśli nie znaleźliśmy w response_metadata
                     token_count_usage = usage_meta.get('completion_tokens')
@@ -456,29 +454,120 @@ class RAGChatbot:
                         token_count = token_count_usage
                         logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata): {token_count}")
                     else:
-                        logger.warning("⚠️ Nie znaleziono 'completion_tokens' w usage_metadata.")
                         total_tokens_usage = usage_meta.get('total_tokens')
                         if total_tokens_usage is not None:
                             logger.info(f"📊 Użycie tokenów (całkowite, z usage_metadata): {total_tokens_usage}")
                             token_count = total_tokens_usage # Fallback
                         else:
-                            logger.warning("⚠️ Nie znaleziono 'total_tokens' w usage_metadata.")
+                            logger.warning("⚠️ Nie znaleziono 'completion_tokens' ani 'total_tokens' w usage_metadata dla lokalnego LLM.")
                 elif token_count is None:
-                    logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów ani w 'response_metadata', ani w 'usage_metadata'.")
+                    logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów ani w 'response_metadata', ani w 'usage_metadata' dla lokalnego LLM.")
 
 
             except AttributeError as attr_err:
-                 logger.warning(f"⚠️ Obiekt odpowiedzi nie ma oczekiwanych atrybutów metadanych ({attr_err}). Typ obiektu: {type(response)}")
+                 logger.warning(f"⚠️ Obiekt odpowiedzi lokalnego LLM nie ma oczekiwanych atrybutów metadanych ({attr_err}). Typ obiektu: {type(response)}")
             except Exception as meta_e:
-                 logger.warning(f"⚠️ Nieoczekiwany błąd podczas pobierania metadanych z odpowiedzi: {meta_e}.")
+                 logger.warning(f"⚠️ Nieoczekiwany błąd podczas pobierania metadanych z odpowiedzi lokalnego LLM: {meta_e}.")
 
         except Exception as e:
-            error_msg = f"Wystąpił błąd podczas generowania odpowiedzi przez LLM: {e}"
-            logger.error(f"❌ {error_msg}", exc_info=True) # Dodano exc_info
-            # Zwracamy błąd jako string, bez metadanych
+            error_msg = f"Wystąpił błąd podczas generowania odpowiedzi przez lokalny LLM: {e}"
+            logger.error(f"❌ {error_msg}", exc_info=True)
             return {"content": error_msg, "metadata": None}
 
-        # Zwracamy cały obiekt odpowiedzi LangChain w 'content'
+        return {
+            "content": response_content,
+            "metadata": {
+                "model": model_name,
+                "tokens": token_count,
+                "time": response_time
+            }
+        }
+
+    # DODANO: Nowa metoda do generowania odpowiedzi przez Gemini
+    def _generate_gemini_answer(self, question: str) -> Dict[str, Any]:
+        """
+        Generuje odpowiedź na pytanie bezpośrednio przez model Google Gemini,
+        dołączając metadane dotyczące generowania.
+
+        Args:
+            question (str): Pytanie użytkownika.
+
+        Returns:
+            dict: Słownik zawierający treść odpowiedzi i metadane
+                  np. {"content": AIMessage(...), "metadata": {"model": "...", "tokens": ..., "time": ...}}
+                  W przypadku błędu lub braku modelu Gemini zwraca słownik z komunikatem o błędzie.
+        """
+        if not hasattr(self, 'gemini_llm') or self.gemini_llm is None:
+             error_msg = "Model Google Gemini (self.gemini_llm) nie został zainicjalizowany."
+             logger.error(f"❌ {error_msg}")
+             return {"content": error_msg, "metadata": None}
+
+        response_content = None
+        token_count = None
+        model_name = "gemini-1.5-flash-preview-04-17" # Nazwa modelu użytego w init
+        response_time = 0.0
+
+        try:
+            logger.info(f"➡️ Wysłanie promptu do Google Gemini API (model: {model_name})...")
+            start_time = time.time()
+            response = self.gemini_llm.invoke(question)
+            end_time = time.time()
+            response_time = end_time - start_time
+
+            response_content = response # Przechowujemy cały obiekt odpowiedzi
+            logger.info(f"⬅️ Otrzymano odpowiedź od Gemini API w {response_time:.2f}s.")
+
+            # Wyciąganie metadanych z obiektu odpowiedzi Gemini (jeśli dostępne)
+            try:
+                # Gemini API (przez langchain-google-genai) może zwracać metadane w 'response_metadata'
+                resp_meta = getattr(response, 'response_metadata', {})
+                if resp_meta:
+                    # Tokeny - szukamy w 'usage_metadata' wewnątrz 'response_metadata'
+                    usage_metadata = resp_meta.get('usage_metadata', {})
+                    if usage_metadata:
+                        # Gemini zwraca 'prompt_token_count', 'candidates_token_count', 'total_token_count'
+                        token_count = usage_metadata.get('candidates_token_count') # Liczba tokenów w odpowiedzi
+                        if token_count is not None:
+                            logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata): {token_count}")
+                        else:
+                            total_tokens = usage_metadata.get('total_token_count')
+                            if total_tokens is not None:
+                                logger.info(f"📊 Użycie tokenów (całkowite, z usage_metadata): {total_tokens}")
+                                token_count = total_tokens # Użyj jako fallback, jeśli completion brak
+                            else:
+                                logger.warning("⚠️ Nie znaleziono 'candidates_token_count' ani 'total_token_count' w usage_metadata dla Gemini.")
+                    else:
+                         logger.warning("⚠️ Nie znaleziono 'usage_metadata' w response_metadata dla Gemini.")
+                else:
+                     logger.warning("⚠️ Brak 'response_metadata' w obiekcie odpowiedzi Gemini.")
+
+                # Alternatywnie, nowsze wersje mogą mieć 'usage_metadata' bezpośrednio na obiekcie response
+                usage_meta_direct = getattr(response, 'usage_metadata', None)
+                if usage_meta_direct and token_count is None:
+                    token_count_usage = usage_meta_direct.get('candidates_token_count')
+                    if token_count_usage is not None:
+                        token_count = token_count_usage
+                        logger.info(f"📊 Użycie tokenów (odpowiedź, z usage_metadata - direct): {token_count}")
+                    else:
+                        total_tokens_usage = usage_meta_direct.get('total_token_count')
+                        if total_tokens_usage is not None:
+                            logger.info(f"📊 Użycie tokenów (całkowite, z usage_metadata - direct): {total_tokens_usage}")
+                            token_count = total_tokens_usage # Fallback
+                        else:
+                            logger.warning("⚠️ Nie znaleziono tokenów w usage_metadata (direct) dla Gemini.")
+                elif token_count is None:
+                     logger.warning("⚠️ Nie znaleziono danych o użyciu tokenów w odpowiedzi Gemini.")
+
+            except AttributeError as attr_err:
+                 logger.warning(f"⚠️ Obiekt odpowiedzi Gemini nie ma oczekiwanych atrybutów metadanych ({attr_err}). Typ obiektu: {type(response)}")
+            except Exception as meta_e:
+                 logger.warning(f"⚠️ Nieoczekiwany błąd podczas pobierania metadanych z odpowiedzi Gemini: {meta_e}.")
+
+        except Exception as e:
+            error_msg = f"Wystąpił błąd podczas wywołania Google Gemini API: {e}"
+            logger.error(f"❌ {error_msg}", exc_info=True)
+            return {"content": error_msg, "metadata": None}
+
         return {
             "content": response_content,
             "metadata": {

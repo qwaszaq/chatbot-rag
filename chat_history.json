@@ -2804,6 +2804,82 @@
                         ]
                     },
                     "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "user",
+                    "content": "czesc."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Wystąpił błąd: 404 models/gemini-1.5-flash-preview-04-17 is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "czesc."
+                },
+                {
+                    "role": "user",
+                    "content": "czesc"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć! Jak mogę Ci pomóc?",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "czesc"
+                },
+                {
+                    "role": "user",
+                    "content": "kim jest agnieszk?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Agnieszka to bardzo popularne imię żeńskie w Polsce.\n\nJest bardzo wiele osób o tym imieniu. Bez dodatkowych informacji (np. nazwisko, zawód, kontekst, z jakiej dziedziny życia) trudno jest powiedzieć, o którą Agnieszkę chodzi.\n\nCzy możesz podać więcej szczegółów? Na przykład:\n*   Agnieszka... (nazwisko)\n*   Agnieszka, która jest... (zawód/rola)\n*   Agnieszka z... (miejsca/serialu/książki/wydarzenia)\n\nJeśli podasz więcej informacji, postaram się pomóc zidentyfikować, o kogo pytasz.",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "kim jest agnieszk?"
+                },
+                {
+                    "role": "user",
+                    "content": "kim jest agnieszka w moich materiałach sprawy?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Nie mam dostępu do Twoich prywatnych dokumentów ani materiałów sprawy. Jako model językowy AI, nie mam możliwości przeglądania Twoich osobistych plików czy akt sprawy.\n\nŻeby dowiedzieć się, kim jest Agnieszka w Twoich materiałach sprawy, musisz **samodzielnie przeanalizować te dokumenty**.\n\nPoszukaj jej imienia (i ewentualnie nazwiska) w kluczowych dokumentach sprawy, takich jak:\n\n1.  **Pozew/Wniosek/Akt oskarżenia:** Czy Agnieszka jest wymieniona jako strona postępowania (np. powódka, pozwana, oskarżona, pokrzywdzona)?\n2.  **Protokoły rozpraw/posiedzeń:** Czy Agnieszka była obecna na rozprawie/posiedzeniu? W jakiej roli (świadek, strona, pełnomocnik)?\n3.  **Lista świadków:** Czy Agnieszka jest wymieniona na liście świadków, którzy mają zostać przesłuchani?\n4.  **Opinie biegłych:** Czy Agnieszka jest biegłą, która sporządziła opinię?\n5.  **Pisma procesowe:** Czy Agnieszka jest autorką jakiegoś pisma procesowego (np. pełnomocnikiem) lub czy jest często wymieniana w treści pism jako osoba związana ze sprawą?\n6.  **Decyzje/Postanowienia sądu:** Czy jej imię pojawia się w uzasadnieniu decyzji lub postanowień?\n\nZwróć uwagę na kontekst, w którym pojawia się jej imię. Obok imienia często podana jest rola procesowa lub informacja o jej związku ze sprawą.\n\nJeśli masz trudności ze zrozumieniem dokumentów, warto skonsultować się z prawnikiem, który może przeanalizować Twoje akta i wyjaśnić, kim są poszczególne osoby w sprawie.",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "kim jest agnieszka w moich materiałach sprawy?"
+                },
+                {
+                    "role": "user",
+                    "content": "czesc"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć!\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "czesc",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 5,
+                        "time": 3.346407890319824
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "cześć"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć! Jak się masz?",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "cześć",
+                    "metadata": {
+                        "model": "gemini-1.5-flash-preview-04-17",
+                        "tokens": null,
+                        "time": 1.3059871196746826
+                    }
                 }
             ]
         },
