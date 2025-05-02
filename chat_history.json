@@ -1443,6 +1443,258 @@
                         ]
                     },
                     "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\nOdpowiedź: Cykl finansowania 'Projektu Beż' inicjuje się pozyskaniem środków z Narodowego Centrum Badań i Rozwoju (NCBR) oraz Banku Gospodarstwa Krajowego (BGK) w kwocie 4.800.000 PLN, na podstawie fałszywych dokumentów i nierzetelnych wniosków złożonych przez Agnieszkę Dąbrowską (\"Beż\") dla jej firmy \"BeigeLife Innovations\" sp. z o.o.. Środki te są następnie przepływają do firmy-słupa \"NeutralTech Solutions Ltd.\" (z siedzibą na Cyprze) w postaci zawyżonych kosztów zakupu linii produkcyjnej. Następnie, środki te trafiają do centralnego hubu finansowego zarządzanego przez Agnieszkę Malinowską (\"Czas\"/\"Kosmiczna Rachunkowość\"), gdzie są legalizowane poprzez nierzetelne prowadzenie ksiąg i ukrywane w firmie \"Astro-Precision Logistics\". Ostateczny kierunek przepływu środków, poza wewnętrzną dystrybucją w grupie (sprzedaż za ETH/XMR), obejmuje transfery do rajów podatkowych – Seszele, Belize, Cypr, Liechtenstein, Vanuatu oraz kont bankowych w Szwajcarii.  Odbiorcy końcowi nie są bezpośrednio wskazani w dostarczonych materiałach, jednak wskazane jest, że środki służą finansowaniu całej grupy \"Agnieszka\".\n\nŹródło w dokumentach:\n*   NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi) - opisuje wyłudzenie 4.8 mln PLN z NCBR i BGK, rolę \"BeigeLife Innovations\" oraz powiązanie z \"NeutralTech Solutions Ltd.\".\n*   Dokumenty zabezpieczone przez CBŚP – wskazują na zawyżone kosztorysy i fałszywe wyniki badań jako podstawę do uzyskania dotacji.\n*   Fragment dotyczący struktury legalizacyjnej (Punkt 2) - ujawnia rolę A. Malinowskiej w centralnym zarządzaniu finansami i legalizacji środków.\n*   Wątek Finansowy i Legalizacyjny (Punkt 2) - wskazuje na transfery do rajów podatkowych i kont szwajcarskich.\n\nKomentarz: Materiały nie wskazują bezpośrednio na konkretnych odbiorców końcowych, jednak kontekst sugeruje finansowanie działalności całej grupy przestępczej \"Agnieszka\". Brak informacji o dokładnej kwocie środków kierowanych do poszczególnych rajów podatkowych i kont w Szwajcarii.\n",
+                    "sources": [
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpspc8rene/code - 2025-04-25T232215.125.txt",
+                        "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpx2bqxk52/code - 2025-04-25T231143.084.txt"
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Projekt Beż",
+                                "ner_type": null,
+                                "id": "Projekt Beż"
+                            },
+                            {
+                                "label": "NCBR",
+                                "ner_type": "orgName",
+                                "id": "NCBR"
+                            },
+                            {
+                                "label": "BGK",
+                                "ner_type": "orgName",
+                                "id": "BGK"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "BeigeLife Innovations",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "Agnieszki Dąbrowskiej",
+                                "ner_type": "persName",
+                                "id": "Agnieszki Dąbrowskiej"
+                            },
+                            {
+                                "label": "4.800.000 PLN",
+                                "ner_type": null,
+                                "id": "4.800.000 PLN"
+                            },
+                            {
+                                "label": "Środki",
+                                "ner_type": null,
+                                "id": "Środki"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd.",
+                                "ner_type": null,
+                                "id": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "Cyprze",
+                                "ner_type": "placeName",
+                                "id": "Cyprze"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "centralnym hubem finansowym",
+                                "ner_type": null,
+                                "id": "centralnym hubem finansowym"
+                            },
+                            {
+                                "label": "Centralny hub finansowy",
+                                "ner_type": null,
+                                "id": "Centralny hub finansowy"
+                            },
+                            {
+                                "label": "nierzetelne prowadzenie ksiąg",
+                                "ner_type": null,
+                                "id": "nierzetelne prowadzenie ksiąg"
+                            },
+                            {
+                                "label": "Astro-Precision Logistics",
+                                "ner_type": null,
+                                "id": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "rajów podatkowych",
+                                "ner_type": null,
+                                "id": "rajów podatkowych"
+                            },
+                            {
+                                "label": "NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi)",
+                                "ner_type": "orgName",
+                                "id": "NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi)"
+                            },
+                            {
+                                "label": "wyłudzenie 4.8 mln PLN z NCBR i BGK",
+                                "ner_type": "orgName",
+                                "id": "wyłudzenie 4.8 mln PLN z NCBR i BGK"
+                            },
+                            {
+                                "label": "Dokumenty zabezpieczone przez CBŚP",
+                                "ner_type": "orgName",
+                                "id": "Dokumenty zabezpieczone przez CBŚP"
+                            },
+                            {
+                                "label": "zawyżone kosztorysy",
+                                "ner_type": null,
+                                "id": "zawyżone kosztorysy"
+                            },
+                            {
+                                "label": "fałszywe wyniki badań",
+                                "ner_type": null,
+                                "id": "fałszywe wyniki badań"
+                            },
+                            {
+                                "label": "Fragment dotyczący struktury legalizacyjnej (Punkt 2)",
+                                "ner_type": null,
+                                "id": "Fragment dotyczący struktury legalizacyjnej (Punkt 2)"
+                            },
+                            {
+                                "label": "A. Malinowskiej",
+                                "ner_type": "persName",
+                                "id": "A. Malinowskiej"
+                            },
+                            {
+                                "label": "Wątek Finansowy i Legalizacyjny (Punkt 2)",
+                                "ner_type": null,
+                                "id": "Wątek Finansowy i Legalizacyjny (Punkt 2)"
+                            },
+                            {
+                                "label": "Szwajcarii",
+                                "ner_type": "placeName",
+                                "id": "Szwajcarii"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "inicjuje się pozyskaniem środków z",
+                                "source": "Projekt Beż",
+                                "target": "NCBR"
+                            },
+                            {
+                                "label": "inicjuje się pozyskaniem środków z",
+                                "source": "Projekt Beż",
+                                "target": "BGK"
+                            },
+                            {
+                                "label": "przekazało środki w kwocie",
+                                "source": "NCBR",
+                                "target": "4.800.000 PLN"
+                            },
+                            {
+                                "label": "przekazało środki w kwocie",
+                                "source": "BGK",
+                                "target": "4.800.000 PLN"
+                            },
+                            {
+                                "label": "złożyła wnioski dla",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "jest firmą",
+                                "source": "BeigeLife Innovations",
+                                "target": "Agnieszki Dąbrowskiej"
+                            },
+                            {
+                                "label": "przepływają do",
+                                "source": "Środki",
+                                "target": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "są ukrywane w firmie",
+                                "source": "Środki",
+                                "target": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "trafiają do",
+                                "source": "Środki",
+                                "target": "rajów podatkowych"
+                            },
+                            {
+                                "label": "ma siedzibę na",
+                                "source": "NeutralTech Solutions Ltd.",
+                                "target": "Cyprze"
+                            },
+                            {
+                                "label": "zarządza",
+                                "source": "Agnieszka Malinowska",
+                                "target": "centralnym hubem finansowym"
+                            },
+                            {
+                                "label": "legalizuje środki poprzez",
+                                "source": "Centralny hub finansowy",
+                                "target": "nierzetelne prowadzenie ksiąg"
+                            },
+                            {
+                                "label": "opisuje",
+                                "source": "NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi)",
+                                "target": "wyłudzenie 4.8 mln PLN z NCBR i BGK"
+                            },
+                            {
+                                "label": "opisuje rolę",
+                                "source": "NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi)",
+                                "target": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "opisuje powiązanie z",
+                                "source": "NOTATKA SŁUŻBOWA (Komenda Wojewódzka Policji w Łodzi)",
+                                "target": "NeutralTech Solutions Ltd."
+                            },
+                            {
+                                "label": "wskazują na",
+                                "source": "Dokumenty zabezpieczone przez CBŚP",
+                                "target": "zawyżone kosztorysy"
+                            },
+                            {
+                                "label": "wskazują na",
+                                "source": "Dokumenty zabezpieczone przez CBŚP",
+                                "target": "fałszywe wyniki badań"
+                            },
+                            {
+                                "label": "ujawnia rolę",
+                                "source": "Fragment dotyczący struktury legalizacyjnej (Punkt 2)",
+                                "target": "A. Malinowskiej"
+                            },
+                            {
+                                "label": "wskazuje na transfery do",
+                                "source": "Wątek Finansowy i Legalizacyjny (Punkt 2)",
+                                "target": "rajów podatkowych"
+                            },
+                            {
+                                "label": "wskazuje na konta w",
+                                "source": "Wątek Finansowy i Legalizacyjny (Punkt 2)",
+                                "target": "Szwajcarii"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\n"
                 }
             ]
         },

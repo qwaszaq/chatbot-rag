@@ -158,7 +158,7 @@ class RAGChatbot:
         Returns:
             tuple: Zawiera:
                    - dict: Słownik odpowiedzi z kluczami 'content' i 'metadata'.
-                   - list: Lista źródeł (max 3 unikalne).
+                   - list[dict]: Lista słowników źródeł, każdy z kluczami 'name' i 'id'.
                    - dict or None: Dane grafu wiedzy w formacie NetworkX node-link lub None.
         """
         # Dodano sprawdzenie, czy LLM i reranker są zainicjalizowane
@@ -172,13 +172,15 @@ class RAGChatbot:
             # === POCZĄTEK ZMIANY ===
             # Wyszukaj podobne dokumenty w Qdrant (używając metody, która istnieje)
             logger.info(f"🔍 Wyszukiwanie {self.top_k} podobnych dokumentów w Qdrant")
+            # UWAGA: Używamy similarity_search, która MOŻE nie zwracać ID punktu w metadanych domyślnie.
+            # Sprawdzimy, czy ID jest obecne podczas iteracji.
             relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k) # Używamy similarity_search
 
             if not relevant_docs:
                 logger.info("❌ Nie znaleziono żadnych dokumentów pasujących do pytania")
                 return {"content": "Nie znaleziono żadnych dokumentów pasujących do pytania.", "metadata": None}, [], None
 
-            # `relevant_docs` zawiera już listę dokumentów
+            # `relevant_docs` zawiera listę obiektów Document LangChain
             logger.info(f"🎯 Znaleziono {len(relevant_docs)} dokumentów pasujących do pytania przed rerankingiem")
             # === KONIEC ZMIANY ===
 
@@ -191,31 +193,50 @@ class RAGChatbot:
                 self.top_k_reranker
             )
 
-            # Przygotowanie kontekstu i listy TOP 3 źródeł na podstawie rerankingu
+            # Przygotowanie kontekstu i listy TOP 3 źródeł (jako słowniki) na podstawie rerankingu
             context_parts = []
-            top_sources = []
-            added_sources = set()
-            # Mapowanie treści na metadane dla łatwiejszego dostępu
-            content_to_metadata = {doc.page_content: doc.metadata for doc in relevant_docs}
+            top_sources = [] # Teraz będzie listą słowników {'name': ..., 'id': ...}
+            added_source_names = set() # Śledzimy dodane nazwy źródeł
+            # Mapowanie treści na cały obiekt Document dla łatwiejszego dostępu do metadanych i ID
+            content_to_document = {doc.page_content: doc for doc in relevant_docs}
 
-            logger.info(f"📝 Budowanie kontekstu i listy źródeł (max 3) z rerankowanych dokumentów...")
+            logger.info(f"📝 Budowanie kontekstu i listy źródeł (max 3, ze strukturą) z rerankowanych dokumentów...")
             for content, score in reranked_scored_docs:
                 if score > self.relevance_threshold:
                     context_parts.append(content)
-                    metadata = content_to_metadata.get(content)
-                    if metadata:
+                    document = content_to_document.get(content)
+                    if document and document.metadata:
+                        metadata = document.metadata
                         # Preferuj 'source', fallback na 'file_path' lub 'filename'
-                        source = metadata.get("source", metadata.get("file_path", metadata.get("filename", "nieznane źródło")))
-                        if source not in added_sources:
+                        source_name = metadata.get("source", metadata.get("file_path", metadata.get("filename", "nieznane źródło")))
+
+                        # Próba pobrania ID punktu z metadanych obiektu Document LangChain
+                        # Obiekt Document nie ma bezpośrednio ID punktu Qdrant.
+                        # ID *może* być w metadanych, jeśli zostało tam dodane podczas tworzenia Document.
+                        # Sprawdźmy klucze 'id' lub '_id' w metadanych.
+                        point_id = metadata.get("id", metadata.get("_id"))
+                        if point_id is None:
+                             # Jeśli nie ma ID w metadanych, musimy je znaleźć inaczej.
+                             # To jest problematyczne i wymagałoby np. modyfikacji similarity_search
+                             # lub dodania ID do metadanych podczas indeksowania.
+                             # Na razie logujemy ostrzeżenie i ustawiamy ID na None.
+                             logger.warning(f"   Nie znaleziono ID punktu ('id' lub '_id') w metadanych dla źródła: {source_name}. ID będzie None.")
+
+                        if source_name not in added_source_names:
                              if len(top_sources) < 3:
-                                top_sources.append(source)
-                                added_sources.add(source)
+                                top_sources.append({"name": source_name, "id": point_id})
+                                added_source_names.add(source_name)
+                    elif document:
+                         logger.warning(f"   Dokument dla treści '{content[:50]}...' nie ma metadanych.")
+                    else:
+                         logger.warning(f"   Nie znaleziono obiektu Document dla treści '{content[:50]}...' w mapowaniu.")
+
                 else:
                     # logger.debug(f"   Dokument odrzucony przez próg rerankera (score: {score:.4f}): {content[:100]}...") # Opcjonalny debug
-                    pass # Nie dodajemy, ale kontynuujemy pętlę, by sprawdzić inne (na wypadek gdyby nie były idealnie posortowane)
+                    pass # Nie dodajemy, ale kontynuujemy pętlę, by sprawdzić inne
 
             logger.info(f"✅ Zbudowano kontekst z {len(context_parts)} chunków.")
-            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia: {top_sources}")
+            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia (ze strukturą): {top_sources}")
 
             if not context_parts:
                 logger.info("❌ Brak dokumentów spełniających próg istotności po rerankingu")

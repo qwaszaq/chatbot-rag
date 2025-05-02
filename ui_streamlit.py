@@ -16,12 +16,12 @@ from langchain_core.messages import AIMessage, HumanMessage
 import warnings # Dodano do obsługi FutureWarning
 import numpy as np # Dodano import numpy
 # Zaktualizowano importy z clustering_module
-from clustering_module import perform_clustering, generate_cluster_labels_llm 
+from clustering_module import perform_clustering, generate_cluster_labels_llm
 from collections import Counter # Do zliczania punktów w klastrach
 
 # Konfiguracja logowania
 logging.basicConfig(
-    level=logging.INFO, 
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -168,30 +168,12 @@ def save_chat_history(chats_data, active_chat_id):
 # -----------------------------------------
 
 # Funkcja pomocnicza do mapowania źródła na ID punktu (wymaga dostosowania!)
-def find_point_id_for_source(source_name, qdrant_data):
-    """
-    Znajduje ID punktu Qdrant odpowiadające danej nazwie źródła.
-    UWAGA: To jest BARDZO uproszczona implementacja i może wymagać znaczących zmian
-           w zależności od tego, jak metadane są przechowywane w Qdrant i jak
-           źródła są zwracane przez funkcję query w app.py.
-           Może być konieczne przekazywanie ID punktów wraz ze źródłami z app.py.
-    """
-    if not qdrant_data: return None
-    
-    for item in qdrant_data:
-        # Sprawdź, czy payload istnieje i zawiera klucz 'metadata'
-        payload = item.get('payload')
-        if payload and isinstance(payload, dict):
-            metadata = payload.get('metadata')
-            if metadata and isinstance(metadata, dict):
-                 # Sprawdź różne możliwe klucze dla nazwy pliku
-                 source_in_meta = metadata.get('source', metadata.get('file_path', metadata.get('filename')))
-                 if source_in_meta and os.path.basename(source_in_meta) == source_name:
-                      return item.get('id')
-    return None # Nie znaleziono pasującego ID
+# USUNIĘTO: Już niepotrzebna, bo ID jest przekazywane w sources
+# def find_point_id_for_source(source_name, qdrant_data):
+#     ...
 
 def main():
-    
+
     st.title("🤖 Chatbot RAG z Qdrant")
 
     # --- Inicjalizacja stanu sesji ---
@@ -368,12 +350,12 @@ def main():
         # === DODANO SEKCJE KLASTROWANIA ===
         st.header("🔬 Analiza Klastrowania")
         num_clusters_kmeans = st.number_input("Liczba klastrów (dla K-Means):", min_value=2, max_value=50, value=8, step=1, key="kmeans_clusters")
-        
+
         if st.button("🚀 Analizuj / Odśwież Klastry", key="analyze_clusters_button"):
             with st.spinner("Pobieranie danych i wykonywanie klastrowania..."):
                 try:
                     # Krok 1: Pobierz dane (z payloadem do etykiet)
-                    qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True) 
+                    qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True)
                     if not qdrant_data:
                          st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
                          # Wyzeruj wyniki klastrowania w stanie sesji
@@ -383,20 +365,20 @@ def main():
                          # Przygotuj dane dla scikit-learn
                          point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
                          embeddings_matrix = np.array([d['vector'] for d in qdrant_data if d.get('vector') is not None])
-                         
+
                          if embeddings_matrix.shape[0] > 0:
                              # Krok 2: Wykonaj klastrowanie
                              cluster_labels_array = perform_clustering(
-                                 embeddings_matrix, 
-                                 algorithm='kmeans', 
+                                 embeddings_matrix,
+                                 algorithm='kmeans',
                                  n_clusters=num_clusters_kmeans
                              )
-                             
+
                              if cluster_labels_array is not None:
                                  # Krok 3: Zapisz wyniki
                                  st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
                                  st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array))} klastrów dla {len(point_ids)} punktów.")
-                                 
+
                                  # Krok 4: Generuj etykiety (jeśli są dane i LLM)
                                  if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
                                      with st.spinner("Generowanie etykiet dla klastrów..."):
@@ -428,7 +410,7 @@ def main():
                     st.session_state.cluster_assignments = None
                     st.session_state.cluster_labels = None
             # Odśwież, aby pokazać wyniki
-            st.rerun() 
+            st.rerun()
 
         # Wyświetlanie informacji o klastrach (jeśli istnieją)
         if st.session_state.cluster_assignments:
@@ -437,16 +419,16 @@ def main():
                      # Zliczanie punktów w każdym klastrze
                      cluster_counts = Counter(st.session_state.cluster_assignments.values())
                      # Usuń klaster -1 (szum/outliers) jeśli istnieje, do osobnego raportowania
-                     noise_points = cluster_counts.pop(-1, 0) 
+                     noise_points = cluster_counts.pop(-1, 0)
                      num_clusters_found = len(cluster_counts)
-                     
+
                      st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
                      if noise_points > 0:
                          st.write(f"Liczba punktów szumu/outlierów: {noise_points}")
-                     
-                     # Sortowanie klastrów po ID 
+
+                     # Sortowanie klastrów po ID
                      sorted_clusters = sorted(cluster_counts.items())
-                     
+
                      for cluster_id, count in sorted_clusters:
                           # Użyj wygenerowanej etykiety, jeśli dostępna
                           label_text = f"Klaster {cluster_id}"
@@ -466,8 +448,8 @@ def main():
         # Checkbox do filtrowania grafów wg liczby węzłów
         st.session_state.filter_small_graphs = st.checkbox(
             "Filtruj małe grafy (min. 3 węzły)",
-            value=st.session_state.filter_small_graphs, 
-            key="filter_small_graphs_checkbox" 
+            value=st.session_state.filter_small_graphs,
+            key="filter_small_graphs_checkbox"
         )
         st.markdown("---")
 
@@ -640,44 +622,55 @@ def main():
          for message_index, message in enumerate(active_chat_data.get("messages", [])):
               with st.chat_message(message["role"]):
                    content_to_display = message.get("content", "_Brak treści_")
-                   sources_to_display = message.get("sources", [])
+                   sources_to_display = message.get("sources", []) # Oczekujemy listy słowników {'name': ..., 'id': ...} lub listy stringów (stara historia)
                    graph_data_to_display = message.get("graph_data")
 
                    st.markdown(content_to_display)
 
                    if sources_to_display:
                            with st.expander("Źródła"):
-                               unique_sources = set()
-                               # TODO: Potrzebujemy lepszego sposobu mapowania źródła na ID punktu
-                               # Obecnie `sources_to_display` to tylko lista ścieżek/nazw plików
-                               # Musimy zmodyfikować `app.py`->`query`, aby zwracała również ID punktów dla źródeł
-                               # lub użyć `qdrant_data` (jeśli jest dostępne globalnie/w sesji) do wyszukania ID
-                               qdrant_data_available = st.session_state.get('qdrant_data_for_clustering') # Przykład, jeśli zapiszemy dane w sesji
+                               # Iterujemy po liście źródeł, która może zawierać stringi (stara historia) lub słowniki (nowe odpowiedzi)
+                               for source_item in sources_to_display:
+                                   source_name = 'nieznane źródło'
+                                   point_id = None
 
-                               for source in sources_to_display:
-                                    source_name = os.path.basename(source) if isinstance(source, str) else str(source)
-                                    point_id = None 
-                                    # Przykładowa, prymitywna logika szukania ID (wymaga ulepszenia!)
-                                    # point_id = find_point_id_for_source(source_name, qdrant_data_available) 
+                                   if isinstance(source_item, dict):
+                                       # Nowy format: {'name': ..., 'id': ...}
+                                       source_name = source_item.get('name', 'nieznane źródło')
+                                       point_id = source_item.get('id')
+                                   elif isinstance(source_item, str):
+                                       # Stary format: tylko nazwa pliku (string)
+                                       source_name = source_item
+                                       # point_id pozostaje None, więc informacja o klastrze nie zostanie dodana dla starej historii
+                                   else:
+                                       # Nieoczekiwany format
+                                       logger.warning(f"Nieoczekiwany typ elementu w sources_to_display: {type(source_item)}")
+                                       source_name = str(source_item) # Spróbuj wyświetlić jako string
 
-                                    cluster_info_str = ""
-                                    if st.session_state.cluster_assignments and point_id in st.session_state.cluster_assignments:
-                                        cluster_id = st.session_state.cluster_assignments[point_id]
-                                        if cluster_id != -1: # Ignoruj szum
-                                            cluster_name = f"Klaster {cluster_id}"
-                                            if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
-                                                cluster_name = st.session_state.cluster_labels[cluster_id]
-                                            cluster_info_str = f" ({cluster_name})"
-                                    
-                                    st.markdown(f"- `{source_name}`{cluster_info_str}")
+                                   cluster_info_str = ""
+                                   # Sprawdzamy, czy mamy przypisania klastrów i czy ID punktu istnieje i jest w przypisaniach
+                                   if st.session_state.cluster_assignments and point_id and point_id in st.session_state.cluster_assignments:
+                                       cluster_id = st.session_state.cluster_assignments[point_id]
+                                       if cluster_id != -1: # Ignoruj szum
+                                           cluster_name = f"Klaster {cluster_id}"
+                                           # Sprawdź, czy mamy etykiety i czy dla tego klastra istnieje etykieta
+                                           if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
+                                               cluster_name = st.session_state.cluster_labels[cluster_id]
+                                           cluster_info_str = f" (**{cluster_name}**)" # Dodano pogrubienie dla lepszej widoczności
+                                   elif point_id is None and isinstance(source_item, dict): # Tylko jeśli spodziewaliśmy się ID, ale go nie było
+                                        cluster_info_str = " (ID źródła niedostępne)"
+
+                                   # Używamy os.path.basename, aby wyświetlić tylko nazwę pliku
+                                   display_name = os.path.basename(source_name)
+                                   st.markdown(f"- `{display_name}`{cluster_info_str}")
 
 
                    # --- Sekcja wizualizacji grafu ---
                    if graph_data_to_display:
                         # Logika filtrowania grafu wg liczby węzłów z checkboxem
-                        MIN_NODES_TO_DISPLAY = 3 
+                        MIN_NODES_TO_DISPLAY = 3
                         num_nodes_in_graph = 0
-                        should_render_graph_section = False 
+                        should_render_graph_section = False
 
                         if isinstance(graph_data_to_display, dict) and 'nodes' in graph_data_to_display and 'links' in graph_data_to_display:
                              num_nodes_in_graph = len(graph_data_to_display.get('nodes', []))
@@ -810,7 +803,7 @@ def main():
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": response_content_str,
-                            "sources": sources,
+                            "sources": sources, # Przekazujemy listę słowników
                             "graph_data": graph_data,
                             "prompt_answered": prompt_answered
                         })
