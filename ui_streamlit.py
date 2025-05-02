@@ -106,7 +106,7 @@ Komentarz: Możliwa różnica wynika z częściowego wydatkowania środków prze
 # Zmieniono klucze, aby zawierały "(RAG)"
 AVAILABLE_PROMPTS = {
     "Analityk Tekstu (RAG)": PROMPT_ANALITYK_TEKSTU,
-    "Analityk Grafów (RAG)": PROMPT_ANALITYK_GRAFOW
+    "Analityk Grafów (RAG)": PROMPT_ANALITYK_TEKSTU # ZMIANA: Użyj tego samego promptu co Analityk Tekstu do generowania odpowiedzi
 }
 # ---------------------------------------
 
