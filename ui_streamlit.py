@@ -454,8 +454,8 @@ def main():
                      # Sortowanie klastrów po ID
                      sorted_clusters = sorted(cluster_counts.items())
 
-                     # Mapowanie ID punktu na dane (dla szybkiego dostępu)
-                     point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
+                     # Mapowanie ID punktu na dane (dla szybkiego dostępu) - przeniesione niżej
+                     # point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
 
                      for cluster_id, count in sorted_clusters:
                           # Użyj wygenerowanej etykiety, jeśli dostępna
@@ -471,6 +471,8 @@ def main():
                                    st.session_state.selected_cluster_id = cluster_id
                               # Wyczyść poprzednie dane przy wyborze nowego klastra
                               if st.session_state.selected_cluster_id is not None:
+                                   # Użyj selected_id, które właśnie ustawiliśmy
+                                   selected_id = st.session_state.selected_cluster_id
                                    if selected_id in st.session_state.cluster_summaries:
                                         del st.session_state.cluster_summaries[selected_id]
                                    if selected_id in st.session_state.cluster_entities:
@@ -498,7 +500,8 @@ def main():
                            if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
                                if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and st.session_state.qdrant_data_cache and st.session_state.cluster_assignments:
                                    with st.spinner(f"Generowanie podsumowania dla {selected_label_text}..."):
-                                       point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
+                                       # Upewnij się, że point_id_to_data jest aktualne
+                                       point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
                                        cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
                                        texts_to_summarize = [
                                            point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
@@ -520,13 +523,14 @@ def main():
                                    st.error("Nie można wygenerować podsumowania. Brakuje chatbota, danych Qdrant lub przypisań klastrów.")
                       with col2_details:
                            # DODANO: Przycisk i logika dla encji
-                           if st.button("🧐 Pokaż Kluczowe Byty", key=f"entities_{selected_id}", use_container_width=True):
+                           if st.button("🧐 Pokaż Kluczowe Obiekty", key=f"entities_{selected_id}", use_container_width=True):
                                 if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and st.session_state.qdrant_data_cache and st.session_state.cluster_assignments:
                                      if st.session_state.chatbot.nlp is None:
                                          st.error("Model spaCy (nlp) nie jest załadowany. Nie można wyekstrahować encji.")
                                      else:
                                          with st.spinner(f"Ekstrakcja kluczowych bytów dla {selected_label_text}..."):
-                                             point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
+                                             # Upewnij się, że point_id_to_data jest aktualne
+                                             point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
                                              cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
                                              texts_for_ner = [
                                                  point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
@@ -555,7 +559,7 @@ def main():
 
                       # DODANO: Wyświetlanie kluczowych bytów (jeśli istnieją)
                       if selected_id in st.session_state.cluster_entities:
-                           st.markdown("**Kluczowe Byty:**")
+                           st.markdown("**Kluczowe Obiekty:**")
                            entities_list = st.session_state.cluster_entities[selected_id]
                            if entities_list:
                                for entity_text, entity_label, count in entities_list:
@@ -574,7 +578,7 @@ def main():
                           st.warning("Dane Qdrant nie są dostępne w cache. Odśwież klastry.")
                       else:
                           # Ponownie pobierz mapowanie ID->Dane, na wypadek gdyby cache się zmienił
-                          point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
+                          point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
 
                           st.write(f"Punkty ({len(cluster_point_ids)}):")
                           points_shown = 0
