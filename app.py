@@ -17,6 +17,10 @@ import spacy # Dodano import spacy
 import networkx as nx # Dodano import networkx
 import json # Dodano import json do parsowania odpowiedzi LLM
 from langchain_core.messages import AIMessage # Dodano brakujący import
+# DODANO: Import Counter do zliczania klastrów
+from collections import Counter
+# DODANO: Import typowania
+from typing import Optional, Dict, List, Tuple, Any
 
 # Konfiguracja logowania
 logging.basicConfig(
@@ -147,18 +151,26 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
 
-    def query(self, question, system_prompt_override=None):
+    # DODANO: argument cluster_assignments i parametry rozszerzania
+    def query(self, question: str, system_prompt_override: Optional[str] = None,
+              cluster_assignments: Optional[Dict[str, int]] = None,
+              expand_context_clusters: int = 1, expand_context_docs: int = 2) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """
-        Udziela odpowiedzi na pytanie korzystając z RAG
+        Udziela odpowiedzi na pytanie korzystając z RAG.
+        Opcjonalnie rozszerza kontekst o dodatkowe dokumenty z dominujących klastrów.
 
         Args:
-            question (str): Pytanie użytkownika
+            question (str): Pytanie użytkownika.
             system_prompt_override (str, optional): Prompt systemowy do użycia zamiast domyślnego.
+            cluster_assignments (dict, optional): Słownik mapujący ID punktu na ID klastra.
+                                                   Jeśli podany i niepusty, włącza logikę rozszerzania kontekstu.
+            expand_context_clusters (int): Liczba dominujących klastrów do rozważenia przy rozszerzaniu kontekstu.
+            expand_context_docs (int): Maksymalna liczba dodatkowych dokumentów do dodania z każdego dominującego klastra.
 
         Returns:
             tuple: Zawiera:
                    - dict: Słownik odpowiedzi z kluczami 'content' i 'metadata'.
-                   - list[dict]: Lista słowników źródeł, każdy z kluczami 'name' i 'id'.
+                   - list[dict]: Lista słowników źródeł (max 3 unikalne), każdy z kluczami 'name' i 'id'.
                    - dict or None: Dane grafu wiedzy w formacie NetworkX node-link lub None.
         """
         # Dodano sprawdzenie, czy LLM i reranker są zainicjalizowane
@@ -169,80 +181,112 @@ class RAGChatbot:
         try:
             logger.info(f"❓ Otrzymałem pytanie: {question}")
 
-            # === POCZĄTEK ZMIANY ===
-            # Wyszukaj podobne dokumenty w Qdrant (używając metody, która istnieje)
+            # Wyszukaj podobne dokumenty w Qdrant
             logger.info(f"🔍 Wyszukiwanie {self.top_k} podobnych dokumentów w Qdrant")
-            # UWAGA: Używamy similarity_search, która MOŻE nie zwracać ID punktu w metadanych domyślnie.
-            # Sprawdzimy, czy ID jest obecne podczas iteracji.
-            relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k) # Używamy similarity_search
+            relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k)
 
             if not relevant_docs:
                 logger.info("❌ Nie znaleziono żadnych dokumentów pasujących do pytania")
                 return {"content": "Nie znaleziono żadnych dokumentów pasujących do pytania.", "metadata": None}, [], None
 
-            # `relevant_docs` zawiera listę obiektów Document LangChain
             logger.info(f"🎯 Znaleziono {len(relevant_docs)} dokumentów pasujących do pytania przed rerankingiem")
-            # === KONIEC ZMIANY ===
 
             # Reranking dokumentów
             logger.info(f"🔄 Reranking dokumentów (top {self.top_k_reranker}, próg istotności {self.relevance_threshold})")
-            # Reranker oczekuje listy stringów (treści dokumentów)
             reranked_scored_docs = self.reranker.rerank(
                 question,
-                [doc.page_content for doc in relevant_docs], # Przekazujemy tylko treści
+                [doc.page_content for doc in relevant_docs],
                 self.top_k_reranker
             )
 
-            # Przygotowanie kontekstu i listy TOP 3 źródeł (jako słowniki) na podstawie rerankingu
+            # Przygotowanie kontekstu i listy TOP 3 źródeł
             context_parts = []
-            top_sources = [] # Teraz będzie listą słowników {'name': ..., 'id': ...}
-            added_source_names = set() # Śledzimy dodane nazwy źródeł
-            # Mapowanie treści na cały obiekt Document dla łatwiejszego dostępu do metadanych i ID
+            top_sources = []
+            added_source_names = set()
             content_to_document = {doc.page_content: doc for doc in relevant_docs}
+            initial_context_point_ids = set()
+            reranked_docs_in_context = [] # Przechowuje obiekty Document, które trafiły do kontekstu
 
-            logger.info(f"📝 Budowanie kontekstu i listy źródeł (max 3, ze strukturą) z rerankowanych dokumentów...")
+            logger.info(f"📝 Budowanie początkowego kontekstu i listy źródeł (max 3) z rerankowanych dokumentów...")
             for content, score in reranked_scored_docs:
                 if score > self.relevance_threshold:
-                    context_parts.append(content)
                     document = content_to_document.get(content)
-                    if document and document.metadata:
+                    if document:
+                        context_parts.append(content)
+                        reranked_docs_in_context.append(document) # Dodaj do listy użytych
                         metadata = document.metadata
-                        # Preferuj 'source', fallback na 'file_path' lub 'filename'
-                        source_name = metadata.get("source", metadata.get("file_path", metadata.get("filename", "nieznane źródło")))
+                        if metadata:
+                            point_id = metadata.get("id", metadata.get("_id"))
+                            if point_id is not None:
+                                initial_context_point_ids.add(point_id)
+                            else:
+                                logger.warning(f"   Nie znaleziono ID punktu ('id' lub '_id') w metadanych dla treści: {content[:50]}...")
 
-                        # Próba pobrania ID punktu z metadanych obiektu Document LangChain
-                        # Obiekt Document nie ma bezpośrednio ID punktu Qdrant.
-                        # ID *może* być w metadanych, jeśli zostało tam dodane podczas tworzenia Document.
-                        # Sprawdźmy klucze 'id' lub '_id' w metadanych.
-                        point_id = metadata.get("id", metadata.get("_id"))
-                        if point_id is None:
-                             # Jeśli nie ma ID w metadanych, musimy je znaleźć inaczej.
-                             # To jest problematyczne i wymagałoby np. modyfikacji similarity_search
-                             # lub dodania ID do metadanych podczas indeksowania.
-                             # Na razie logujemy ostrzeżenie i ustawiamy ID na None.
-                             logger.warning(f"   Nie znaleziono ID punktu ('id' lub '_id') w metadanych dla źródła: {source_name}. ID będzie None.")
-
-                        if source_name not in added_source_names:
-                             if len(top_sources) < 3:
-                                top_sources.append({"name": source_name, "id": point_id})
-                                added_source_names.add(source_name)
-                    elif document:
-                         logger.warning(f"   Dokument dla treści '{content[:50]}...' nie ma metadanych.")
+                            source_name = metadata.get("source", metadata.get("file_path", metadata.get("filename", "nieznane źródło")))
+                            if source_name not in added_source_names:
+                                if len(top_sources) < 3:
+                                    top_sources.append({"name": source_name, "id": point_id})
+                                    added_source_names.add(source_name)
+                        else:
+                             logger.warning(f"   Dokument dla treści '{content[:50]}...' nie ma metadanych.")
                     else:
                          logger.warning(f"   Nie znaleziono obiektu Document dla treści '{content[:50]}...' w mapowaniu.")
-
                 else:
-                    # logger.debug(f"   Dokument odrzucony przez próg rerankera (score: {score:.4f}): {content[:100]}...") # Opcjonalny debug
-                    pass # Nie dodajemy, ale kontynuujemy pętlę, by sprawdzić inne
+                    pass # Dokument odrzucony przez reranker
 
-            logger.info(f"✅ Zbudowano kontekst z {len(context_parts)} chunków.")
-            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia (ze strukturą): {top_sources}")
+            logger.info(f"✅ Zbudowano początkowy kontekst z {len(context_parts)} chunków.")
+            logger.info(f"✅ Wybrano {len(top_sources)} unikalnych źródeł do wyświetlenia: {top_sources}")
+
+            # === DODANO: Logika rozszerzania kontekstu na podstawie klastrów ===
+            if cluster_assignments and initial_context_point_ids:
+                logger.info(f"🧩 Rozszerzanie kontekstu na podstawie klastrów (dominujące: {expand_context_clusters}, dodatkowe: {expand_context_docs})...")
+                # Znajdź klastry dla punktów w początkowym kontekście
+                context_clusters = [cluster_assignments.get(pid) for pid in initial_context_point_ids if cluster_assignments.get(pid) is not None and cluster_assignments.get(pid) != -1] # Ignoruj szum (-1)
+
+                if context_clusters:
+                    # Znajdź dominujące klastry
+                    cluster_counts = Counter(context_clusters)
+                    dominant_clusters = [cid for cid, count in cluster_counts.most_common(expand_context_clusters)]
+                    logger.info(f"   Dominujące klastry w kontekście: {dominant_clusters}")
+
+                    added_expansion_docs_count = 0
+                    # Przejrzyj wszystkie *pierwotnie* relewantne dokumenty
+                    for doc in relevant_docs:
+                        metadata = doc.metadata
+                        point_id = metadata.get("id", metadata.get("_id")) if metadata else None
+
+                        # Sprawdź, czy dokument ma ID, należy do dominującego klastra i NIE był już w początkowym kontekście
+                        if point_id and point_id in cluster_assignments and \
+                           cluster_assignments[point_id] in dominant_clusters and \
+                           point_id not in initial_context_point_ids:
+
+                            if added_expansion_docs_count < expand_context_docs * len(dominant_clusters):
+                                logger.info(f"   ➕ Dodawanie rozszerzenia kontekstu z klastra {cluster_assignments[point_id]} (ID: {point_id}): {doc.page_content[:100]}...")
+                                context_parts.append(doc.page_content)
+                                initial_context_point_ids.add(point_id) # Dodaj do użytych, aby nie powtórzyć
+                                added_expansion_docs_count += 1
+                            else:
+                                logger.info("   Osiągnięto limit dodatkowych dokumentów do rozszerzenia kontekstu.")
+                                break # Osiągnięto limit
+
+                    if added_expansion_docs_count > 0:
+                         logger.info(f"✅ Dodano {added_expansion_docs_count} dodatkowych chunków do kontekstu na podstawie klastrów.")
+                else:
+                    logger.info("   Brak informacji o klastrach (innych niż szum) dla dokumentów w początkowym kontekście.")
+            elif cluster_assignments:
+                 logger.info("ℹ️ Przypisania klastrów dostępne, ale brak punktów w początkowym kontekście do określenia dominujących klastrów.")
+            else:
+                logger.info("ℹ️ Brak przypisań klastrów, pomijanie rozszerzania kontekstu.")
+            # === KONIEC LOGIKI ROZSZERZANIA KONTEKSTU ===
+
 
             if not context_parts:
-                logger.info("❌ Brak dokumentów spełniających próg istotności po rerankingu")
+                logger.info("❌ Brak dokumentów spełniających próg istotności po rerankingu (i ewentualnym rozszerzeniu).")
                 return {"content": "Nie znaleziono wystarczająco istotnych informacji w dokumentach, aby odpowiedzieć na to pytanie.", "metadata": None}, [], None
 
             context = "\n\n".join(context_parts)
+            logger.info(f"📊 Finalny kontekst ma długość: {len(context)} znaków ({len(context_parts)} chunków).")
+
 
             # Generowanie odpowiedzi
             logger.info("🤖 Generowanie odpowiedzi za pomocą LLM")
@@ -251,7 +295,7 @@ class RAGChatbot:
                  system_prompt_override = ""
 
             response_dict = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
-            sources = top_sources # Używamy zebranych źródeł
+            sources = top_sources # Używamy zebranych źródeł (tylko top 3, nawet jeśli kontekst rozszerzony)
 
             logger.info("✅ Odpowiedź została pomyślnie wygenerowana wraz z metadanymi")
 

@@ -472,11 +472,11 @@ def main():
                               # Wyczyść poprzednie dane przy wyborze nowego klastra
                               if st.session_state.selected_cluster_id is not None:
                                    # Użyj selected_id, które właśnie ustawiliśmy
-                                   selected_id = st.session_state.selected_cluster_id
-                                   if selected_id in st.session_state.cluster_summaries:
-                                        del st.session_state.cluster_summaries[selected_id]
-                                   if selected_id in st.session_state.cluster_entities:
-                                       del st.session_state.cluster_entities[selected_id]
+                                   selected_id_local = st.session_state.selected_cluster_id # Zmieniono nazwę zmiennej
+                                   if selected_id_local in st.session_state.cluster_summaries:
+                                        del st.session_state.cluster_summaries[selected_id_local]
+                                   if selected_id_local in st.session_state.cluster_entities:
+                                       del st.session_state.cluster_entities[selected_id_local]
                               st.rerun() # Odśwież, aby pokazać/ukryć szczegóły
 
                  except Exception as e:
@@ -494,61 +494,51 @@ def main():
 
                   st.subheader(f"Szczegóły - {selected_label_text}")
                   try:
+                      # Mapowanie ID punktu na dane (dla szybkiego dostępu w tej sekcji)
+                      point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
+                      cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
+                      cluster_texts = [
+                           point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
+                           for pid in cluster_point_ids
+                           if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
+                       ]
+
                       # --- Przyciski i logika generowania podsumowania i encji ---
                       col1_details, col2_details = st.columns(2)
                       with col1_details:
                            if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
-                               if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and st.session_state.qdrant_data_cache and st.session_state.cluster_assignments:
+                               if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and cluster_texts:
                                    with st.spinner(f"Generowanie podsumowania dla {selected_label_text}..."):
-                                       # Upewnij się, że point_id_to_data jest aktualne
-                                       point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
-                                       cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
-                                       texts_to_summarize = [
-                                           point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
-                                           for pid in cluster_point_ids
-                                           if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
-                                       ]
-                                       if texts_to_summarize:
-                                           summary = generate_cluster_summary(
-                                               texts_to_summarize,
-                                               st.session_state.chatbot.llm
-                                               # max_context_length=10000 # Opcjonalnie ustaw limit długości
-                                           )
-                                           st.session_state.cluster_summaries[selected_id] = summary
-                                           st.rerun() # Odśwież, aby wyświetlić podsumowanie
-                                       else:
-                                           st.warning("Brak tekstów w tym klastrze do wygenerowania podsumowania.")
-                                           st.session_state.cluster_summaries[selected_id] = "Brak tekstów w klastrze."
+                                       summary = generate_cluster_summary(
+                                           cluster_texts,
+                                           st.session_state.chatbot.llm
+                                       )
+                                       st.session_state.cluster_summaries[selected_id] = summary
+                                       st.rerun()
+                               elif not cluster_texts:
+                                   st.warning("Brak tekstów w tym klastrze do wygenerowania podsumowania.")
+                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów w klastrze."
                                else:
-                                   st.error("Nie można wygenerować podsumowania. Brakuje chatbota, danych Qdrant lub przypisań klastrów.")
+                                   st.error("Nie można wygenerować podsumowania. Brakuje chatbota lub danych.")
                       with col2_details:
                            # DODANO: Przycisk i logika dla encji
                            if st.button("🧐 Pokaż Kluczowe Obiekty", key=f"entities_{selected_id}", use_container_width=True):
-                                if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and st.session_state.qdrant_data_cache and st.session_state.cluster_assignments:
+                                if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and cluster_texts:
                                      if st.session_state.chatbot.nlp is None:
                                          st.error("Model spaCy (nlp) nie jest załadowany. Nie można wyekstrahować encji.")
                                      else:
                                          with st.spinner(f"Ekstrakcja kluczowych bytów dla {selected_label_text}..."):
-                                             # Upewnij się, że point_id_to_data jest aktualne
-                                             point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
-                                             cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
-                                             texts_for_ner = [
-                                                 point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
-                                                 for pid in cluster_point_ids
-                                                 if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
-                                             ]
-                                             if texts_for_ner:
-                                                 entities = extract_key_entities(
-                                                     texts_for_ner,
-                                                     st.session_state.chatbot.nlp
-                                                 )
-                                                 st.session_state.cluster_entities[selected_id] = entities
-                                                 st.rerun() # Odśwież, aby wyświetlić encje
-                                             else:
-                                                 st.warning("Brak tekstów w tym klastrze do ekstrakcji encji.")
-                                                 st.session_state.cluster_entities[selected_id] = []
+                                             entities = extract_key_entities(
+                                                 cluster_texts,
+                                                 st.session_state.chatbot.nlp
+                                             )
+                                             st.session_state.cluster_entities[selected_id] = entities
+                                             st.rerun() # Odśwież, aby wyświetlić encje
+                                elif not cluster_texts:
+                                     st.warning("Brak tekstów w tym klastrze do ekstrakcji encji.")
+                                     st.session_state.cluster_entities[selected_id] = []
                                 else:
-                                     st.error("Nie można wyekstrahować encji. Brakuje chatbota, modelu nlp, danych Qdrant lub przypisań klastrów.")
+                                     st.error("Nie można wyekstrahować encji. Brakuje chatbota, modelu nlp lub danych.")
 
 
                       # Wyświetlanie podsumowania (jeśli istnieje)
@@ -569,17 +559,12 @@ def main():
                            st.markdown("---")
                       # --------------------------------------------------
 
-                      # Znajdź punkty dla wybranego klastra
-                      cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
-
+                      # Wyświetlanie listy punktów (chunków)
                       if not cluster_point_ids:
                           st.write("Brak punktów w tym klastrze.")
                       elif not st.session_state.qdrant_data_cache:
                           st.warning("Dane Qdrant nie są dostępne w cache. Odśwież klastry.")
                       else:
-                          # Ponownie pobierz mapowanie ID->Dane, na wypadek gdyby cache się zmienił
-                          point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
-
                           st.write(f"Punkty ({len(cluster_point_ids)}):")
                           points_shown = 0
                           MAX_POINTS_TO_SHOW = 20 # Ogranicznik dla wydajności UI
@@ -974,9 +959,11 @@ def main():
                             st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
                             st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
                             selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]
+                            # DODANO: Przekazanie cluster_assignments do query
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
-                                system_prompt_override=selected_prompt_text
+                                system_prompt_override=selected_prompt_text,
+                                cluster_assignments=st.session_state.get('cluster_assignments') # Przekaż, jeśli istnieje
                             )
                             if isinstance(response_dict.get("content"), AIMessage):
                                  response_content_str = response_dict.get("content").content
