@@ -10,6 +10,11 @@ from sklearn.cluster import KMeans, DBSCAN # Importujemy K-Means i DBSCAN
 from sklearn.metrics import silhouette_score # Do oceny jakości klastrowania (opcjonalne)
 from sklearn.preprocessing import StandardScaler # Do skalowania danych (ważne dla DBSCAN)
 import random # Do próbkowania tekstów
+# Dodano import dla typowania LLM i spacy
+from typing import List, Dict, Any, Tuple
+from collections import Counter # Dodano import Counter
+import spacy # Dodano import spacy
+
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +39,9 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
         return None
 
     logger.info(f"📈 Rozpoczynanie klastrowania dla {embeddings.shape[0]} punktów przy użyciu algorytmu: {algorithm}...")
-    
+
     labels = None
-    
+
     try:
         if algorithm == 'kmeans':
             # Sprawdzenie, czy n_clusters nie jest większe niż liczba próbek
@@ -57,16 +62,16 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
             logger.info("   Skalowanie danych przed DBSCAN...")
             scaler = StandardScaler()
             embeddings_scaled = scaler.fit_transform(embeddings)
-            
+
             # Domyślne parametry DBSCAN, jeśli nie podano w kwargs
-            eps = kwargs.get('eps', 0.5) 
+            eps = kwargs.get('eps', 0.5)
             min_samples = kwargs.get('min_samples', 5)
             logger.info(f"   Używane parametry DBSCAN: eps={eps}, min_samples={min_samples}")
 
             dbscan = DBSCAN(eps=eps, min_samples=min_samples, **{k:v for k,v in kwargs.items() if k not in ['eps', 'min_samples']})
             dbscan.fit(embeddings_scaled)
             labels = dbscan.labels_
-            
+
             # Podsumowanie wyników DBSCAN
             n_clusters_found = len(set(labels)) - (1 if -1 in labels else 0)
             n_noise_points = list(labels).count(-1)
@@ -104,8 +109,8 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
         return None
 
 
-# === NOWA FUNKCJA DO GENEROWANIA ETYKIET ===
-def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, llm, sample_size: int = 5, max_text_length: int = 300):
+# === FUNKCJA DO GENEROWANIA ETYKIET ===
+def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, llm: Any, sample_size: int = 5, max_text_length: int = 300):
     """
     Generuje opisowe etykiety dla klastrów za pomocą LLM.
 
@@ -125,9 +130,9 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
         return {}
 
     logger.info(f"🏷️ Rozpoczynanie generowania etykiet dla klastrów za pomocą LLM...")
-    
+
     # Stwórz słownik mapujący ID punktu na jego tekst (page_content)
-    point_id_to_text = {item['id']: item.get('payload', {}).get('page_content', '') 
+    point_id_to_text = {item['id']: item.get('payload', {}).get('page_content', '')
                         for item in qdrant_data if item.get('payload')}
 
     # Grupuj ID punktów według klastra
@@ -137,32 +142,32 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
             if cluster_label not in clusters:
                 clusters[cluster_label] = []
             clusters[cluster_label].append(point_id)
-            
+
     generated_labels = {}
-    
+
     for cluster_id, point_ids in clusters.items():
         logger.info(f"   Generowanie etykiety dla Klastra {cluster_id} (zawiera {len(point_ids)} punktów)...")
-        
+
         # Zbierz próbkę tekstów dla klastra
         sample_texts = []
         # Losuj próbkę ID punktów z klastra
         sample_point_ids = random.sample(point_ids, min(len(point_ids), sample_size))
-        
+
         for point_id in sample_point_ids:
             text = point_id_to_text.get(point_id)
             if text:
                 # Przytnij tekst, aby prompt nie był za długi
                 sample_texts.append(text[:max_text_length] + "..." if len(text) > max_text_length else text)
-                
+
         if not sample_texts:
             logger.warning(f"   Brak tekstów dla Klastra {cluster_id}. Pomijanie generowania etykiety.")
             generated_labels[cluster_id] = f"Klaster {cluster_id} (brak danych tekstowych)"
             continue
-            
+
         # Przygotuj prompt dla LLM
         combined_texts = "\n---\n".join(sample_texts)
         prompt = f"""
-        Poniżej znajdują się fragmenty tekstów należące do tej samej grupy tematycznej (klastra). 
+        Poniżej znajdują się fragmenty tekstów należące do tej samej grupy tematycznej (klastra).
         Twoim zadaniem jest przeanalizowanie tych fragmentów i zaproponowanie krótkiej, zwięzłej etykiety (maksymalnie 3-5 słów) opisującej główny temat tej grupy. Etykieta powinna być po polsku.
 
         Fragmenty tekstów:
@@ -172,11 +177,11 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
 
         Zaproponuj etykietę (tylko sama etykieta, bez dodatkowych wyjaśnień):
         """
-        
+
         try:
             logger.debug(f"      Wysyłanie promptu do LLM dla Klastra {cluster_id}...")
             response = llm.invoke(prompt)
-            
+
             label_text = ""
             if hasattr(response, 'content'):
                 label_text = response.content
@@ -184,7 +189,7 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
                 label_text = response
             else:
                 label_text = str(response)
-                
+
             # Proste czyszczenie odpowiedzi LLM (usuwanie np. cudzysłowów)
             cleaned_label = label_text.strip().strip('"').strip("'").strip()
             # Ustawienie pierwszej litery na wielką
@@ -195,11 +200,155 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
                  logger.warning(f"   LLM zwrócił pustą odpowiedź dla Klastra {cluster_id}.")
 
             logger.info(f"   Wygenerowana etykieta dla Klastra {cluster_id}: '{generated_labels[cluster_id]}'")
-            
+
         except Exception as llm_e:
             logger.error(f"   ❌ Błąd podczas wywoływania LLM dla Klastra {cluster_id}: {llm_e}")
             generated_labels[cluster_id] = f"Klaster {cluster_id} (błąd generowania)"
 
     logger.info("✅ Zakończono generowanie etykiet dla klastrów.")
     return generated_labels
+# === KONIEC FUNKCJI DO GENEROWANIA ETYKIET ===
+
+
+# === FUNKCJA DO GENEROWANIA PODSUMOWANIA ===
+def generate_cluster_summary(texts: List[str], llm: Any, max_context_length: int = 8000, sample_size: int = 20) -> str:
+    """
+    Generuje podsumowanie dla grupy tekstów (chunków) należących do jednego klastra za pomocą LLM.
+
+    Args:
+        texts (List[str]): Lista tekstów chunków należących do klastra.
+        llm: Instancja modelu językowego LangChain (np. ChatOpenAI).
+        max_context_length (int): Maksymalna przybliżona długość kontekstu (w znakach) do wysłania do LLM.
+                                   Teksty będą losowo próbkowane i łączone, aż do osiągnięcia tego limitu.
+        sample_size (int): Alternatywnie, można użyć stałej liczby próbek, jeśli `max_context_length` nie jest priorytetem.
+                           Jeśli `max_context_length` jest ustawione, `sample_size` jest ignorowane.
+
+    Returns:
+        str: Wygenerowane podsumowanie lub komunikat o błędzie.
+    """
+    if not texts or not llm:
+        logger.warning("⚠️ Brak tekstów lub modelu LLM do wygenerowania podsumowania klastra.")
+        return "Brak danych do wygenerowania podsumowania."
+
+    logger.info(f"📝 Rozpoczynanie generowania podsumowania dla {len(texts)} tekstów...")
+
+    # Przygotowanie kontekstu - próbkowanie lub łączenie do limitu długości
+    combined_texts = ""
+    if max_context_length:
+        current_length = 0
+        # Poprawka: Zawsze próbuj z całej listy, aby uniknąć błędu przy małej liczbie tekstów
+        sampled_texts_indices = random.sample(range(len(texts)), min(len(texts), len(texts))) # Losowa kolejność indeksów
+        selected_texts = []
+        for index in sampled_texts_indices:
+            text = texts[index]
+            if current_length + len(text) + 5 < max_context_length: # +5 dla separatora "\n---\n"
+                selected_texts.append(text)
+                current_length += len(text) + 5
+            else:
+                # Dodaj przynajmniej jeden tekst, nawet jeśli przekracza limit, jeśli nic nie wybrano
+                if not selected_texts:
+                    selected_texts.append(text[:max_context_length-5]) # Przytnij, aby zmieścić się w limicie
+                    logger.warning("   Pierwszy tekst był dłuższy niż max_context_length, został przycięty.")
+                break # Osiągnięto limit długości
+        combined_texts = "\n---\n".join(selected_texts)
+        logger.info(f"   Użyto {len(selected_texts)} z {len(texts)} tekstów (limit długości: {max_context_length} znaków).")
+
+    elif sample_size:
+         sampled_texts = random.sample(texts, min(len(texts), sample_size))
+         combined_texts = "\n---\n".join(sampled_texts)
+         logger.info(f"   Użyto {len(sampled_texts)} z {len(texts)} tekstów (limit próbek: {sample_size}).")
+    else: # Fallback - użyj wszystkich (może być bardzo długie!)
+        combined_texts = "\n---\n".join(texts)
+        logger.warning(f"   Użyto wszystkich {len(texts)} tekstów (brak limitu długości/próbek).")
+
+
+    if not combined_texts:
+        logger.warning("   Nie udało się zbudować kontekstu do podsumowania.")
+        return "Nie można było zbudować kontekstu do podsumowania (puste teksty?)."
+
+    # Przygotuj prompt dla LLM
+    prompt = f"""
+    Poniżej znajdują się fragmenty tekstów należące do tej samej grupy tematycznej (klastra), prawdopodobnie związane ze sprawą ZGP "Agnieszka".
+    Twoim zadaniem jest przeanalizowanie tych fragmentów i stworzenie zwięzłego podsumowania (kilka zdań), które oddaje główne wątki, kluczowe informacje, postacie lub wydarzenia poruszane w tej grupie tekstów. Skup się na najważniejszych aspektach. Podsumowanie powinno być po polsku.
+
+    Fragmenty tekstów:
+    ---
+    {combined_texts}
+    ---
+
+    Zwięzłe podsumowanie głównych wątków i kluczowych informacji:
+    """
+
+    try:
+        logger.debug("      Wysyłanie promptu podsumowania do LLM...")
+        response = llm.invoke(prompt)
+
+        summary_text = ""
+        if hasattr(response, 'content'):
+            summary_text = response.content
+        elif isinstance(response, str):
+            summary_text = response
+        else:
+            summary_text = str(response)
+
+        cleaned_summary = summary_text.strip()
+        logger.info("✅ Podsumowanie klastra wygenerowane.")
+        return cleaned_summary if cleaned_summary else "LLM zwrócił puste podsumowanie."
+
+    except Exception as llm_e:
+        logger.error(f"   ❌ Błąd podczas wywoływania LLM dla podsumowania klastra: {llm_e}")
+        return f"Błąd podczas generowania podsumowania: {llm_e}"
+# === KONIEC FUNKCJI DO GENEROWANIA PODSUMOWANIA ===
+
+
+# === NOWA FUNKCJA DO EKSTRAKCJI KLUCZOWYCH BYTÓW (NER) ===
+def extract_key_entities(texts: List[str], nlp: Any, top_n: int = 10,
+                         allowed_labels: set = {"persName", "orgName", "geogName", "placeName"}) -> List[Tuple[str, str, int]]:
+    """
+    Ekstrahuje i zlicza nazwane encje (NER) z listy tekstów za pomocą modelu spaCy.
+
+    Args:
+        texts (List[str]): Lista tekstów chunków należących do klastra.
+        nlp: Załadowana instancja modelu językowego spaCy (np. pl_core_news_lg).
+        top_n (int): Liczba najczęstszych encji do zwrócenia.
+        allowed_labels (set): Zbiór etykiet NER, które mają być uwzględnione w wynikach.
+                              Domyślnie: osoby, organizacje, nazwy geograficzne, miejsca.
+
+    Returns:
+        List[Tuple[str, str, int]]: Lista krotek (tekst_encji, etykieta_ner, liczba_wystąpień),
+                                     posortowana malejąco według liczby wystąpień.
+                                     Zwraca pustą listę w przypadku błędu, braku modelu nlp lub braku encji.
+    """
+    if not nlp:
+        logger.error("❌ Model spaCy (nlp) nie jest dostępny do ekstrakcji encji.")
+        return []
+    if not texts:
+        logger.warning("⚠️ Brak tekstów do ekstrakcji encji.")
+        return []
+
+    logger.info(f"🧐 Rozpoczynanie ekstrakcji kluczowych bytów (NER) z {len(texts)} tekstów (top {top_n}, dozwolone: {allowed_labels})...")
+    entity_counts = Counter()
+
+    try:
+        # Przetwarzanie tekstów partiami dla lepszej wydajności spaCy
+        for doc in nlp.pipe(texts, disable=["tagger", "parser"]): # Wyłączamy niepotrzebne komponenty
+            for ent in doc.ents:
+                # Sprawdź, czy etykieta encji jest dozwolona
+                if ent.label_ in allowed_labels:
+                    # Normalizuj tekst encji (np. usuń białe znaki na początku/końcu)
+                    entity_text = ent.text.strip()
+                    if entity_text: # Ignoruj puste encje po strip()
+                        entity_counts[(entity_text, ent.label_)] += 1
+
+        # Pobierz top_n najczęstszych encji
+        most_common_entities = entity_counts.most_common(top_n)
+
+        # Konwertuj na format wyjściowy (tekst, etykieta, liczba)
+        result = [(text, label, count) for (text, label), count in most_common_entities]
+        logger.info(f"✅ Znaleziono {len(result)} kluczowych bytów.")
+        return result
+
+    except Exception as e:
+        logger.error(f"❌ Błąd podczas ekstrakcji encji NER: {e}", exc_info=True)
+        return []
 # === KONIEC NOWEJ FUNKCJI ===

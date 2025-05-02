@@ -1695,6 +1695,28 @@
                         ]
                     },
                     "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych).\n\n"
+                },
+                {
+                    "role": "user",
+                    "content": "dzien dobry"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Dzień dobry! W czym mogę pomóc? 😊\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "dzien dobry"
+                },
+                {
+                    "role": "user",
+                    "content": "jak tam?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Wszystko w porządku, dziękuję! Jako model językowy, nie mam uczuć ani potrzeb, ale działam poprawnie. A jak u Ciebie? Co słychać?\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "jak tam?"
                 }
             ]
         },
