@@ -13,6 +13,8 @@ from data_processing.reranker import Reranker
 from langchain_core.documents import Document
 # Zmieniono import LLM na ChatOpenAI z langchain_openai do połączenia z LM Studio API
 from langchain_openai import ChatOpenAI
+# DODANO: Import dla Google Gemini
+from langchain_google_genai import ChatGoogleGenerativeAI
 import spacy # Dodano import spacy
 import networkx as nx # Dodano import networkx
 import json # Dodano import json do parsowania odpowiedzi LLM
@@ -28,6 +30,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# UWAGA DOTYCZĄCA BEZPIECZEŃSTWA: Przechowywanie klucza API w kodzie jest niebezpieczne.
+# Rozważ użycie zmiennych środowiskowych lub mechanizmu sekretów Streamlit.
+GOOGLE_API_KEY = "AIzaSyAaOq6wmol8FR3DC39g2iuqF68I8_Edfj0" # <- Zastąp bezpiecznym mechanizmem
 
 class RAGChatbot:
     # Zmieniono domyślną nazwę kolekcji na "nowa1"
@@ -82,6 +88,19 @@ class RAGChatbot:
             max_tokens=10000,
             # Dostosuj inne parametry według potrzeb
         )
+
+        # DODANO: Inicjalizacja modelu Google Gemini
+        try:
+            self.gemini_llm = ChatGoogleGenerativeAI(
+                model="gemini-1.5-flash-preview-04-17", # Używamy wskazanego modelu flash
+                google_api_key=GOOGLE_API_KEY,
+                temperature=0.7,
+                # convert_system_message_to_human=True # Może być potrzebne dla niektórych promptów systemowych
+            )
+            logger.info("✅ Pomyślnie zainicjalizowano model Google Gemini.")
+        except Exception as e:
+            logger.error(f"❌ Błąd inicjalizacji Google Gemini: {e}. Funkcjonalność Gemini będzie niedostępna.")
+            self.gemini_llm = None # Ustaw na None w przypadku błędu
 
         # --- Ładowanie modelu spaCy dla NER ---
         try:

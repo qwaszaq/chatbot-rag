@@ -24,6 +24,8 @@ from clustering_module import (
     extract_key_entities
 )
 from collections import Counter # Do zliczania punktów w klastrach
+# DODANO: Import dla typu LLM Google
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Konfiguracja logowania
 logging.basicConfig(
@@ -219,6 +221,9 @@ def main():
     # Inicjalizacja wybranego trybu czatu w stanie sesji
     if 'selected_chat_mode' not in st.session_state:
         st.session_state.selected_chat_mode = "Analityk Tekstu (RAG)"
+    # DODANO: Inicjalizacja stanu dla checkboxa Gemini API
+    if 'use_gemini_api' not in st.session_state:
+        st.session_state.use_gemini_api = False
     # Inicjalizacja stanu checkboxa do filtrowania małych grafów
     if 'filter_small_graphs' not in st.session_state:
         st.session_state.filter_small_graphs = True # Domyślnie filtruj (checkbox zaznaczony)
@@ -233,7 +238,7 @@ def main():
         st.session_state.selected_cluster_id = None
     if 'cluster_summaries' not in st.session_state: # Do przechowywania podsumowań
         st.session_state.cluster_summaries = {}
-    if 'cluster_entities' not in st.session_state: # DODANO: Do przechowywania encji
+    if 'cluster_entities' not in st.session_state: # Do przechowywania encji
         st.session_state.cluster_entities = {}
     # ---------------------------------------------------
 
@@ -345,24 +350,40 @@ def main():
                        st.rerun()
 
         st.markdown("---")
-        st.header("🎭 Wybierz Tryb Czatu")
-        ALL_CHAT_MODES = ["Zwykły Chat"] + list(AVAILABLE_PROMPTS.keys())
-        st.session_state.selected_chat_mode = st.radio(
-            "Wybierz tryb:",
-            options=ALL_CHAT_MODES,
-            key="mode_selector",
-            index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode)
-        )
-        if st.session_state.selected_chat_mode != "Zwykły Chat":
-            with st.expander("Podgląd wybranego promptu systemowego"):
-                 st.markdown(f"```\n{AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]}\n```")
-        st.markdown("---")
+        st.header("🤖 Wybór Modelu")
 
-        st.header("⚙️ Ustawienia RAG")
-        st.session_state.top_k = st.slider("Liczba dok. z Qdrant", 1, 200, st.session_state.get('top_k', 99))
-        st.session_state.top_k_reranker = st.slider("Liczba dok. po rerankingu", 1, 100, st.session_state.get('top_k_reranker', 33))
-        st.session_state.relevance_threshold = st.slider("Próg istotności rerankera", 0.0, 1.0, st.session_state.get('relevance_threshold', 0.0), 0.01)
-        st.markdown("---")
+        # DODANO: Checkbox do przełączania na Gemini API
+        st.session_state.use_gemini_api = st.checkbox(
+            "✨ Użyj Google Gemini API (pomija RAG)",
+            key="gemini_api_checkbox",
+            value=st.session_state.use_gemini_api,
+            help="Jeśli zaznaczone, zapytania będą kierowane bezpośrednio do Google Gemini Flash API (wymaga klucza API). Pomija wyszukiwanie w dokumentach (RAG)."
+        )
+
+        # Ukryj wybór trybu RAG, jeśli Gemini API jest aktywne
+        if not st.session_state.use_gemini_api:
+            st.header("🎭 Wybierz Tryb Czatu (Lokalny LLM)")
+            ALL_CHAT_MODES = ["Zwykły Chat"] + list(AVAILABLE_PROMPTS.keys())
+            st.session_state.selected_chat_mode = st.radio(
+                "Wybierz tryb:",
+                options=ALL_CHAT_MODES,
+                key="mode_selector",
+                index=ALL_CHAT_MODES.index(st.session_state.selected_chat_mode)
+            )
+            if st.session_state.selected_chat_mode != "Zwykły Chat":
+                with st.expander("Podgląd wybranego promptu systemowego"):
+                     st.markdown(f"```\n{AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]}\n```")
+            st.markdown("---")
+
+            st.header("⚙️ Ustawienia RAG")
+            st.session_state.top_k = st.slider("Liczba dok. z Qdrant", 1, 200, st.session_state.get('top_k', 99))
+            st.session_state.top_k_reranker = st.slider("Liczba dok. po rerankingu", 1, 100, st.session_state.get('top_k_reranker', 33))
+            st.session_state.relevance_threshold = st.slider("Próg istotności rerankera", 0.0, 1.0, st.session_state.get('relevance_threshold', 0.0), 0.01)
+            st.markdown("---")
+        else:
+            st.info("Tryby RAG i ich ustawienia są niedostępne, gdy aktywny jest tryb Google Gemini API.")
+            st.markdown("---")
+
 
         # === DODANO SEKCJE KLASTROWANIA ===
         st.header("🔬 Analiza Klastrowania")
@@ -941,8 +962,29 @@ def main():
                         graph_data = None
                         prompt_answered = last_user_prompt
 
-                        if st.session_state.selected_chat_mode == "Zwykły Chat":
-                            logger.info("💬 Tryb: Zwykły Chat - wywołanie LLM bez RAG")
+                        # Sprawdź, czy używać Gemini API
+                        if st.session_state.use_gemini_api:
+                            logger.info("✨ Tryb: Google Gemini API")
+                            if st.session_state.chatbot.gemini_llm:
+                                gemini_response = st.session_state.chatbot.gemini_llm.invoke(last_user_prompt)
+                                if hasattr(gemini_response, 'content'):
+                                    response_content_str = gemini_response.content
+                                elif isinstance(gemini_response, str):
+                                    response_content_str = gemini_response
+                                else:
+                                    response_content_str = str(gemini_response)
+                                # W trybie Gemini API nie ma źródeł ani grafu
+                                sources = []
+                                graph_data = None
+                                logger.info("✅ Odpowiedź z Gemini API otrzymana.")
+                            else:
+                                response_content_str = "Błąd: Model Google Gemini nie został poprawnie zainicjalizowany."
+                                logger.error(response_content_str)
+                                sources = []
+                                graph_data = None
+                        # Logika dla lokalnego LLM (Zwykły Chat lub RAG)
+                        elif st.session_state.selected_chat_mode == "Zwykły Chat":
+                            logger.info("💬 Tryb: Zwykły Chat (Lokalny LLM) - wywołanie LLM bez RAG")
                             plain_response = st.session_state.chatbot.llm.invoke(last_user_prompt)
                             if hasattr(plain_response, 'content'):
                                 response_content_str = plain_response.content
@@ -952,14 +994,13 @@ def main():
                                 response_content_str = str(plain_response)
                             sources = []
                             graph_data = None
-
-                        else: # Tryb RAG
-                            logger.info(f"⚙️ Tryb: RAG ({st.session_state.selected_chat_mode})")
+                        else: # Tryb RAG z lokalnym LLM
+                            logger.info(f"⚙️ Tryb: RAG ({st.session_state.selected_chat_mode}) z lokalnym LLM")
                             st.session_state.chatbot.top_k = st.session_state.top_k
                             st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
                             st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
                             selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]
-                            # DODANO: Przekazanie cluster_assignments do query
+                            # Przekazanie cluster_assignments do query
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
                                 system_prompt_override=selected_prompt_text,
@@ -972,11 +1013,12 @@ def main():
                             else:
                                  response_content_str = str(response_dict.get("content",""))
 
+                        # Zapis odpowiedzi do historii
                         st.session_state.chats[st.session_state.active_chat_id]["messages"].append({
                             "role": "assistant",
                             "content": response_content_str,
-                            "sources": sources, # Przekazujemy listę słowników
-                            "graph_data": graph_data,
+                            "sources": sources, # Przekazujemy listę słowników lub pustą listę
+                            "graph_data": graph_data, # Przekazujemy dane grafu lub None
                             "prompt_answered": prompt_answered
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)

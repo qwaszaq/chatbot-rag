@@ -1965,6 +1965,845 @@
                         ]
                     },
                     "prompt_answered": "Wygeneruj graf ilustrujący pełen cykl finansowania i legalizacji środków dla 'Projektu Beż' (A. Dąbrowska), pokazując źródła finansowania (NCBR, BGK), powiązane firmy-słupy (NeutralTech Solutions), centralny hub finansowy (A. Malinowska) i potencjalnych odbiorców końcowych lub dalsze transfery (np. do rajów podatkowych)."
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Specyficzne metody, choć absurdalne, były integralną częścią strategii operacyjnej i finansowej ZGP \"Agnieszka\". Nie ograniczały się one do bezpośredniego oszustwa, ale służyły jako narzędzia kamuflażu, pozyskiwania informacji oraz tworzenia skomplikowanego systemu legalizacji środków. Agnieszka Malinowska (\"Kosmiczna Rachunkowość\"/\"Czas\") pełniła rolę centralnego hubu finansowego i prowadziła kalkulacje zysków generowanych przez różne \"projekty\" związane z tymi metodami, takie jak \"Projekt Echo - sample audio\" (Jankowska), \"Projekt Hipnos - Negocjacje Strategiczne\" (Kowalska) czy \"Projekt Gołąb - Raporty PIA\" (Piotrowska).\n\nIstnieją dowody na koordynację tych metod i ich wykorzystanie poza generowaniem pierwotnego dochodu. Korespondencja między Agnieszkami wskazuje na dyskusje dotyczące \"integracji metod\", wymianę informacji o skuteczności różnych technik oraz planowanie wspólnych działań. Przykładowo, notatka Agnieszki Michalskiej (\"Chlorofil\") pyta o możliwość współpracy z Agnieszką Pawlak (\"Cień\") w zakresie analizy wibracji cienia nieruchomości, a korespondencja między A. Malinowską i A. Kowalską dotyczy \"konwersji wartości cienia na waluty fiducjarne\".  Ponadto, analiza laptopa Agnieszki Majewskiej ujawniła plik opisujący \"koordynację działań estetyzacyjnych i informacyjnych\" w miastach portowych, co sugeruje wykorzystanie metod artystycznych do maskowania działalności przestępczej.\n\nMetody takie jak kluczodiagnostyka (Kowalska) i analiza bio-sygnałów roślin (Michalska) były potencjalnie używane do wstępnej oceny potencjalnych ofiar lub pozyskiwania informacji o ich majątku, co wskazuje na rolę wywiadowczą w ramach grupy.  \"Metoda Beżowej Diety\" Dąbrowskiej była powiązana z analizami przetargowymi Lisieckiej. Te metody nie służyły wyłącznie oszustwu, ale były częścią skomplikowanej strategii manipulacji i pozyskiwania korzyści.\n\nŹródło w dokumentach:\n*   Cały załączony kontekst, szczególnie fragmenty dotyczące korespondencji między Agnieszkami (wspomniane w sekcji \"Wewnętrzna Komunikacja i Wsparcie\") oraz opisy poszczególnych metod i ich powiązań z innymi członkami grupy.\n*   Notatka Agnieszki Michalskiej (\"Chlorofil\"): fragment o współpracy z A. Pawlak (\"Cień\").\n*   Korespondencja między A. Malinowską a A. Kowalską: dyskusje na temat \"konwersji wartości cienia\".\n*   Plik \"Strategia Okienna i Latarniana AG\" (laptop Agnieszki Majewskiej): opis koordynacji działań informacyjnych.\n*   Informacje o kalkulacjach finansowych prowadzonych przez A. Malinowską (\"Projekt Echo\", \"Projekt Hipnos\", \"Projekt Gołąb\").\n\nKomentarz:  ZGP \"Agnieszka\" wykorzystywała pseudonaukowe i artystyczne metody nie tylko do generowania dochodów, ale również do tworzenia złożonego systemu kamuflażu, pozyskiwania informacji oraz wzajemnego wsparcia. Koordynacja tych metod sugeruje istnienie centralnego planowania i zarządzania przez A. Malinowską lub inną osobę z grupy.  Absurdalny charakter tych metod wydaje się być celowym zabiegiem mającym na celu odwrócenie uwagi śledczych oraz stworzenie pozorów działalności naukowej lub artystycznej.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj7m_todo/code - 2025-04-25T230546.395.txt",
+                            "id": "b7adbc0b-b06c-45e0-96cb-6e8ec0a4d159"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                            "id": "43daded9-7d38-41fc-bad5-b978895977b9"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpv5s80lml/code - 2025-04-25T230122.059.txt",
+                            "id": "fb00774a-c15c-4cd5-a23f-4ce2998a0c7d"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Kowalska",
+                                "ner_type": "persName",
+                                "id": "Kowalska"
+                            },
+                            {
+                                "label": "kluczodiagnostyka",
+                                "ner_type": null,
+                                "id": "kluczodiagnostyka"
+                            },
+                            {
+                                "label": "Lisiecka",
+                                "ner_type": "persName",
+                                "id": "Lisiecka"
+                            },
+                            {
+                                "label": "prognozy chmur",
+                                "ner_type": null,
+                                "id": "prognozy chmur"
+                            },
+                            {
+                                "label": "Michalska",
+                                "ner_type": "persName",
+                                "id": "Michalska"
+                            },
+                            {
+                                "label": "analiza wibracji roślin",
+                                "ner_type": null,
+                                "id": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "Pawlak",
+                                "ner_type": "persName",
+                                "id": "Pawlak"
+                            },
+                            {
+                                "label": "rozmowy z cieniem",
+                                "ner_type": null,
+                                "id": "rozmowy z cieniem"
+                            },
+                            {
+                                "label": "ZGP \"Agnieszka\"",
+                                "ner_type": "orgName",
+                                "id": "ZGP \"Agnieszka\""
+                            },
+                            {
+                                "label": "strategia operacyjną i finansową",
+                                "ner_type": null,
+                                "id": "strategia operacyjną i finansową"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "centralny hub finansowy",
+                                "ner_type": null,
+                                "id": "centralny hub finansowy"
+                            },
+                            {
+                                "label": "kalkulacje zysków",
+                                "ner_type": null,
+                                "id": "kalkulacje zysków"
+                            },
+                            {
+                                "label": "Jankowska",
+                                "ner_type": "persName",
+                                "id": "Jankowska"
+                            },
+                            {
+                                "label": "\"Projekt Echo - sample audio\"",
+                                "ner_type": "orgName",
+                                "id": "\"Projekt Echo - sample audio\""
+                            },
+                            {
+                                "label": "\"Projekt Hipnos - Negocjacje Strategiczne\"",
+                                "ner_type": null,
+                                "id": "\"Projekt Hipnos - Negocjacje Strategiczne\""
+                            },
+                            {
+                                "label": "Piotrowska",
+                                "ner_type": "persName",
+                                "id": "Piotrowska"
+                            },
+                            {
+                                "label": "\"Projekt Gołąb - Raporty PIA\"",
+                                "ner_type": null,
+                                "id": "\"Projekt Gołąb - Raporty PIA\""
+                            },
+                            {
+                                "label": "Agnieszki",
+                                "ner_type": "persName",
+                                "id": "Agnieszki"
+                            },
+                            {
+                                "label": "korespondencję",
+                                "ner_type": null,
+                                "id": "korespondencję"
+                            },
+                            {
+                                "label": "Agnieszka Michalska (\"Chlorofil\")",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Michalska (\"Chlorofil\")"
+                            },
+                            {
+                                "label": "współpracę z Agnieszką Pawlak (\"Cień\")",
+                                "ner_type": "persName",
+                                "id": "współpracę z Agnieszką Pawlak (\"Cień\")"
+                            },
+                            {
+                                "label": "A. Malinowska",
+                                "ner_type": "persName",
+                                "id": "A. Malinowska"
+                            },
+                            {
+                                "label": "A. Kowalską",
+                                "ner_type": "persName",
+                                "id": "A. Kowalską"
+                            },
+                            {
+                                "label": "Agnieszka Majewska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Majewska"
+                            },
+                            {
+                                "label": "laptopa",
+                                "ner_type": null,
+                                "id": "laptopa"
+                            },
+                            {
+                                "label": "Plik na laptopie Agnieszki Majewskiej",
+                                "ner_type": "persName",
+                                "id": "Plik na laptopie Agnieszki Majewskiej"
+                            },
+                            {
+                                "label": "koordynację działań estetyzacyjnych i informacyjnych",
+                                "ner_type": null,
+                                "id": "koordynację działań estetyzacyjnych i informacyjnych"
+                            },
+                            {
+                                "label": "analiza bio-sygnałów roślin",
+                                "ner_type": null,
+                                "id": "analiza bio-sygnałów roślin"
+                            },
+                            {
+                                "label": "Dąbrowska",
+                                "ner_type": "persName",
+                                "id": "Dąbrowska"
+                            },
+                            {
+                                "label": "\"Metoda Beżowej Diety\"",
+                                "ner_type": null,
+                                "id": "\"Metoda Beżowej Diety\""
+                            },
+                            {
+                                "label": "analizami przetargowymi",
+                                "ner_type": null,
+                                "id": "analizami przetargowymi"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "opracowała",
+                                "source": "Kowalska",
+                                "target": "kluczodiagnostyka"
+                            },
+                            {
+                                "label": "jest związana z",
+                                "source": "Kowalska",
+                                "target": "\"Projekt Hipnos - Negocjacje Strategiczne\""
+                            },
+                            {
+                                "label": "opracowała",
+                                "source": "Lisiecka",
+                                "target": "prognozy chmur"
+                            },
+                            {
+                                "label": "jest związana z",
+                                "source": "Lisiecka",
+                                "target": "analizami przetargowymi"
+                            },
+                            {
+                                "label": "opracowała",
+                                "source": "Michalska",
+                                "target": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "opracowała",
+                                "source": "Michalska",
+                                "target": "analiza bio-sygnałów roślin"
+                            },
+                            {
+                                "label": "wykorzystywała",
+                                "source": "Pawlak",
+                                "target": "rozmowy z cieniem"
+                            },
+                            {
+                                "label": "zastosowało",
+                                "source": "ZGP \"Agnieszka\"",
+                                "target": "strategia operacyjną i finansową"
+                            },
+                            {
+                                "label": "pełniła rolę",
+                                "source": "Agnieszka Malinowska",
+                                "target": "centralny hub finansowy"
+                            },
+                            {
+                                "label": "prowadziła",
+                                "source": "Agnieszka Malinowska",
+                                "target": "kalkulacje zysków"
+                            },
+                            {
+                                "label": "jest związana z",
+                                "source": "Jankowska",
+                                "target": "\"Projekt Echo - sample audio\""
+                            },
+                            {
+                                "label": "jest związana z",
+                                "source": "Piotrowska",
+                                "target": "\"Projekt Gołąb - Raporty PIA\""
+                            },
+                            {
+                                "label": "prowadziły",
+                                "source": "Agnieszki",
+                                "target": "korespondencję"
+                            },
+                            {
+                                "label": "pytała o",
+                                "source": "Agnieszka Michalska (\"Chlorofil\")",
+                                "target": "współpracę z Agnieszką Pawlak (\"Cień\")"
+                            },
+                            {
+                                "label": "prowadziła korespondencję z",
+                                "source": "A. Malinowska",
+                                "target": "A. Kowalską"
+                            },
+                            {
+                                "label": "posiadała",
+                                "source": "Agnieszka Majewska",
+                                "target": "laptopa"
+                            },
+                            {
+                                "label": "opisuje",
+                                "source": "Plik na laptopie Agnieszki Majewskiej",
+                                "target": "koordynację działań estetyzacyjnych i informacyjnych"
+                            },
+                            {
+                                "label": "opracowała",
+                                "source": "Dąbrowska",
+                                "target": "\"Metoda Beżowej Diety\""
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Pseudonaukowe i artystyczne metody poszczególnych Agnieszek nie ograniczały się do bezpośredniego oszustwa, lecz były integralną częścią szerszej strategii operacyjnej i finansowej ZGP \"Agnieszka\", z centralnym hubem finansowym zarządzanym przez **Agnieszkę Malinowską (\"Czas\"/\"Kosmiczna Rachunkowość\")**. Dowody wskazują na koordynację tych metod, wykorzystywanych nie tylko do generowania dochodu, ale również jako elementy maskujące działalność i budujące spójną narrację grupy.\n\nKonkretnie:\n\n*   **Kluczodiagnostyka Agnieszki Kowalskiej (\"Kluczarka\")** była omawiana w kontekście oceny zamożności potencjalnych ofiar przez **Agnieszkę Lisiecką (\"Chmura\")** oraz możliwości jej wykorzystania do otwierania sejfów (notatka Agnieszki Szymańskiej - \"Tosterowa Wyrocznia\").\n*   Metody **Agnieszki Michalskiej (\"Chlorofil\")** – analiza wibracji roślin i komunikacja z nimi – były przedmiotem dyskusji ze strony innych Agnieszek, w tym **Agnieszki Piotrowskiej (\"Gołąb\")**, dotyczących łączenia \"bio-sygnałów\" z komunikacją gołębi.\n*   **Agnieszka Malinowska** prowadziła kalkulacje finansowe związane z działalnością poszczególnych Agnieszek, np. z projektem **\"Projekt Echo - sample audio\" Agnieszki Jankowskiej (\"Echo\")**, oraz \"Projektem Gołąb\", co wskazuje na centralne zarządzanie finansami i koordynację działań.\n*   Pliki zabezpieczone u Malinowskiej (np. **\"Strategia Okienna i Latarniana AG\"**), znalezione również u Agnieszki Majewskiej (\"Latarnia\"), ujawniają plan \"koordynacji działań estetyzacyjnych i informacyjnych\", co sugeruje wykorzystanie metod artystycznych do maskowania działalności grupy.\n*   Notatki **Agnieszki Kowalskiej (\"Kluczarka\")** dotyczące „aur wibracyjnych” kluczy znalazły odzwierciedlenie w zainteresowaniu **Agnieszki Michalskiej**, co pokazuje wymianę wiedzy i integrację metod między członkami grupy.\n*   Wspólne źródło papieru czerpanego ze znakiem wodnym (wykorzystywanego przez **Jankowską** i **Zając**) oraz powtarzające się wzmianki o \"integracji metod\" w korespondencji sugerują skoordynowane działanie mające na celu zwiększenie efektywności oszustw.\n\nRelacja między tymi metodami a działalnością finansową polegała na wykorzystywaniu ich do generowania fałszywych aktywów, pozyskiwania środków i legalizacji dochodów pod przykrywką absurdalnych narracji oraz poprzez tworzenie spójnego wizerunku grupy.\n\nŹródło w dokumentach:\n*   Cały załączony tekst, szczególnie fragmenty dotyczące poszczególnych Agnieszek i ich metod, a także wzmianki o powiązaniach między nimi (wzajemna korespondencja, notatki, pliki na laptopach).\n*   Notatka Agnieszki Michalskiej (\"Chlorofil\") o współpracy z A. Pawlak (\"Cień\").\n*   Korespondencja między A. Malinowską a osobą o nicku \"Kosmiczna Rachunkowość\" (zidentyfikowana jako A. Malinowska) dotycząca konwersji wartości cienia na waluty fiducjarne.\n*   Analiza zabezpieczonej korespondencji z komputera Agnieszki Zając (\"Guma\") i Agnieszki Jankowskiej (\"Echo\").\n*   Plik \"Strategia Okienna i Latarniana AG\" znaleziony u A. Majewskiej i A. Wojciechowskiej.\n\nKomentarz:  ZGP \"Agnieszka\" operowała na zasadzie wyrafinowanego podziału ról, gdzie każda Agnieszka specjalizowała się w konkretnym typie przestępstwa lub metodzie kamuflażu. Koordynacja tych metod i centralne zarządzanie finansami przez A. Malinowską sugerują świadome i zaplanowane działania mające na celu osiągnięcie korzyści majątkowych poprzez oszustwa o złożonym charakterze.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj7m_todo/code - 2025-04-25T230546.395.txt",
+                            "id": "b7adbc0b-b06c-45e0-96cb-6e8ec0a4d159"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                            "id": "43daded9-7d38-41fc-bad5-b978895977b9"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpv5s80lml/code - 2025-04-25T230122.059.txt",
+                            "id": "fb00774a-c15c-4cd5-a23f-4ce2998a0c7d"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "centralny hub finansowy",
+                                "ner_type": null,
+                                "id": "centralny hub finansowy"
+                            },
+                            {
+                                "label": "Agnieszka Kowalska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka"
+                            },
+                            {
+                                "label": "Agnieszka Lisiecka",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka Agnieszki Kowalskiej",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "Agnieszka Szymańska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Szymańska"
+                            },
+                            {
+                                "label": "Tosterowa Wyrocznia",
+                                "ner_type": null,
+                                "id": "Tosterowa Wyrocznia"
+                            },
+                            {
+                                "label": "Agnieszka Michalska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "analiza wibracji roślin",
+                                "ner_type": null,
+                                "id": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "Agnieszka Piotrowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Piotrowska"
+                            },
+                            {
+                                "label": "Agnieszki Michalskiej",
+                                "ner_type": "persName",
+                                "id": "Agnieszki Michalskiej"
+                            },
+                            {
+                                "label": "Projekt Echo - sample audio Agnieszki Jankowskiej",
+                                "ner_type": "persName",
+                                "id": "Projekt Echo - sample audio Agnieszki Jankowskiej"
+                            },
+                            {
+                                "label": "Projekt Gołąb",
+                                "ner_type": null,
+                                "id": "Projekt Gołąb"
+                            },
+                            {
+                                "label": "Strategia Okienna i Latarniana AG",
+                                "ner_type": null,
+                                "id": "Strategia Okienna i Latarniana AG"
+                            },
+                            {
+                                "label": "koordynacji działań estetyzacyjnych i informacyjnych",
+                                "ner_type": null,
+                                "id": "koordynacji działań estetyzacyjnych i informacyjnych"
+                            },
+                            {
+                                "label": "Agnieszka Majewska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Majewska"
+                            },
+                            {
+                                "label": "aur wibracyjnych kluczy",
+                                "ner_type": null,
+                                "id": "aur wibracyjnych kluczy"
+                            },
+                            {
+                                "label": "notatkami Agnieszki Kowalskiej",
+                                "ner_type": "persName",
+                                "id": "notatkami Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "A. Pawlak (Cień)",
+                                "ner_type": "persName",
+                                "id": "A. Pawlak (Cień)"
+                            },
+                            {
+                                "label": "Kosmiczna Rachunkowość",
+                                "ner_type": null,
+                                "id": "Kosmiczna Rachunkowość"
+                            },
+                            {
+                                "label": "Korespondencja",
+                                "ner_type": null,
+                                "id": "Korespondencja"
+                            },
+                            {
+                                "label": "konwersji wartości cienia na waluty fiducjarne",
+                                "ner_type": null,
+                                "id": "konwersji wartości cienia na waluty fiducjarne"
+                            },
+                            {
+                                "label": "Plik \"Strategia Okienna i Latarniana AG\"",
+                                "ner_type": null,
+                                "id": "Plik \"Strategia Okienna i Latarniana AG\""
+                            },
+                            {
+                                "label": "A. Majewskiej",
+                                "ner_type": "persName",
+                                "id": "A. Majewskiej"
+                            },
+                            {
+                                "label": "A. Wojciechowskiej",
+                                "ner_type": "persName",
+                                "id": "A. Wojciechowskiej"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "zarządza",
+                                "source": "Agnieszka Malinowska",
+                                "target": "centralny hub finansowy"
+                            },
+                            {
+                                "label": "prowadziła kalkulacje finansowe dotyczące",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt Echo - sample audio Agnieszki Jankowskiej"
+                            },
+                            {
+                                "label": "zarządzała finansami",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt Gołąb"
+                            },
+                            {
+                                "label": "korespondowała z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Kosmiczna Rachunkowość"
+                            },
+                            {
+                                "label": "opracowała",
+                                "source": "Agnieszka Kowalska",
+                                "target": "Kluczodiagnostyka"
+                            },
+                            {
+                                "label": "napisała notatki dotyczące",
+                                "source": "Agnieszka Kowalska",
+                                "target": "aur wibracyjnych kluczy"
+                            },
+                            {
+                                "label": "oceniała zamożność ofiar za pomocą",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "Kluczodiagnostyka Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "napisała notatkę",
+                                "source": "Agnieszka Szymańska",
+                                "target": "Tosterowa Wyrocznia"
+                            },
+                            {
+                                "label": "opracowała metodę",
+                                "source": "Agnieszka Michalska",
+                                "target": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "wykazywała zainteresowanie",
+                                "source": "Agnieszka Michalska",
+                                "target": "notatkami Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "współpracowała z",
+                                "source": "Agnieszka Michalska",
+                                "target": "A. Pawlak (Cień)"
+                            },
+                            {
+                                "label": "dyskutowała o metodach",
+                                "source": "Agnieszka Piotrowska",
+                                "target": "Agnieszki Michalskiej"
+                            },
+                            {
+                                "label": "ujawnia plan",
+                                "source": "Strategia Okienna i Latarniana AG",
+                                "target": "koordynacji działań estetyzacyjnych i informacyjnych"
+                            },
+                            {
+                                "label": "posiadała plik",
+                                "source": "Agnieszka Majewska",
+                                "target": "Strategia Okienna i Latarniana AG"
+                            },
+                            {
+                                "label": "dotyczy",
+                                "source": "Korespondencja",
+                                "target": "konwersji wartości cienia na waluty fiducjarne"
+                            },
+                            {
+                                "label": "znaleziono u",
+                                "source": "Plik \"Strategia Okienna i Latarniana AG\"",
+                                "target": "A. Majewskiej"
+                            },
+                            {
+                                "label": "znaleziono u",
+                                "source": "Plik \"Strategia Okienna i Latarniana AG\"",
+                                "target": "A. Wojciechowskiej"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź:  \"Metody\" stosowane przez poszczególne \"Agnieszki\" (Agnieszka Kowalska (\"Kluczarka\") - kluczodiagnostyka, Agnieszka Lisiecka (\"Chmura\") - prognozy chmur, Agnieszka Michalska (\"Chlorofil\") – analiza wibracji roślin, Agnieszka Pawlak (\"Cień\") - rozmowy z cieniem) nie były jedynie środkiem do bezpośredniego oszustwa, ale integralną częścią szerszej strategii ZGP \"Agnieszka\", a ich koordynacja i wykorzystanie wykraczało poza generowanie dochodu. Dowody wskazują na centralne zarządzanie i księgowość tych działań przez Agnieszkę Malinowską (\"Kosmiczna Rachunkowość\").\n\nKluczowe relacje i powiązania:\n\n*   **Koordynacja Metod:** Notatki Agnieszki Michalskiej (\"Chlorofil\") wskazują na zapytanie o współpracę z Agnieszką Pawlak (\"Cień\") w zakresie analizy wibracji cienia nieruchomości i roślin, sugerując wymianę wiedzy i potencjalne połączenie metod. Podobna koordynacja występuje w odniesieniu do metod Kowalskiej (\"Kluczarka\") i Michalskiej (\"Chlorofil\") - pytanie o wykorzystanie metody \"Kluczarki\" do oceny zamożności beneficjentów przez Lisiecką (\"Chmura\").\n*   **Centralizacja Finansowa:** Kalkulacje finansowe związane z działalnością poszczególnych Agnieszek (np. “Projekt Echo – sample audio” Jankowskiej, \"Projekt Hipnos - Negocjacje Strategiczne\" Kowalskiej) znajdowały się na laptopie Agnieszki Malinowskiej (\"Kosmiczna Rachunkowość\"), co wskazuje na scentralizowane zarządzanie finansami i księgowością.\n*   **Wykorzystanie poza Generowaniem Dochodów:**  Metody były dyskutowane w kontekście \"integracji\" i \"strategii maskowania\", sugerując wykorzystanie ich do dezinformacji, kamuflażu działań przestępczych i tworzenia legitymacji dla ZGP. W notatkach Agnieszki Majewskiej (\"Latarnia\") wspomina się o koordynacji działań estetyzacyjnych i informacyjnych w miastach portowych, co wskazuje na wykorzystanie metod do manipulacji opinią publiczną lub ukrywania śladów przestępczych.\n*   **Powiązania z innymi \"Projektami\":**  Wiele z tych \"metod\" pojawia się w kontekście konkretnych \"projektów\", takich jak \"Projekt Gołąb”, \"Projekt Mapa” czy “Projekt Pył”. To sugeruje, że nie są one jedynie indywidualnymi działaniami, ale elementami większych operacji przestępczych.\n*   **Komunikacja i Wsparcie:** Bezpośrednia korespondencja między Agnieszkami (np. dyskusje o \"konwersji wartości cienia na waluty fiducjarne\" między Malinowską a Michalską) sugeruje wymianę informacji, wsparcie wzajemnych działań oraz centralną rolę Agnieszki Malinowskiej w koordynacji operacji.\n\nŹródło w dokumentach:\n\n*   Zabezpieczone notatki Agnieszki Michalskiej (\"Chlorofil\") - zapytanie o współpracę z A. Pawlak (\"Cień\").\n*   Analiza zabezpieczonej korespondencji (laptop A. Zając / \"Guma\") - maile dotyczące papieru czerpanego ze znakiem wodnym.\n*   Pliki Agnieszki Malinowskiej (\"Kosmiczna Rachunkowość\") – kalkulacje finansowe z różnych \"projektów\" prowadzonych przez inne Agnieszki.\n*   Notatki odręczne Agnieszki Kowalskiej (\"Kluczarka\").\n*   Korespondencja między A. Lisiecką a A. Malinowską dotycząca metod i strategii.\n*   Dokument \"Strategia Okienna i Latarniana AG\" (laptop A. Majewskiej).\n\nKomentarz:  Absurdalność tych \"metod\" nie wyklucza ich strategicznego wykorzystania przez ZGP \"Agnieszka\". Służyły one prawdopodobnie jako kamuflaż, element psychologiczny manipulacji ofiarami oraz sposób na integrację i koordynację działań różnych członków grupy pod scentralizowanym nadzorem Agnieszki Malinowskiej.  Dalsza analiza komunikacji i finansów jest niezbędna do pełnego zrozumienia roli tych metod w szerszej strategii ZGP.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj7m_todo/code - 2025-04-25T230546.395.txt",
+                            "id": "b7adbc0b-b06c-45e0-96cb-6e8ec0a4d159"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                            "id": "43daded9-7d38-41fc-bad5-b978895977b9"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpv5s80lml/code - 2025-04-25T230122.059.txt",
+                            "id": "fb00774a-c15c-4cd5-a23f-4ce2998a0c7d"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Kowalska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "kluczodiagnostyka",
+                                "ner_type": null,
+                                "id": "kluczodiagnostyka"
+                            },
+                            {
+                                "label": "Agnieszka Lisiecka",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "prognozy chmur",
+                                "ner_type": null,
+                                "id": "prognozy chmur"
+                            },
+                            {
+                                "label": "Agnieszka Michalska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "analiza wibracji roślin",
+                                "ner_type": null,
+                                "id": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "Agnieszka Pawlak",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Pawlak"
+                            },
+                            {
+                                "label": "rozmowy z cieniem",
+                                "ner_type": null,
+                                "id": "rozmowy z cieniem"
+                            },
+                            {
+                                "label": "ZGP \"Agnieszka\"",
+                                "ner_type": "orgName",
+                                "id": "ZGP \"Agnieszka\""
+                            },
+                            {
+                                "label": "metody Agnieszki Kowalskiej",
+                                "ner_type": "persName",
+                                "id": "metody Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "metody Agnieszki Lisieckiej",
+                                "ner_type": "persName",
+                                "id": "metody Agnieszki Lisieckiej"
+                            },
+                            {
+                                "label": "metody Agnieszki Michalskiej",
+                                "ner_type": "persName",
+                                "id": "metody Agnieszki Michalskiej"
+                            },
+                            {
+                                "label": "metody Agnieszki Pawlak",
+                                "ner_type": "persName",
+                                "id": "metody Agnieszki Pawlak"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "finansami ZGP \"Agnieszka\"",
+                                "ner_type": "orgName",
+                                "id": "finansami ZGP \"Agnieszka\""
+                            },
+                            {
+                                "label": "Kalkulacje finansowe",
+                                "ner_type": null,
+                                "id": "Kalkulacje finansowe"
+                            },
+                            {
+                                "label": "Projekt Echo – sample audio",
+                                "ner_type": null,
+                                "id": "Projekt Echo – sample audio"
+                            },
+                            {
+                                "label": "Jankowska",
+                                "ner_type": "persName",
+                                "id": "Jankowska"
+                            },
+                            {
+                                "label": "Projekt Hipnos - Negocjacje Strategiczne",
+                                "ner_type": null,
+                                "id": "Projekt Hipnos - Negocjacje Strategiczne"
+                            },
+                            {
+                                "label": "Kowalska",
+                                "ner_type": "persName",
+                                "id": "Kowalska"
+                            },
+                            {
+                                "label": "Notatki Agnieszki Majewskiej",
+                                "ner_type": "persName",
+                                "id": "Notatki Agnieszki Majewskiej"
+                            },
+                            {
+                                "label": "miastach portowych",
+                                "ner_type": null,
+                                "id": "miastach portowych"
+                            },
+                            {
+                                "label": "Zabezpieczone notatki",
+                                "ner_type": null,
+                                "id": "Zabezpieczone notatki"
+                            },
+                            {
+                                "label": "Analiza korespondencji",
+                                "ner_type": null,
+                                "id": "Analiza korespondencji"
+                            },
+                            {
+                                "label": "A. Zając",
+                                "ner_type": "persName",
+                                "id": "A. Zając"
+                            },
+                            {
+                                "label": "Pliki",
+                                "ner_type": null,
+                                "id": "Pliki"
+                            },
+                            {
+                                "label": "Notatki odręczne",
+                                "ner_type": null,
+                                "id": "Notatki odręczne"
+                            },
+                            {
+                                "label": "Korespondencja",
+                                "ner_type": null,
+                                "id": "Korespondencja"
+                            },
+                            {
+                                "label": "A. Lisiecka i A. Malinowska",
+                                "ner_type": "persName",
+                                "id": "A. Lisiecka i A. Malinowska"
+                            },
+                            {
+                                "label": "Dokument \"Strategia Okienna i Latarniana AG\"",
+                                "ner_type": null,
+                                "id": "Dokument \"Strategia Okienna i Latarniana AG\""
+                            },
+                            {
+                                "label": "A. Majewska",
+                                "ner_type": "persName",
+                                "id": "A. Majewska"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "stosuje",
+                                "source": "Agnieszka Kowalska",
+                                "target": "kluczodiagnostyka"
+                            },
+                            {
+                                "label": "była przedmiotem pytania przez",
+                                "source": "Agnieszka Kowalska",
+                                "target": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "stosuje",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "prognozy chmur"
+                            },
+                            {
+                                "label": "była przedmiotem pytania przez",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "stosuje",
+                                "source": "Agnieszka Michalska",
+                                "target": "analiza wibracji roślin"
+                            },
+                            {
+                                "label": "pytała o współpracę z",
+                                "source": "Agnieszka Michalska",
+                                "target": "Agnieszka Pawlak"
+                            },
+                            {
+                                "label": "stosuje",
+                                "source": "Agnieszka Pawlak",
+                                "target": "rozmowy z cieniem"
+                            },
+                            {
+                                "label": "wykorzystywała",
+                                "source": "ZGP \"Agnieszka\"",
+                                "target": "metody Agnieszki Kowalskiej"
+                            },
+                            {
+                                "label": "wykorzystywała",
+                                "source": "ZGP \"Agnieszka\"",
+                                "target": "metody Agnieszki Lisieckiej"
+                            },
+                            {
+                                "label": "wykorzystywała",
+                                "source": "ZGP \"Agnieszka\"",
+                                "target": "metody Agnieszki Michalskiej"
+                            },
+                            {
+                                "label": "wykorzystywała",
+                                "source": "ZGP \"Agnieszka\"",
+                                "target": "metody Agnieszki Pawlak"
+                            },
+                            {
+                                "label": "zarządzała",
+                                "source": "Agnieszka Malinowska",
+                                "target": "finansami ZGP \"Agnieszka\""
+                            },
+                            {
+                                "label": "prowadziła dyskusje z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "znajdowały się na laptopie",
+                                "source": "Kalkulacje finansowe",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "należy do działalności",
+                                "source": "Projekt Echo – sample audio",
+                                "target": "Jankowska"
+                            },
+                            {
+                                "label": "należy do działalności",
+                                "source": "Projekt Hipnos - Negocjacje Strategiczne",
+                                "target": "Kowalska"
+                            },
+                            {
+                                "label": "wspominają o koordynacji działań w",
+                                "source": "Notatki Agnieszki Majewskiej",
+                                "target": "miastach portowych"
+                            },
+                            {
+                                "label": "pochodzą od",
+                                "source": "Zabezpieczone notatki",
+                                "target": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "pochodzi z laptopa",
+                                "source": "Analiza korespondencji",
+                                "target": "A. Zając"
+                            },
+                            {
+                                "label": "pochodzą od",
+                                "source": "Pliki",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "pochodzą od",
+                                "source": "Notatki odręczne",
+                                "target": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "dotyczy relacji między",
+                                "source": "Korespondencja",
+                                "target": "A. Lisiecka i A. Malinowska"
+                            },
+                            {
+                                "label": "znajduje się na laptopie",
+                                "source": "Dokument \"Strategia Okienna i Latarniana AG\"",
+                                "target": "A. Majewska"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
                 }
             ]
         },

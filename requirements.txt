@@ -20,3 +20,4 @@ streamlit-agraph # Dla wizualizacji grafu wiedzy
 scikit-learn # Dla klastrowania
 pandas # Do obsługi danych
 numpy # Wymagane przez pandas/scikit-learn
+langchain-google-genai # Do obsługi API Google Gemini
