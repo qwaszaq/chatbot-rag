@@ -598,31 +598,64 @@ class RAGChatbot:
         if not self.nlp:
             logger.warning("⚠️ Model spaCy (self.nlp) nie jest załadowany. Graf zostanie utworzony bez typów NER.")
 
-        # Prompt do ekstrakcji trójek (bez zmian)
+        # NOWY, ULEPSZONY PROMPT EKSTRAKCJI:
         extraction_prompt = f"""
-        Przeanalizuj poniższy tekst i wyekstrahuj z niego relacje w formie trójek [podmiot, relacja, obiekt].
-        Skup się na relacjach dotyczących:
-        - Osób (np. kto co zrobił, kto gdzie pracuje, kto kogo zna).
-        - Organizacji (np. firma X zrobiła Y, relacje między firmami).
-        - Czasu (np. co kiedy się wydarzyło, daty spotkań).
-        - Adresów/Lokalizacji (np. co gdzie się znajduje, spotkanie w miejscu X).
-        - Dokumentów (np. co jest wspomniane w dokumencie X, dokument Y dotyczy tematu Z).
+ROLE:
+Jesteś zaawansowanym analitykiem specjalizującym się w budowaniu Grafów Wiedzy (Knowledge Graphs) na podstawie analizy tekstu śledczego. Twoim zadaniem jest zidentyfikowanie kluczowych bytów (Encji) oraz **znaczących, wieloetapowych relacji** między nimi w poniższym tekście dotyczącym sprawy Zorganizowanej Grupy Przestępczej "Agnieszka". Celem jest stworzenie struktury grafu, która odzwierciedla **procesy, hierarchie, przepływy (finansowe, informacyjne) i kluczowe powiązania** opisane w tekście.
 
-        Zwróć wynik **WYŁĄCZNIE** jako obiekt JSON zawierający klucz "triples", którego wartością jest lista znalezionych trójek. Każdy element trójki powinien być stringiem. Przykład:
-        {{"triples": [["Jan Kowalski", "pracuje w", "XYZ Corp"], ["Raport Finansowy Q3", "opisuje", "Wyniki sprzedaży"], ["Spotkanie", "odbędzie się", "15 Listopada"]]}}
-        Jeśli nie znajdziesz żadnych istotnych relacji pasujących do kryteriów, zwróć pustą listę: {{"triples": []}}
+ZADANIA:
+1.  **Zidentyfikuj Kluczowe Byty (Węzły):** Rozpoznaj następujące typy encji i użyj ich jako węzłów grafu:
+    *   **Person:** Osoby (np. "Agnieszka Malinowska", "Janusz Wąs", "dr Klaus Steiner"). Staraj się używać pełnych nazwisk, rozpoznawaj i grupuj aliasy/pseudonimy (np. "Czas", "Kosmiczna Rachunkowość" -> "Agnieszka Malinowska").
+    *   **Organization:** Organizacje, firmy (realne i fikcyjne), instytucje, grupy (np. "ZGP 'Agnieszka'", "BeigeLife Innovations", "NCBR", "CBŚP", "NeutralTech Solutions Ltd", "Fundacja Niebieskie Perspektywy").
+    *   **Location:** Miejsca geograficzne (kraje, miasta, regiony), konkretne adresy (np. "Cypr", "Szwajcaria", "Pcim Dolny", "ul. Cienista 10").
+    *   **Method:** Specyficzne metody działania grupy (np. "kluczodiagnostyka", "prognozy chmur", "beżowa dieta", "wyścigi ślimaków", "analiza cienia").
+    *   **Project:** Wewnętrzne nazwy projektów lub operacji grupy (np. "'Projekt Beż'", "'Projekt Echo'", "'Strategia Okienna...'").
+    *   **FinancialAsset:** Aktywa finansowe, waluty (np. "środki 4.8M PLN", "kryptowaluta XMR", "sztabki platyny", "dotacja", "łapówka").
+    *   **Document:** Dokumenty, raporty, pliki, certyfikaty (np. "fałszywy certyfikat", "operat szacunkowy", "Raport PIA", "plik .xlsx", "notatka służbowa").
+    *   **Concept:** Inne istotne pojęcia lub role (np. "centralny hub finansowy", "mechanizm legalizacji", "kamuflaż", "strategia grupy").
+2.  **Zidentyfikuj Znaczące Relacje (Krawędzie):** Połącz zidentyfikowane byty za pomocą **konkretnych, opisowych relacji**. Unikaj ogólnych relacji jak "jest", "ma". Skup się na:
+    *   **Struktura/Kontrola:** `ZARZĄDZA`, `KONTROLUJE`, `NALEŻY_DO`, `JEST_CZĘŚCIĄ`, `MA_SIEDZIBĘ_W`.
+    *   **Działania/Procesy:** `WYKONUJE` (metodę, zadanie), `STOSUJE_METODĘ`, `PROWADZI` (projekt, księgowość), `GENERUJE` (dokument, zyski), `SPRZEDAJE`, `KUPUJE`, `FAŁSZUJE` (dokument).
+    *   **Przepływy:** `OTRZYMUJE_ŚRODKI_Z`, `TRANSFERUJE_ŚRODKI_DO`, `LEGALIZUJE_PRZEZ`, `PŁACI_ZA`, `DOSTARCZA_INFORMACJE_DO`.
+    *   **Komunikacja/Powiązania:** `KOMUNIKUJE_Z`, `WSPÓŁPRACUJE_Z`, `POWIĄZANY_Z`, `WSKAZUJE_NA`, `ZAWIERA_INFORMACJE_O`, `MENTIONED_IN`.
+    *   **Cel/Motywacja:** `W_CELU` (np. `[Oszustwo] W_CELU [Korzyść Majątkowa]`).
+3.  **Łącz Kontekstowo:** **NAJWAŻNIEJSZE:** Jeśli tekst opisuje **proces lub sekwencję zdarzeń** angażującą wiele bytów (np. przepływ pieniędzy: NCBR -> BeigeLife -> NeutralTech -> Malinowska -> Raj Podatkowy), **stwórz łańcuch połączonych krawędzi**, aby odzwierciedlić ten przepływ (np. `(NCBR, FINANSUJE, BeigeLife)`, `(BeigeLife, TRANSFERUJE_ŚRODKI_DO, NeutralTech)`, `(NeutralTech, JEST_KANAŁEM_DLA?, Malinowska?)`, `(Malinowska, TRANSFERUJE_ŚRODKI_DO, 'Raj podatkowy Seszele')`). Nie twórz tylko izolowanych par. Połącz byty wspomniane w tym samym akapicie lub zdaniu, jeśli opisują wspólną akcję lub powiązanie.
+4.  **Format Wyjściowy:** Zwróć wynik **WYŁĄCZNIE** jako pojedynczy obiekt JSON, zawierający dwa klucze: "nodes" i "edges".
+    *   `"nodes"`: Lista obiektów, gdzie każdy obiekt reprezentuje unikalny węzeł i ma klucze:
+        *   `"id"`: (String) Unikalny identyfikator węzła (użyj nazwy bytu, np. "Agnieszka Malinowska"). Staraj się ujednolicać identyfikatory dla tej samej encji.
+        *   `"label"`: (String) Pełna etykieta do wyświetlenia (może zawierać alias, np. "Agnieszka Malinowska ('Czas')").
+        *   `"type"`: (String) Typ encji z listy powyżej (np. "Person", "Organization", "Method"). Jeśli typ jest niejasny, użyj "Concept" lub pomiń.
+    *   `"edges"`: Lista obiektów, gdzie każdy obiekt reprezentuje relację (krawędź) i ma klucze:
+        *   `"source"`: (String) ID węzła źródłowego (musi pasować do ID w liście "nodes").
+        *   `"target"`: (String) ID węzła docelowego (musi pasować do ID w liście "nodes").
+        *   `"label"`: (String) Etykieta relacji z listy powyżej (np. "KONTROLUJE", "TRANSFERUJE_ŚRODKI_DO").
 
-        Tekst do analizy:
-        ---
-        {text}
-        ---
+PRZYKŁAD FORMATU WYJŚCIOWEGO:
+```json
+{{
+  "nodes": [
+    {{"id": "Agnieszka Malinowska", "label": "Agnieszka Malinowska ('Czas')", "type": "Person"}},
+    {{"id": "Centralny Hub Finansowy", "label": "Centralny Hub Finansowy", "type": "Concept"}},
+    {{"id": "Projekt Echo", "label": "Projekt Echo - sample audio", "type": "Project"}},
+    {{"id": "ZGP 'Agnieszka'", "label": "ZGP 'Agnieszka'", "type": "Organization"}}
+  ],
+  "edges": [
+    {{"source": "Agnieszka Malinowska", "target": "Centralny Hub Finansowy", "label": "KONTROLUJE"}},
+    {{"source": "Agnieszka Malinowska", "target": "Projekt Echo", "label": "KSIĘGUJE_DLA"}},
+    {{"source": "Projekt Echo", "target": "ZGP 'Agnieszka'", "label": "JEST_CZĘŚCIĄ"}}
+  ]
+}}
+```
 
-        JSON z wynikiem:
-        """
+Tekst do analizy:
+{text}
+JSON z wynikiem:
+"""
+# Koniec NOWEGO PROMPTU
 
         try:
-            logger.info("➡️ Wywołanie LLM w celu ekstrakcji relacji dla grafu (max_tokens=10000)...")
-            extraction_response = self.llm.invoke(extraction_prompt, config={"max_tokens": 10000})
+            logger.info("➡️ Wywołanie LLM w celu ekstrakcji relacji dla grafu (max_tokens=10000, temperature=0.2)...")
+            extraction_response = self.llm.invoke(extraction_prompt, config={"max_tokens": 10000, "temperature": 0.2})
             logger.info("⬅️ Otrzymano odpowiedź ekstrakcji.")
 
             response_text = ""
@@ -658,73 +691,72 @@ class RAGChatbot:
                  logger.error(f"❌ Nie znaleziono poprawnej struktury JSON w odpowiedzi (po czyszczeniu): {response_text_cleaned[:500]}...")
                  return None
 
-            # Parsowanie JSON
+            # --- Fragment do modyfikacji w PARSOWANIU JSON ---
             extracted_data = json.loads(response_text_cleaned)
 
-            if "triples" in extracted_data and isinstance(extracted_data["triples"], list):
-                triples = extracted_data["triples"]
-                if not triples:
-                     logger.info("   LLM nie znalazł żadnych relacji do ekstrakcji (zwrócił pustą listę).")
-                     return None # Zwracamy None, jeśli lista trójek jest pusta
+            if "nodes" in extracted_data and "edges" in extracted_data and \
+               isinstance(extracted_data["nodes"], list) and isinstance(extracted_data["edges"], list):
 
-                # --- Budowanie grafu NetworkX z dodaniem NER ---
+                nodes_from_llm = extracted_data["nodes"]
+                edges_from_llm = extracted_data["edges"]
+
+                if not nodes_from_llm and not edges_from_llm:
+                    logger.info("   LLM nie znalazł żadnych węzłów ani relacji.")
+                    return None
+
                 G = nx.DiGraph()
-                nodes_added = set() # Zbiór do śledzenia dodanych węzłów, aby nie przetwarzać NER wielokrotnie
-                triples_added_count = 0 # Licznik poprawnie dodanych trójek
+                nodes_added_ner_checked = set()
+                edges_added_count = 0
 
-                for triple in triples:
-                    if isinstance(triple, list) and len(triple) == 3:
-                        # Oczyść i zwaliduj elementy trójki
-                        subject = str(triple[0]).strip() if triple[0] is not None else ""
-                        relation = str(triple[1]).strip() if triple[1] is not None else ""
-                        obj = str(triple[2]).strip() if triple[2] is not None else ""
+                # 1. Dodaj węzły i wykonaj NER
+                for node_data in nodes_from_llm:
+                    node_id = node_data.get("id", "").strip()
+                    node_label = node_data.get("label", node_id).strip()
+                    node_type_llm = node_data.get("type", "Unknown").strip() # Typ zasugerowany przez LLM
 
-                        # Pomiń trójki z pustymi elementami kluczowymi
-                        if not subject or not relation or not obj:
-                            logger.warning(f"   Pominięto trójkę z brakującymi elementami: {triple}")
-                            continue
+                    if not node_id:
+                        logger.warning(f"   Pominięto węzeł bez ID: {node_data}")
+                        continue
 
-                        # Przetwarzanie węzłów (Subject i Object)
-                        for node_text in [subject, obj]:
-                            if node_text not in nodes_added:
-                                ner_type = None # Domyślnie brak typu
-                                if self.nlp: # Sprawdź, czy model spaCy jest dostępny
-                                    try:
-                                        # Przetwórz tekst węzła przez spaCy
-                                        doc_node = self.nlp(node_text)
-                                        if doc_node.ents:
-                                            # Pobierz etykietę *pierwszej* znalezionej encji
-                                            # UWAGA: Modele 'pl_core_news' zwracają etykiety jak 'persName', 'orgName', 'geogName', 'placeName', 'date'
-                                            ner_type = doc_node.ents[0].label_
-                                            logger.info(f"   NER dla węzła '{node_text}': Rozpoznano typ '{ner_type}'")
-                                        else:
-                                            logger.info(f"   NER dla węzła '{node_text}': Nie rozpoznano konkretnej encji.")
-                                    except Exception as ner_exc:
-                                        logger.error(f"   Błąd podczas NER dla tekstu '{node_text}': {ner_exc}")
-                                        ner_type = "ERROR" # Oznacz błąd NER
+                    if node_id not in nodes_added_ner_checked:
+                        ner_type = None # Domyślnie brak typu spaCy
+                        if self.nlp:
+                            try:
+                                doc_node = self.nlp(node_label) # Użyj label do NER
+                                if doc_node.ents:
+                                    ner_type = doc_node.ents[0].label_
+                                    # logger.info(f"   NER dla węzła '{node_label}' (ID: {node_id}): Rozpoznano typ '{ner_type}'") # Zmniejszono gadatliwość logów
+                            except Exception as ner_exc:
+                                logger.error(f"   Błąd NER dla '{node_label}': {ner_exc}")
+                                ner_type = "ERROR"
 
-                                # Dodaj węzeł do grafu z etykietą i typem NER
-                                # Atrybut 'label' to tekst węzła, 'ner_type' to etykieta spaCy
-                                G.add_node(node_text, label=node_text, ner_type=ner_type)
-                                nodes_added.add(node_text) # Dodaj do zbioru przetworzonych
+                        # Dodaj węzeł do grafu NetworkX z atrybutami
+                        G.add_node(node_id, label=node_label, llm_type=node_type_llm, ner_type=ner_type)
+                        nodes_added_ner_checked.add(node_id)
 
-                        # Dodaj krawędź do grafu z etykietą relacji
-                        G.add_edge(subject, obj, label=relation)
-                        triples_added_count += 1
+                # 2. Dodaj krawędzie
+                for edge_data in edges_from_llm:
+                    source_id = edge_data.get("source", "").strip()
+                    target_id = edge_data.get("target", "").strip()
+                    relation_label = edge_data.get("label", "").strip()
 
+                    # Sprawdź czy węzły istnieją i relacja nie jest pusta
+                    if source_id in G and target_id in G and relation_label:
+                        G.add_edge(source_id, target_id, label=relation_label)
+                        edges_added_count += 1
                     else:
-                        logger.warning(f"   Pominięto nieprawidłowy format trójki: {triple}")
+                         logger.warning(f"   Pominięto krawędź z brakującymi elementami lub węzłami: {edge_data}")
 
-                if triples_added_count > 0:
-                     logger.info(f"   Dodano {triples_added_count} poprawnych trójek do grafu.")
-                     # Zwróć zbudowany graf (zostanie zserializowany w metodzie query)
-                     return G
+                if G.number_of_nodes() > 0 or G.number_of_edges() > 0:
+                    logger.info(f"   Dodano {G.number_of_nodes()} węzłów i {G.number_of_edges()} krawędzi do grafu.")
+                    return G
                 else:
-                     logger.info("   Nie dodano żadnych poprawnych trójek do grafu.")
-                     return None # Zwracamy None, jeśli żadna trójka nie była poprawna
-                # --------------------------------------------------
+                    logger.info("   Nie dodano żadnych węzłów ani krawędzi do grafu.")
+                    return None
+            # --- Koniec fragmentu do modyfikacji w PARSOWANIU JSON ---
+
             else:
-                logger.error(f"❌ Odpowiedź ekstrakcji LLM (po czyszczeniu) nie zawiera klucza 'triples' lub wartość nie jest listą: {response_text_cleaned}")
+                logger.error(f"❌ Odpowiedź ekstrakcji LLM (po czyszczeniu) nie zawiera kluczy 'nodes'/'edges' lub wartości nie są listami: {response_text_cleaned}")
                 return None
 
         except json.JSONDecodeError as json_err:

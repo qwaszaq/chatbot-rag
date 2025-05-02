@@ -2880,6 +2880,217 @@
                         "tokens": null,
                         "time": 1.3059871196746826
                     }
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: \"Dziwactwa\" poszczególnych Agnieszek nie były jedynie przykrywką dla oszustwa, lecz integralną częścią skoordynowanej strategii. Dowody wskazują na koordynację i wzajemne wykorzystanie tych metod, a także ich powiązanie z centralnym hubem finansowym prowadzonym przez Agnieszki Malinowską (\"Czas\"). \n\nŹródło w dokumentach:\n\n*   \"Wspólne Schematy: Powtarzalność modus operandi (wykorzystanie \"dziwactwa\" jako przykrywki dla oszustwa finansowego lub szpiegostwa gospodarczego).\"\n*   \"Podział Ról: Każda \"Agnieszka\" specjalizowała się w określonym typie przestępstwa lub \"metodzie kamuflażu\", co sugeruje koordynację i wykorzystanie ich specyficznych predyspozycji...\"\n*   „Materiał wyłączony do Archiwum X sugeruje, że ZGP \"Agnieszka\" to coś więcej niż zorganizowana grupa przestępcza. Ich metody i narracja...wykazują stopień spójności, zaangażowania i systematyki, który **może wskazywać na operacje wywiadowcze kamuflażowe**”\n*   Korespondencja między Agnieszkami (np. A. Michalska (\"Chlorofil\") pytająca o współpracę z A. Pawlak (\"Cień\") w analizie wibracji).\n*   Wzmianki w dokumentach o \"integracji metod\" i \"strategiach maskowania\", sugerujące centralne planowanie wykorzystania specyficznych umiejętności każdej Agnieszki.\n*   Pliki na laptopie A. Malinowskiej (\"Projekty X\") oraz kalkulacje finansowe dotyczące działalności innych Agnieszek (np. \"Projekt Echo - sample audio\" powiązany z Jankowską, \"Projekt Hipnos – Negocjacje Strategiczne\" powiązane z Kowalską), co wskazuje na centralne zarządzanie finansami i monitorowanie wyników generowanych przez różne \"metody\".\n*   Notatki A. Kowalskiej („Kluczarka”) oraz Agnieszki Majewskiej (\"Latarnia\") wskazujące na potencjalne wykorzystanie metod jednej Agnieszki przez inne (np. użycie metody „Kluczarki” do oceny inwestorów).\n\nKomentarz: Dowody sugerują, że \"dziwactwa\" nie były jedynie elementem oszustwa, ale narzędziem operacyjnym i dezinformacyjnym, a także źródłem danych lub metod wykorzystywanych przez inne członkini grupy. Centralny hub finansowy (Malinowska) monitorował i rozliczał wyniki generowane przez te \"metody\", co wskazuje na ich strategiczne znaczenie dla całej organizacji. Nie można wykluczyć szerszego celu, np. kamuflażu działań wywiadowczych lub eksperymentów społecznych.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj7m_todo/code - 2025-04-25T230546.395.txt",
+                            "id": "b7adbc0b-b06c-45e0-96cb-6e8ec0a4d159"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp5i4udgg9/code - 2025-04-25T230550.641.txt",
+                            "id": "43daded9-7d38-41fc-bad5-b978895977b9"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpv5s80lml/code - 2025-04-25T230122.059.txt",
+                            "id": "fb00774a-c15c-4cd5-a23f-4ce2998a0c7d"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska ('Czas')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "Centralny Hub Finansowy",
+                                "llm_type": "Concept",
+                                "ner_type": "orgName",
+                                "id": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "ZGP 'Agnieszka'",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka Kowalskiej",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "Prognozy Chmur Lisieckiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "Analiza Wibracji Roślin Michalskiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "Rozmowy z Cieniem Pawlak",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "Projekt Echo - sample audio",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Echo - sample audio"
+                            },
+                            {
+                                "label": "Jankowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Jankowska"
+                            },
+                            {
+                                "label": "Projekt Hipnos – Negocjacje Strategiczne",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Hipnos – Negocjacje Strategiczne"
+                            },
+                            {
+                                "label": "Kowalska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Kowalska"
+                            },
+                            {
+                                "label": "Agnieszka Majewska ('Latarnia')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Majewska Agnieszka"
+                            },
+                            {
+                                "label": "Metody Kamuflażu",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Metody Kamuflażu"
+                            },
+                            {
+                                "label": "Strategie Maskowania",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Strategie Maskowania"
+                            },
+                            {
+                                "label": "Operacje Wywiadowcze Kamuflażowe",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Operacje Wywiadowcze Kamuflażowe"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "Prowadzi",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "MONITORUJE",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Metody Kamuflażu"
+                            },
+                            {
+                                "label": "MONITORUJE_FINANSOWO",
+                                "source": "Centralny Hub Finansowy",
+                                "target": "Projekt Echo - sample audio"
+                            },
+                            {
+                                "label": "MONITORUJE_FINANSOWO",
+                                "source": "Centralny Hub Finansowy",
+                                "target": "Projekt Hipnos – Negocjacje Strategiczne"
+                            },
+                            {
+                                "label": "KONTROLUJE",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "MOŻLIWE_POWIĄZANIE",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Operacje Wywiadowcze Kamuflażowe"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "Kluczodiagnostyka Kowalskiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "POTENCJALNE_WYKORZYSTANIE_PRZEZ",
+                                "source": "Kluczodiagnostyka Kowalskiej",
+                                "target": "Majewska Agnieszka"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "Prognozy Chmur Lisieckiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "Analiza Wibracji Roślin Michalskiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "Rozmowy z Cieniem Pawlak",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "POWIĄZANY_Z",
+                                "source": "Projekt Echo - sample audio",
+                                "target": "Jankowska"
+                            },
+                            {
+                                "label": "POWIĄZANY_Z",
+                                "source": "Projekt Hipnos – Negocjacje Strategiczne",
+                                "target": "Kowalska"
+                            },
+                            {
+                                "label": "WYMIANA_INFORMACJI",
+                                "source": "Kowalska",
+                                "target": "Majewska Agnieszka"
+                            },
+                            {
+                                "label": "JEST_CZĘŚCIĄ",
+                                "source": "Metody Kamuflażu",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "JEST_CZĘŚCIĄ",
+                                "source": "Strategie Maskowania",
+                                "target": "ZGP 'Agnieszka'"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 796,
+                        "time": 208.01040410995483
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n"
                 }
             ]
         },
