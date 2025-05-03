@@ -1,0 +1,381 @@
+{
+    "timestamp": 1746285024.970173,
+    "assignments_count": 743,
+    "labels": {
+        "5": "Postępowanie karne i koszty",
+        "3": "Zorganizowana przestępczość i ezoteryka.",
+        "2": "Podejrzane działania i śledztwa.",
+        "0": "Analiza finansowa i korupcja.",
+        "7": "Interwencje wobec ekscentrycznych osób",
+        "6": "Dokumenty służbowe/protokoły policyjne",
+        "1": "Sprawy prowadzone przez Policję.",
+        "4": "Procedura i działania."
+    },
+    "summaries": {
+        "5": "Fragmenty tekstów dotyczą postępowania w sprawie, prawdopodobnie związanej z działalnością grupy przestępczej (ZGP) \"Agnieszka\". Osobie/osobom podejrzanym przedstawiono zarzuty dotyczące różnych przestępstw finansowych – fałszowania dokumentacji (art. 258 § 1 kk), oszustwa (art. 286 § 1 kk), prania pieniędzy (art. 299 § 1 kk) oraz naruszenia prawa bankowego i podatkowego (art. 271, 18). Śledczy zabezpieczyli protokoły przesłuchań i zlecili analizę powiązań finansowych, elektronicznych oraz kryptowalutowych. W związku z wagą zarzutów i obawą o matactwo lub ukrywanie majątku, złożono wnioski do prokuratury o wniesienie aktu oskarżenia i zastosowanie tymczasowego aresztowania lub dozoru Policji wobec podejrzanych. W kilku fragmentach pojawia się nazwisko Grabowskiej, sugerujące jej powiązania ze sprawą.",
+        "3": "Podsumowując, fragmenty tekstów dotyczą działalności zorganizowanej grupy przestępczej (\"Deweloperzy Cienia\") skupionej na **wyłudzaniu środków finansowych i manipulowaniu wartością aktywów**. Kluczową rolę w grupie odgrywają kobiety (Agnieszka Zając oraz inne wymienione osoby inicjałem), które specjalizują się w różnych aspektach przestępstwa: fałszowaniu dokumentów, legalizacji pieniędzy, doradztwie strategicznym maskującym zmowy przetargowe. Działania te przybierają formę fikcyjnych projektów i absurdalnej narracji (np. \"terapeutyczny beż\", \"uchwycenie esencji umierającej technologii\") mającej ukryć prawdziwe intencje - **osiągnięcie korzyści majątkowej**. Śledztwo opiera się na analizie dokumentów, przepływów finansowych, podsłuchu i zabezpieczonych dowodów materialnych.",
+        "2": "Śledztwo dotyczy grupy ZGP \"Agnieszka\", a w centrum uwagi znajduje się kobieta podejrzewana o świadome uczestnictwo w schemacie oszustw finansowych. Dowody wskazują na jej powiązania z innymi członkami grupy, ujawnione poprzez analizę korespondencji, plików finansowych i protokołów spotkań z firmami poszkodowanymi. Podejrzana wykorzystywała prawdopodobnie elementy pseudonaukowe (wizualizacja danych przyszłościowych, analiza wibracji cienia, \"stan hipnagogiczny\") oraz manipulacje (symulacja ataków snu) w celu wpływania na negocjacje i pozyskiwania środków finansowych, m.in. poprzez sprzedaż oszukańczych talizmanów. Podejrzana konsekwentnie odmawia składania wyjaśnień, tłumacząc swoje działania ezoterycznymi argumentami dotyczącymi energii i wibracji kosmicznych.",
+        "0": "Fragmenty tekstów dotyczą prowadzonego przez CBA śledztwa w sprawie Zorganizowanej Grupy Przestępczej \"Agnieszka\", charakteryzującej się bezprecedensową złożonością, ogólnopolskim i międzynarodowym zasięgiem oraz znacznymi operacjami finansowymi i korupcyjnymi. Kluczowe jest podkreślenie, że dopiero kompetentne przejęcie sprawy przez CBA i dogłębna analiza kryminalistyczna (w tym behawioralna i techniczna) pozwoliły na ujawnienie ukrytych powiązań i świadomego działania grupy. Śledztwo koncentruje się na zagrożeniu dla interesów ekonomicznych państwa oraz integralności sfery publicznej, a celem jest rozbicie grupy i pociągnięcie do odpowiedzialności wszystkich jej członków, aż po najwyższy szczebel struktury. Istotnym elementem śledztwa jest także identyfikacja specyficznego systemu kodowania wewnątrz grupy, czego przykładem jest słoiczek z sokiem z mniszka zawierający ukryte informacje.",
+        "7": "Podsumowanie:\n\nPrzedstawione fragmenty dokumentują serię przesłuchań różnych kobiet o imieniu Agnieszka, przeprowadzanych przez Centralne Biuro Śledcze Policji (CBŚP) w kilku miastach Polski (Kraków, Poznań, Warszawa, Bydgoszcz, Wrocław). Wiele z przesłuchiwanych posiada pseudonimy używane prawdopodobnie w ramach działalności grupy przestępczej (\"Gumowa Wenus\", \"Echo\", \"Wyceniarka Cienia\" itp.). Obecność nadkom. Janusza Wąsa i asp. sztab. Krystyny Zadrzyńskiej podczas niektórych przesłuchań sugeruje centralną rolę tych funkcjonariuszy w sprawie, która wydaje się dotyczyć zorganizowanej grupy o złożonej strukturze (wskazują na to różnorodne identyfikatory używane wobec podejrzanych). Materiały wskazują na staranne dokumentowanie czynności, w tym nagrywanie audiowizualne i obecność obrońców.",
+        "6": "Fragmenty tekstów wskazują na powtarzalność obecności trzech osób – nadkomisrza Janusza Wąsa, aspirantki sztabowej Krystyny Zadrzyńskiej oraz sierżanta Marka Bąka. Fakt, że ich podpisy pojawiają się wielokrotnie, sugeruje ich kluczową rolę w jakimś procesie lub śledztwie, prawdopodobnie związanym ze sprawą ZGP \"Agnieszka\". Można przypuszczać, że wszyscy trzej funkcjonariusze są zaangażowani w dokumentowanie lub zatwierdzanie pewnych działań.",
+        "1": "Śledztwo prowadzone przez Centralne Biuro Śledcze Policji (CBŚP) dotyczy zorganizowanej grupy przestępczej działającej pod kryptonimem \"Agnieszka\". W ramach śledztwa przesłuchiwane są kolejne podejrzane, wszystkie o imieniu Agnieszka, posiadające operacyjne pseudonimy: \"Tkaczka\", \"Gołąb\", \"Wiatr\", \"Guma\" i \"Skarpeta\".  Podejrzenia dotyczą różnych przestępstw, w tym fałszowania dokumentów (art. 258 § 1 kk), oszustw (różne numery artykułów kk) oraz prawdopodobnie działalności związanej z podróbkami dzieł sztuki i nieprawidłowościami finansowymi. Sprawy lokalne prowadzone są przez różne jednostki policji w kraju, ale wszystkie łączą się w jedną sprawę centralną o numerze CBŚP-PG/0001/ZGP_AG/2024.",
+        "4": "Ponieważ wszystkie fragmenty tekstów to identyczne powtórzenia \"Przebieg czynności:\", nie zawierają one żadnych konkretnych informacji na temat sprawy ZGP \"Agnieszka\". Dlatego też, jedynym możliwym podsumowaniem jest stwierdzenie, że **fragmenty te dokumentują jedynie proces prowadzenia jakichś czynności proceduralnych w sprawie, jednak ich treść pozostaje nieznana.**  Bez dodatkowych danych niemożliwe jest określenie głównych wątków, kluczowych informacji, postaci czy wydarzeń."
+    },
+    "entities": {
+        "5": [
+            [
+                "Janusz Wąs",
+                "persName",
+                20
+            ],
+            [
+                "Krystyna Zadrzyńska",
+                "persName",
+                18
+            ],
+            [
+                "Marek Bąk",
+                "persName",
+                17
+            ],
+            [
+                "Policji",
+                "orgName",
+                15
+            ],
+            [
+                "Broniona",
+                "persName",
+                11
+            ],
+            [
+                "ZGP",
+                "orgName",
+                10
+            ],
+            [
+                "WARSZAWIE",
+                "placeName",
+                7
+            ],
+            [
+                "A.",
+                "persName",
+                5
+            ],
+            [
+                "Zając",
+                "persName",
+                4
+            ],
+            [
+                "Oskarzonych",
+                "persName",
+                4
+            ]
+        ],
+        "3": [
+            [
+                "A.",
+                "persName",
+                156
+            ],
+            [
+                "Agnieszka",
+                "persName",
+                41
+            ],
+            [
+                "ZGP",
+                "orgName",
+                34
+            ],
+            [
+                "Malinowskiej",
+                "persName",
+                25
+            ],
+            [
+                "Lisieckiej",
+                "persName",
+                12
+            ],
+            [
+                "z o.o.",
+                "orgName",
+                12
+            ],
+            [
+                "Ostrowskiej",
+                "persName",
+                11
+            ],
+            [
+                "Polski",
+                "placeName",
+                10
+            ],
+            [
+                "Wojciechowskiej",
+                "persName",
+                9
+            ],
+            [
+                "Baranowskiej",
+                "persName",
+                9
+            ]
+        ],
+        "2": [
+            [
+                "ZGP",
+                "orgName",
+                43
+            ],
+            [
+                "Agnieszka",
+                "persName",
+                31
+            ],
+            [
+                "A.",
+                "persName",
+                30
+            ],
+            [
+                "Agnieszki Malinowskiej",
+                "persName",
+                13
+            ],
+            [
+                "Agnieszki Zając",
+                "persName",
+                8
+            ],
+            [
+                "Zając",
+                "persName",
+                7
+            ],
+            [
+                "Malinowskiej",
+                "persName",
+                7
+            ],
+            [
+                "z o.o.",
+                "orgName",
+                6
+            ],
+            [
+                "Agnieszki Lisieckiej",
+                "persName",
+                6
+            ],
+            [
+                "Agnieszki Szymańskiej",
+                "persName",
+                6
+            ]
+        ],
+        "0": [
+            [
+                "CBA",
+                "orgName",
+                33
+            ],
+            [
+                "ZGP",
+                "orgName",
+                23
+            ],
+            [
+                "Agnieszka",
+                "persName",
+                17
+            ],
+            [
+                "CBŚP",
+                "orgName",
+                14
+            ],
+            [
+                "A.",
+                "persName",
+                7
+            ],
+            [
+                "Janusz Wąs",
+                "persName",
+                5
+            ],
+            [
+                "ABW",
+                "orgName",
+                4
+            ],
+            [
+                "Centralnego Biura Antykorupcyjnego",
+                "orgName",
+                4
+            ],
+            [
+                "Krystyna Zadrzyńska",
+                "persName",
+                4
+            ],
+            [
+                "Marek Bąk",
+                "persName",
+                4
+            ]
+        ],
+        "7": [
+            [
+                "ul.",
+                "geogName",
+                54
+            ],
+            [
+                "CBŚP",
+                "orgName",
+                20
+            ],
+            [
+                "Nazwisko Rodowe Matki",
+                "persName",
+                20
+            ],
+            [
+                "polskie",
+                "placeName",
+                20
+            ],
+            [
+                "Janusz Wąs",
+                "persName",
+                18
+            ],
+            [
+                "Krystyna Zadrzyńska",
+                "persName",
+                13
+            ],
+            [
+                "Krystyny Zadrzyńskiej",
+                "persName",
+                10
+            ],
+            [
+                "Janusza Wąsa",
+                "persName",
+                9
+            ],
+            [
+                "Warszawa",
+                "placeName",
+                7
+            ],
+            [
+                "Krakowie",
+                "placeName",
+                6
+            ]
+        ],
+        "6": [
+            [
+                "Krystyna Zadrzyńska",
+                "persName",
+                9
+            ],
+            [
+                "Marek Bąk",
+                "persName",
+                9
+            ],
+            [
+                "Janusz Wąs",
+                "persName",
+                8
+            ],
+            [
+                "CBA",
+                "orgName",
+                2
+            ],
+            [
+                "KP Poznań",
+                "orgName",
+                1
+            ],
+            [
+                "Andrzej Czujny",
+                "persName",
+                1
+            ],
+            [
+                "KP Kraków I",
+                "orgName",
+                1
+            ],
+            [
+                "Paweł Włóczka",
+                "persName",
+                1
+            ]
+        ],
+        "1": [
+            [
+                "Jednostka Policji",
+                "orgName",
+                39
+            ],
+            [
+                "ul.",
+                "geogName",
+                26
+            ],
+            [
+                "Jednostka Policji: Centralne Biuro Śledcze Policji",
+                "orgName",
+                20
+            ],
+            [
+                "Zespół Śledczy \"",
+                "orgName",
+                20
+            ],
+            [
+                "CBŚP-PG/0001/ZGP_AG/2024",
+                "orgName",
+                20
+            ],
+            [
+                "Agnieszka",
+                "persName",
+                20
+            ],
+            [
+                "Referat Prewencji\nData",
+                "orgName",
+                17
+            ],
+            [
+                "Wydział dw.",
+                "orgName",
+                15
+            ],
+            [
+                "Przestępczością Gospodarczą",
+                "orgName",
+                8
+            ],
+            [
+                "Sekcja ds.",
+                "orgName",
+                8
+            ]
+        ],
+        "4": []
+    }
+}
