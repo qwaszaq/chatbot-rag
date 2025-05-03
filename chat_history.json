@@ -4645,6 +4645,27 @@
                         "tokens": 441,
                         "time": 38.660956144332886
                     }
+                },
+                {
+                    "role": "user",
+                    "content": "jaka była pełna procedura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: jaka była pełna procedura?\n\nOdpowiedź: Brak informacji o procedurze w dostarczonych materiałach. Kontekst składa się wyłącznie z powtórzenia frazy \"Przebieg czynności\" 26 razy, bez żadnych szczegółów dotyczących samego przebiegu.\n\nŹródło w dokumentach: Powtarzające się zdanie „Przebieg czynności” w całym dokumencie.\n\nKomentarz:  Brak danych na temat procedury. Kontekst jest niekompletny i nie zawiera informacji potrzebnych do odpowiedzi na pytanie.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpmdf3jx44/code - 2025-04-25T223533.079.txt",
+                            "id": "c1ae92f8-d601-44bb-8090-810e96c169f8"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "jaka była pełna procedura?",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 126,
+                        "time": 6.654219150543213
+                    }
                 }
             ]
         },

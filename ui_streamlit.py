@@ -32,6 +32,7 @@ from scipy.spatial.distance import cdist
 import time
 # Dodano import typowania (potrzebny w QdrantConnector, ale też może się przydać)
 from typing import List, Dict, Any, Optional, Tuple
+import pandas as pd # DODANO: Import pandas
 
 # Konfiguracja logowania
 logging.basicConfig(
@@ -894,16 +895,18 @@ def main():
                           else:
                               point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
 
-                          # Wyświetlanie listy punktów (jeśli mamy dane)
-                          if not cluster_point_ids: st.write("Brak punktów w klastrze.")
-                          elif not point_id_to_data: st.warning("Nie można wyświetlić listy punktów (brak danych).")
+                          # Wyświetlanie listy punktów za pomocą st.dataframe (jeśli mamy dane)
+                          if not cluster_point_ids:
+                              st.write("Brak punktów w klastrze.")
+                          elif not point_id_to_data:
+                              st.warning("Nie można wyświetlić listy punktów (brak danych).")
                           else:
-                              points_shown = 0
-                              MAX_POINTS_TO_SHOW = 20
+                              # Przygotuj dane do tabeli
+                              table_data = []
+                              full_content_map = {} # Słownik do przechowywania pełnej treści
+                              PREVIEW_LENGTH = 150 # Długość podglądu treści
+
                               for point_id in cluster_point_ids:
-                                  if points_shown >= MAX_POINTS_TO_SHOW:
-                                      st.caption(f"... i {len(cluster_point_ids) - MAX_POINTS_TO_SHOW} więcej.")
-                                      break
                                   point_data = point_id_to_data.get(point_id)
                                   if point_data and point_data.get('payload'):
                                       payload = point_data['payload']
@@ -911,12 +914,40 @@ def main():
                                       content = payload.get('page_content', '_brak treści_')
                                       source_name = metadata.get('source', metadata.get('file_path', metadata.get('filename', 'nieznane źródło')))
                                       display_name = os.path.basename(source_name)
-                                      point_cluster_id = assignments_map.get(point_id, 'N/A')
-                                      st.markdown(f"**Źródło:** `{display_name}` (ID: `{point_id}`, Klaster: `{point_cluster_id}`)")
-                                      st.text_area(f"Treść fragmentu {point_id[:8]}...", value=content, height=100, disabled=True, key=f"chunk_{point_id}")
-                                      st.markdown("---")
-                                      points_shown += 1
-                                  else: st.warning(f"Brak danych payload dla punktu {point_id}")
+                                      point_id_short = point_id[:8] # Skrócone ID
+
+                                      table_data.append({
+                                          "ID Fragmentu": point_id_short,
+                                          "Nazwa Pliku": display_name,
+                                          "Początek Treści": content[:PREVIEW_LENGTH] + ('...' if len(content) > PREVIEW_LENGTH else '')
+                                      })
+                                      full_content_map[point_id_short] = content # Zapisz pełną treść
+                                  else:
+                                      logger.warning(f"Brak danych payload dla punktu {point_id} przy tworzeniu tabeli.")
+
+                              if table_data:
+                                  df = pd.DataFrame(table_data)
+                                  st.dataframe(
+                                       df,
+                                       hide_index=True, # Ukryj domyślny indeks pandas
+                                       use_container_width=True # Rozciągnij tabelę na całą szerokość
+                                  )
+                                  # DODANO: Możliwość wyświetlenia pełnej treści po wybraniu ID z selectboxa
+                                  selected_point_id_short = st.selectbox(
+                                       "Wybierz ID Fragmentu, aby zobaczyć pełną treść:",
+                                       options=[""] + list(full_content_map.keys()), # Dodaj pustą opcję na początek
+                                       key=f"select_full_content_{selected_id}"
+                                  )
+                                  if selected_point_id_short and selected_point_id_short in full_content_map:
+                                       st.text_area(
+                                           f"Pełna treść fragmentu {selected_point_id_short}:",
+                                           value=full_content_map[selected_point_id_short],
+                                           height=200,
+                                           disabled=True,
+                                           key=f"full_content_view_{selected_id}_{selected_point_id_short}"
+                                       )
+                              else:
+                                   st.write("Brak danych punktów do wyświetlenia w tabeli.")
                   except Exception as detail_e:
                        logger.error(f"Błąd wyświetlania szczegółów klastra {selected_id}: {detail_e}", exc_info=True)
                        st.error(f"Błąd przy wyświetlaniu szczegółów klastra {selected_id}.")

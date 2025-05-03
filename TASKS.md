@@ -35,10 +35,10 @@
 
 ## Future Tasks (Wg Nowego Planu)
 
-*   [ ] **Krok 4: Implementacja Filtrowania RAG ("Pytaj w Kontekście Klastra")** (Priorytet Średni)
-    *   [ ] UI: Dodanie interfejsu.
-    *   [ ] App: Modyfikacja `query`.
-    *   [ ] DB: Modyfikacja `similarity_search`.
+*   [x] **Krok 4: Implementacja Filtrowania RAG ("Pytaj w Kontekście Klastra")** (Priorytet Średni)
+    *   [x] UI: Dodanie interfejsu.
+    *   [x] App: Modyfikacja `query`.
+    *   [x] DB: Modyfikacja `similarity_search`.
 *   [ ] **Krok 3 (kontynuacja): Ulepszenie UI Eksploracji Klastrów** (Priorytet Średni) - Wyświetlanie Top N bytów, podsumowań, ulepszona tabela chunków (po zakończeniu Kroku 2).
 *   [ ] **Krok 4 (kontynuacja): Dalsze Ulepszanie Jakości Grafów** (Priorytet Średni/Niski) - Dostrajanie promptu, kolory, konfiguracja `agraph`.
 *   [ ] **Krok 5: Eksperymenty z Algorytmem Klastrowania** (Priorytet Niski) - BERTopic/HDBSCAN.
