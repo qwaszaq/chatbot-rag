@@ -170,10 +170,11 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
 
-    # DODANO: argument cluster_assignments i parametry rozszerzania
+    # Zmodyfikowana metoda query
     def query(self, question: str, system_prompt_override: Optional[str] = None,
               cluster_assignments: Optional[Dict[str, int]] = None,
-              expand_context_clusters: int = 1, expand_context_docs: int = 2) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
+              expand_context_clusters: int = 1, expand_context_docs: int = 2,
+              extract_graph: bool = False) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """
         Udziela odpowiedzi na pytanie korzystając z RAG.
         Opcjonalnie rozszerza kontekst o dodatkowe dokumenty z dominujących klastrów.
@@ -185,6 +186,7 @@ class RAGChatbot:
                                                    Jeśli podany i niepusty, włącza logikę rozszerzania kontekstu.
             expand_context_clusters (int): Liczba dominujących klastrów do rozważenia przy rozszerzaniu kontekstu.
             expand_context_docs (int): Maksymalna liczba dodatkowych dokumentów do dodania z każdego dominującego klastra.
+            extract_graph (bool): Czy próbować ekstrahować graf wiedzy z odpowiedzi. Domyślnie False.
 
         Returns:
             tuple: Zawiera:
@@ -197,7 +199,7 @@ class RAGChatbot:
              logger.error("❌ System RAG nie jest w pełni zainicjalizowany. Brakuje rerankera, LLM lub połączenia z Qdrant.")
              return {"content": "System RAG nie jest w pełni zainicjalizowany.", "metadata": None}, [], None
 
-        try:
+        try: # Główny blok try
             logger.info(f"❓ Otrzymałem pytanie: {question}")
 
             # Wyszukaj podobne dokumenty w Qdrant
@@ -319,7 +321,7 @@ class RAGChatbot:
             logger.info("✅ Odpowiedź została pomyślnie wygenerowana wraz z metadanymi")
 
             # --- Ekstrakcja grafu wiedzy z odpowiedzi ---
-            graph_data = None
+            graph_data = None # Initialize graph_data to None
             answer_text_content = None
             if response_dict and response_dict.get("content"):
                  content_data = response_dict["content"]
@@ -337,8 +339,9 @@ class RAGChatbot:
                  logger.warning("Brak treści w odpowiedzi LLM. Pomijanie ekstrakcji grafu.")
 
 
-            if answer_text_content:
-                 logger.info("🕸️ Próba ekstrakcji grafu wiedzy z odpowiedzi LLM...")
+            # --- Ekstrakcja grafu wiedzy z odpowiedzi (TYLKO jeśli zażądano) ---
+            if extract_graph and answer_text_content: # WARUNEK DODANY TUTAJ
+                 logger.info("🕸️ Próba ekstrakcji grafu wiedzy z odpowiedzi LLM (tryb grafowy)...")
                  try:
                       # Wywołanie metody ekstrakcji grafu
                       graph = self._extract_graph_from_response(answer_text_content)
@@ -352,11 +355,13 @@ class RAGChatbot:
                  except Exception as graph_e:
                       # Logujemy konkretny błąd, który wystąpił TUTAJ
                       logger.error(f"❌ Błąd podczas ekstrakcji lub serializacji grafu wiedzy: {graph_e}", exc_info=True)
+            elif extract_graph: # Jeśli zażądano grafu, ale nie było treści do analizy
+                 logger.warning("⚠️ Pominięto ekstrakcję grafu - brak treści odpowiedzi LLM lub błąd generowania.")
             # -----------------------------------------
 
             return response_dict, sources, graph_data
 
-        except Exception as e:
+        except Exception as e: # Główny blok except
             logger.error(f"❌ Błąd podczas przetwarzania pytania: {str(e)}", exc_info=True)
             return {"content": f"Wystąpił błąd podczas przetwarzania pytania: {e}", "metadata": None}, [], None
 

@@ -972,11 +972,15 @@ def main():
                             st.session_state.chatbot.top_k_reranker = st.session_state.top_k_reranker
                             st.session_state.chatbot.relevance_threshold = st.session_state.relevance_threshold
                             selected_prompt_text = AVAILABLE_PROMPTS[st.session_state.selected_chat_mode]
-                            # Przekazanie cluster_assignments do query
+                            # Sprawdź, czy ekstrahować graf
+                            should_extract_graph = (st.session_state.selected_chat_mode == "Analityk Grafów (RAG)")
+                            logger.info(f"   Ekstrakcja grafu: {'Włączona' if should_extract_graph else 'Wyłączona'}")
+                            # Przekazanie cluster_assignments i extract_graph do query
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
                                 system_prompt_override=selected_prompt_text,
-                                cluster_assignments=st.session_state.get('cluster_assignments') # Przekaż, jeśli istnieje
+                                cluster_assignments=st.session_state.get('cluster_assignments'), # Przekaż, jeśli istnieje
+                                extract_graph=should_extract_graph # Przekaż flagę ekstrakcji
                             )
                             # _generate_answer jest wywoływane wewnątrz query, więc response_dict już zawiera 'content' i 'metadata'
                             if response_dict and response_dict.get("content"):
