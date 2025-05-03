@@ -30,17 +30,21 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
                   (np. eps, min_samples dla DBSCAN).
 
     Returns:
-        np.ndarray or None: Tablica NumPy z etykietami klastrów dla każdego punktu wejściowego.
-                           Etykieta -1 oznacza szum/outlier (w DBSCAN).
-                           Zwraca None w przypadku błędu lub braku danych.
+        Tuple[Optional[np.ndarray], Optional[np.ndarray], Optional[Dict[int, List[int]]]]: Krotka zawierająca:
+            - Tablicę NumPy z etykietami klastrów dla każdego punktu wejściowego (lub None).
+            - Tablicę NumPy z centroidami klastrów (tylko dla K-Means, inaczej None).
+            - Słownik mapujący ID klastra na listę indeksów punktów w tym klastrze (lub None).
+              Etykieta -1 (szum w DBSCAN) jest pomijana w mapie indeksów.
     """
     if embeddings is None or embeddings.shape[0] == 0:
         logger.warning("⚠️ Brak danych embeddings do przeprowadzenia klastrowania.")
-        return None
+        return None, None, None
 
     logger.info(f"📈 Rozpoczynanie klastrowania dla {embeddings.shape[0]} punktów przy użyciu algorytmu: {algorithm}...")
 
     labels = None
+    centroids = None
+    cluster_indices_map = None
 
     try:
         if algorithm == 'kmeans':
@@ -50,11 +54,16 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
                  logger.warning(f"⚠️ Żądana liczba klastrów ({n_clusters}) jest większa niż liczba próbek ({embeddings.shape[0]}). Używam {actual_n_clusters} klastrów.")
             if actual_n_clusters < 2: # K-Means potrzebuje co najmniej 2 klastrów (lub 1 jeśli jest tylko 1 próbka)
                  logger.warning(f"⚠️ K-Means wymaga co najmniej 2 próbek do utworzenia więcej niż 1 klastra. Zwracam etykiety [0] dla {embeddings.shape[0]} próbek.")
-                 return np.zeros(embeddings.shape[0], dtype=int) # Przypisz wszystkie punkty do jednego klastra
+                 labels = np.zeros(embeddings.shape[0], dtype=int)
+                 # W tym przypadku centroid to po prostu średnia wszystkich wektorów
+                 centroids = np.mean(embeddings, axis=0, keepdims=True)
+                 cluster_indices_map = {0: list(range(embeddings.shape[0]))}
+                 return labels, centroids, cluster_indices_map
 
             kmeans = KMeans(n_clusters=actual_n_clusters, random_state=42, n_init='auto', **kwargs)
             kmeans.fit(embeddings)
             labels = kmeans.labels_
+            centroids = kmeans.cluster_centers_
             logger.info(f"✅ K-Means zakończone. Znaleziono {actual_n_clusters} klastrów.")
 
         elif algorithm == 'dbscan':
@@ -86,7 +95,7 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
 
         else:
             logger.error(f"❌ Nieznany algorytm klastrowania: {algorithm}")
-            return None
+            return None, None, None
 
         # Opcjonalna ewaluacja jakości klastrowania (jeśli są co najmniej 2 klastry i nie tylko szum)
         unique_labels = set(labels)
@@ -102,11 +111,20 @@ def perform_clustering(embeddings: np.ndarray, algorithm: str = 'kmeans', n_clus
             except Exception as score_e:
                 logger.warning(f"⚠️ Nie można obliczyć Silhouette Score: {score_e}")
 
-        return labels
+        # Przygotuj cluster_indices_map po udanym klastrowaniu
+        if labels is not None:
+            cluster_indices_map = {}
+            for idx, label in enumerate(labels):
+                if label != -1: # Ignoruj szum
+                    if label not in cluster_indices_map:
+                        cluster_indices_map[label] = []
+                    cluster_indices_map[label].append(idx)
+
+        return labels, centroids, cluster_indices_map
 
     except Exception as e:
         logger.error(f"❌ Błąd podczas wykonywania klastrowania ({algorithm}): {e}", exc_info=True)
-        return None
+        return None, None, None
 
 
 # === FUNKCJA DO GENEROWANIA ETYKIET ===
@@ -211,60 +229,86 @@ def generate_cluster_labels_llm(cluster_assignments: dict, qdrant_data: list, ll
 
 
 # === FUNKCJA DO GENEROWANIA PODSUMOWANIA ===
-def generate_cluster_summary(texts: List[str], llm: Any, max_context_length: int = 8000, sample_size: int = 20) -> str:
+def generate_cluster_summary(
+    cluster_id: int,
+    cluster_indices: List[int],
+    embeddings: np.ndarray,
+    centroids: Optional[np.ndarray],
+    point_id_to_text: Dict[str, str], # Zakładamy, że klucze to ID punktów, nie indeksy
+    point_id_list: List[str], # Lista ID punktów w oryginalnej kolejności (tej samej co embeddings)
+    llm: Any,
+    num_representatives: int = 5,
+    max_context_length: int = 8000 # Nadal możemy użyć jako ostateczny limit
+) -> str:
     """
-    Generuje podsumowanie dla grupy tekstów (chunków) należących do jednego klastra za pomocą LLM.
+    Generuje podsumowanie dla klastra, używając tekstów punktów najbliższych centroidowi (reprezentantów).
 
     Args:
-        texts (List[str]): Lista tekstów chunków należących do klastra.
-        llm: Instancja modelu językowego LangChain (np. ChatOpenAI).
-        max_context_length (int): Maksymalna przybliżona długość kontekstu (w znakach) do wysłania do LLM.
-                                   Teksty będą losowo próbkowane i łączone, aż do osiągnięcia tego limitu.
-        sample_size (int): Alternatywnie, można użyć stałej liczby próbek, jeśli `max_context_length` nie jest priorytetem.
-                           Jeśli `max_context_length` jest ustawione, `sample_size` jest ignorowane.
+        cluster_id (int): ID klastra, dla którego generujemy podsumowanie.
+        cluster_indices (List[int]): Lista indeksów punktów (w macierzy embeddings) należących do tego klastra.
+        embeddings (np.ndarray): Pełna macierz embeddings dla wszystkich punktów.
+        centroids (Optional[np.ndarray]): Tablica centroidów (jeśli dostępna, np. z K-Means).
+        point_id_to_text (Dict[str, str]): Słownik mapujący ID punktu na jego tekst (page_content).
+        point_id_list (List[str]): Lista ID wszystkich punktów w kolejności odpowiadającej wierszom `embeddings`.
+        llm: Instancja modelu językowego LangChain.
+        num_representatives (int): Liczba reprezentatywnych tekstów (najbliższych centroidowi) do użycia.
+        max_context_length (int): Maksymalna przybliżona długość połączonych tekstów reprezentantów.
 
     Returns:
         str: Wygenerowane podsumowanie lub komunikat o błędzie.
     """
-    if not texts or not llm:
-        logger.warning("⚠️ Brak tekstów lub modelu LLM do wygenerowania podsumowania klastra.")
+    if not cluster_indices or embeddings is None or centroids is None or llm is None or not point_id_to_text:
+        logger.warning(f"⚠️ Brak wystarczających danych do wygenerowania podsumowania dla Klastra {cluster_id}.")
         return "Brak danych do wygenerowania podsumowania."
+    if cluster_id >= len(centroids):
+         logger.warning(f"⚠️ Nieprawidłowe cluster_id ({cluster_id}) lub brak centroidu dla tego klastra.")
+         return "Błąd wewnętrzny: brak centroidu dla klastra."
 
-    logger.info(f"📝 Rozpoczynanie generowania podsumowania dla {len(texts)} tekstów...")
+    logger.info(f"📝 Rozpoczynanie generowania podsumowania dla Klastra {cluster_id} (punkty: {len(cluster_indices)}, reprezentanci: {num_representatives})...")
 
-    # Przygotowanie kontekstu - próbkowanie lub łączenie do limitu długości
-    combined_texts = ""
-    if max_context_length:
+    try:
+        # Wybierz embeddingi i ID punktów dla bieżącego klastra
+        cluster_embeddings = embeddings[cluster_indices]
+        cluster_point_ids = [point_id_list[i] for i in cluster_indices]
+
+        # Pobierz centroid dla bieżącego klastra
+        centroid = centroids[cluster_id]
+
+        # Oblicz odległości punktów w klastrze od centroidu (użyjmy odległości kosinusowej, im mniejsza tym bliżej)
+        # cdist zwraca macierz odległości, bierzemy pierwszą (i jedyną) kolumnę
+        distances = cdist(cluster_embeddings, centroid.reshape(1, -1), metric='cosine').flatten()
+
+        # Znajdź indeksy N najbliższych punktów (reprezentantów)
+        num_representatives_actual = min(num_representatives, len(cluster_indices))
+        representative_indices_in_cluster = np.argsort(distances)[:num_representatives_actual]
+
+        # Pobierz teksty dla reprezentantów, ograniczając długość całkowitą
+        representative_texts = []
         current_length = 0
-        # Poprawka: Zawsze próbuj z całej listy, aby uniknąć błędu przy małej liczbie tekstów
-        sampled_texts_indices = random.sample(range(len(texts)), min(len(texts), len(texts))) # Losowa kolejność indeksów
-        selected_texts = []
-        for index in sampled_texts_indices:
-            text = texts[index]
-            if current_length + len(text) + 5 < max_context_length: # +5 dla separatora "\n---\n"
-                selected_texts.append(text)
-                current_length += len(text) + 5
-            else:
-                # Dodaj przynajmniej jeden tekst, nawet jeśli przekracza limit, jeśli nic nie wybrano
-                if not selected_texts:
-                    selected_texts.append(text[:max_context_length-5]) # Przytnij, aby zmieścić się w limicie
-                    logger.warning("   Pierwszy tekst był dłuższy niż max_context_length, został przycięty.")
-                break # Osiągnięto limit długości
-        combined_texts = "\n---\n".join(selected_texts)
-        logger.info(f"   Użyto {len(selected_texts)} z {len(texts)} tekstów (limit długości: {max_context_length} znaków).")
+        for idx_in_cluster in representative_indices_in_cluster:
+            original_index = cluster_indices[idx_in_cluster]
+            point_id = point_id_list[original_index]
+            text = point_id_to_text.get(point_id)
+            if text:
+                 # Sprawdź, czy dodanie tego tekstu nie przekroczy limitu
+                 if max_context_length and current_length + len(text) + 5 > max_context_length:
+                     if not representative_texts: # Dodaj chociaż pierwszy, nawet jeśli za długi (przycięty)
+                          representative_texts.append(text[:max_context_length - 5])
+                          logger.warning(f"   Pierwszy reprezentatywny tekst dla Klastra {cluster_id} był dłuższy niż max_context_length, został przycięty.")
+                     break # Osiągnięto limit
+                 representative_texts.append(text)
+                 current_length += len(text) + 5 # +5 dla separatora
 
-    elif sample_size:
-         sampled_texts = random.sample(texts, min(len(texts), sample_size))
-         combined_texts = "\n---\n".join(sampled_texts)
-         logger.info(f"   Użyto {len(sampled_texts)} z {len(texts)} tekstów (limit próbek: {sample_size}).")
-    else: # Fallback - użyj wszystkich (może być bardzo długie!)
-        combined_texts = "\n---\n".join(texts)
-        logger.warning(f"   Użyto wszystkich {len(texts)} tekstów (brak limitu długości/próbek).")
+        if not representative_texts:
+            logger.warning(f"   Nie udało się pobrać tekstów reprezentantów dla Klastra {cluster_id}.")
+            return "Nie można było pobrać tekstów reprezentantów."
 
+        combined_texts = "\n---\n".join(representative_texts)
+        logger.info(f"   Użyto {len(representative_texts)} tekstów reprezentantów jako kontekstu (łączna długość: {current_length} znaków).")
 
-    if not combined_texts:
-        logger.warning("   Nie udało się zbudować kontekstu do podsumowania.")
-        return "Nie można było zbudować kontekstu do podsumowania (puste teksty?)."
+    except Exception as prep_e:
+        logger.error(f"❌ Błąd podczas przygotowywania kontekstu reprezentantów dla Klastra {cluster_id}: {prep_e}", exc_info=True)
+        return f"Błąd przygotowania danych: {prep_e}"
 
     # Przygotuj prompt dla LLM
     prompt = f"""

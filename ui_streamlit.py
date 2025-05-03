@@ -412,36 +412,55 @@ def main():
                          st.session_state.cluster_assignments = None
                          st.session_state.cluster_labels = None
                     else:
+                         # Przygotuj dane wejściowe dla klastrowania
                          point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
                          embeddings_matrix = np.array([d['vector'] for d in qdrant_data if d.get('vector') is not None])
+                         # Stwórz mapowanie ID punktu na tekst i listę ID w odpowiedniej kolejności
+                         point_id_to_text_map = {d['id']: d.get('payload', {}).get('page_content', '') for d in qdrant_data if d.get('payload')}
+                         point_id_list_ordered = point_ids # Kolejność ID odpowiada wierszom embeddings_matrix
+                         # Zapisz mapowania w stanie sesji, aby były dostępne dla generate_cluster_summary
+                         st.session_state.point_id_to_text_map = point_id_to_text_map
+                         st.session_state.point_id_list_ordered = point_id_list_ordered
+                         st.session_state.embeddings_matrix_cache = embeddings_matrix # Zapisz też macierz embeddings
 
                          if embeddings_matrix.shape[0] > 0:
-                             cluster_labels_array = perform_clustering(
+                             # Wywołaj perform_clustering i przechwyć nowe wartości zwracane
+                             cluster_labels_array, centroids_array, cluster_indices_map = perform_clustering(
                                  embeddings_matrix,
                                  algorithm='kmeans',
                                  n_clusters=num_clusters_kmeans
                              )
 
-                             if cluster_labels_array is not None:
+                             if cluster_labels_array is not None and cluster_indices_map is not None:
+                                 # Zapisz wyniki w stanie sesji
                                  st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
-                                 st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array))} klastrów dla {len(point_ids)} punktów.")
+                                 st.session_state.cluster_centroids = centroids_array # Zapisz centroidy
+                                 st.session_state.cluster_indices_map = cluster_indices_map # Zapisz mapę indeksów
+                                 st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array) - {-1})} klastrów dla {len(point_ids)} punktów.")
 
+                                 # Generowanie etykiet (bez zmian w wywołaniu, bo qdrant_data zawiera wszystko)
                                  if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
                                      with st.spinner("Generowanie etykiet dla klastrów..."):
                                           st.session_state.cluster_labels = generate_cluster_labels_llm(
                                               st.session_state.cluster_assignments,
-                                              st.session_state.qdrant_data_cache,
+                                              st.session_state.qdrant_data_cache, # Przekazujemy cache z Qdrant
                                               st.session_state.chatbot.llm
                                           )
                                           if st.session_state.cluster_labels: st.success("✅ Etykiety klastrów wygenerowane.")
                                           else: st.warning("⚠️ Nie udało się wygenerować etykiet dla klastrów.")
                                  else:
                                       st.warning("Nie można wygenerować etykiet (brak wyników klastrowania lub LLM).")
-                                      st.session_state.cluster_labels = None
-                             else:
+                                      st.session_state.cluster_labels = {} # Ustaw na pusty słownik, jeśli nie wygenerowano
+                             else: # Błąd podczas klastrowania
                                  st.error("❌ Wystąpił błąd podczas klastrowania.")
+                                 # Resetuj wszystko związane z klastrowaniem
                                  st.session_state.cluster_assignments = None
                                  st.session_state.cluster_labels = None
+                                 st.session_state.cluster_centroids = None
+                                 st.session_state.cluster_indices_map = None
+                                 st.session_state.point_id_to_text_map = None
+                                 st.session_state.point_id_list_ordered = None
+                                 st.session_state.embeddings_matrix_cache = None
                          else:
                               st.warning("⚠️ Brak wektorów w pobranych danych do klastrowania.")
                               st.session_state.cluster_assignments = None
@@ -505,11 +524,32 @@ def main():
                       col1_details, col2_details = st.columns(2)
                       with col1_details:
                            if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
-                               if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and cluster_texts:
-                                   with st.spinner(f"Generowanie podsumowania..."):
-                                       summary = generate_cluster_summary(cluster_texts, st.session_state.chatbot.llm)
+                               # Sprawdź, czy mamy wszystkie potrzebne dane
+                               if ('chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and
+                                   'embeddings_matrix_cache' in st.session_state and st.session_state.embeddings_matrix_cache is not None and
+                                   'cluster_centroids' in st.session_state and st.session_state.cluster_centroids is not None and
+                                   'cluster_indices_map' in st.session_state and selected_id in st.session_state.cluster_indices_map and
+                                   'point_id_to_text_map' in st.session_state and st.session_state.point_id_to_text_map is not None and
+                                   'point_id_list_ordered' in st.session_state and st.session_state.point_id_list_ordered is not None):
+
+                                   with st.spinner(f"Generowanie podsumowania dla Klastra {selected_id}..."):
+                                       summary = generate_cluster_summary(
+                                           cluster_id=selected_id,
+                                           cluster_indices=st.session_state.cluster_indices_map[selected_id],
+                                           embeddings=st.session_state.embeddings_matrix_cache,
+                                           centroids=st.session_state.cluster_centroids,
+                                           point_id_to_text=st.session_state.point_id_to_text_map,
+                                           point_id_list=st.session_state.point_id_list_ordered,
+                                           llm=st.session_state.chatbot.llm,
+                                           num_representatives=5 # Można to uczynić konfigurowalnym
+                                       )
                                        st.session_state.cluster_summaries[selected_id] = summary
+                                       # Zapisz stan po wygenerowaniu
+                                       # save_cluster_metadata(...) # Opcjonalnie, jeśli przywrócimy trwały zapis
                                        st.rerun()
+                               elif not cluster_texts: # Obsługa przypadku, gdy nie ma tekstów (nie powinno się zdarzyć, jeśli są indeksy)
+                                   st.warning("Brak tekstów w klastrze do wygenerowania podsumowania.")
+                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
                                elif not cluster_texts:
                                    st.warning("Brak tekstów w klastrze.")
                                    st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
