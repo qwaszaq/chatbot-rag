@@ -1125,6 +1125,56 @@ def main():
 
                    st.markdown(content_to_display)
 
+                   # --- Dodawanie przycisków "Skasuj" i "Wyślij ponownie" ---
+                   if message["role"] == "assistant" and message_index > 0:
+                       # Sprawdź, czy poprzednia wiadomość to zapytanie użytkownika
+                       previous_message = active_chat_data["messages"][message_index - 1]
+                       if previous_message["role"] == "user":
+                           # Utwórz kolumny dla przycisków, znacznie węższe dla ikon
+                           col1_btn, col2_btn, _ = st.columns([0.1, 0.1, 0.8]) # Zmniejszone proporcje dla ikon
+
+                           with col1_btn:
+                               delete_key = f"delete_msg_{active_chat_id}_{message_index}"
+                               # Użyj tylko ikony jako etykiety przycisku
+                               if st.button("🗑️", key=delete_key, help="Usuń tę odpowiedź i poprzedzające ją zapytanie użytkownika.", use_container_width=True):
+                                   try:
+                                       messages_list = st.session_state.chats[active_chat_id]["messages"]
+                                       # Usuwamy najpierw wiadomość o wyższym indeksie (asystenta), aby nie psuć indeksu niższej (użytkownika)
+                                       del messages_list[message_index]
+                                       del messages_list[message_index - 1]
+                                       save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
+                                       logger.info(f"Usunięto wiadomości o indeksach {message_index} (asystent) i {message_index - 1} (użytkownik) z czatu {active_chat_id}")
+                                       st.rerun()
+                                   except IndexError:
+                                       logger.error(f"Błąd indeksu podczas próby usunięcia wiadomości {message_index} i {message_index - 1} z czatu {active_chat_id}")
+                                       st.error("Wystąpił błąd podczas usuwania wiadomości.")
+                                   except Exception as e:
+                                       logger.error(f"Nieoczekiwany błąd podczas usuwania wiadomości: {e}", exc_info=True)
+                                       st.error(f"Wystąpił nieoczekiwany błąd: {e}")
+
+
+                           with col2_btn:
+                               resend_key = f"resend_msg_{active_chat_id}_{message_index}"
+                               # Użyj tylko ikony jako etykiety przycisku
+                               if st.button("🔄", key=resend_key, help="Usuń tę odpowiedź i wyślij poprzednie zapytanie ponownie do LLM.", use_container_width=True):
+                                   try:
+                                       messages_list = st.session_state.chats[active_chat_id]["messages"]
+                                       # Usuwamy tylko odpowiedź asystenta
+                                       del messages_list[message_index]
+                                       st.session_state.new_user_input_submitted = True # Ustawiamy flagę, aby wywołać LLM przy następnym rerun
+                                       save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
+                                       logger.info(f"Usunięto wiadomość o indeksie {message_index} (asystent) z czatu {active_chat_id} i ustawiono flagę ponownego wysłania.")
+                                       st.rerun()
+                                   except IndexError:
+                                        logger.error(f"Błąd indeksu podczas próby usunięcia wiadomości {message_index} z czatu {active_chat_id} do ponownego wysłania.")
+                                        st.error("Wystąpił błąd podczas przygotowania do ponownego wysłania.")
+                                   except Exception as e:
+                                       logger.error(f"Nieoczekiwany błąd podczas ponownego wysyłania: {e}", exc_info=True)
+                                       st.error(f"Wystąpił nieoczekiwany błąd: {e}")
+                   # --- Koniec dodawania przycisków ---
+
+                   # Istniejący kod wyświetlania metadanych, źródeł i grafu poniżej...
+
                    # DODANO: Wyświetlanie metadanych, jeśli istnieją
                    if metadata_to_display:
                        model_name = metadata_to_display.get('model', 'N/A')

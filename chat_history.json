@@ -3091,6 +3091,215 @@
                 {
                     "role": "user",
                     "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n"
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Specyficzne metody stosowane przez poszczególne \"Agnieszki\" nie były jedynie narzędziem do bezpośredniego oszustwa, lecz integralnym elementem szerszej strategii kamuflażu i konspiracji. Dowody wskazują na koordynację tych metod oraz ich wykorzystanie poza generowaniem dochodu - jako środka maskowania przestępczej działalności i budowy spójnej narracji. \n\nŹródło w dokumentach:\n*   \"Podział Ról... sugeruje koordynację i wykorzystanie ich specyficznych predyspozycji lub stworzenie pozorów specjalizacji\".\n*   „Materiały zabezpieczone u jednych podejrzanych zawierają bezpośrednie odwołania do działalności innych Agnieszek”.\n*  \"...korespondencja omawiająca 'projekty', 'strategie', 'metody', 'integrację' ich 'dziwactw' i wspólne interesy\".\n*   \"Dowody łączące Oskarzonych... korespondencja między różnymi Oskarżonymi Agnieszkami… omawiającą 'projekty', 'strategie', 'metody'\".\n*   „Wymiana metod, centralne zarządzanie finansami”. (odnosząc się do powiązań i koordynacji)\n*  \"Analiza zabezpieczonej korespondencji... ujawniła e-maile, w których Lisiecka pyta o 'możliwość użycia metody Kluczarki do wstępnej oceny'\".\n*   “pliki \"Projekt X\" u Malinowskiej, korespondencja między Agnieszkami dot. “integracji metod”, “strategie maskowania”\".\n*  „wyrafinowane mechanizmy finansowe sugerujące wysokie kompetencje logistyczne”.\n*   \"...dowody łączące ją z innymi podejrzanymi... korespondencja z prezesem HCG, pliki finansowe od innej Agnieszki, zapytania od innej Agnieszki” (wskazują na wykorzystanie metod w szerszym kontekście).\n\nKomentarz: Dokumenty wyraźnie wskazują na świadome łączenie i omawianie tych \"dziwactw\" przez członków grupy. Działalność finansowa A. Malinowskiej (\"Kosmiczna Rachunkowość\") jest bezpośrednio powiązana z dokumentacją związaną z różnymi metodami, takimi jak projekt Hipnos czy Projekt Mapa, co sugeruje centralne zarządzanie i księgowość dla wszystkich działań ZGP \"Agnieszka\". Dodatkowo, metody te nie tylko generowały dochód, ale również były elementem strategii maskowania działalności przestępczej.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "cf20f350-8fac-407a-8c8c-82ca37bb60a7"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpfca_bewc/code - 2025-04-25T230550.641.txt",
+                            "id": "ed01e893-e2e0-4be8-9e65-b8e1fd8cde81"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp49mg61na/code - 2025-04-25T232215.125.txt",
+                            "id": "5eedac39-8d42-4b82-a910-0570af5cd97b"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska ('Kosmiczna Rachunkowość')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZGP 'Agnieszka'",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka"
+                            },
+                            {
+                                "label": "Prognozy Chmur",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Prognozy Chmur"
+                            },
+                            {
+                                "label": "Analiza Wibracji Roślin",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Analiza Wibracji Roślin"
+                            },
+                            {
+                                "label": "Rozmowy z Cieniem",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Rozmowy z Cieniem"
+                            },
+                            {
+                                "label": "Projekt X",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt X"
+                            },
+                            {
+                                "label": "Projekt Hipnos",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Hipnos"
+                            },
+                            {
+                                "label": "Projekt Mapa",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Mapa"
+                            },
+                            {
+                                "label": "Centralny Hub Finansowy",
+                                "llm_type": "Concept",
+                                "ner_type": "orgName",
+                                "id": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "Strategia Kamuflażu",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Strategia Kamuflażu"
+                            },
+                            {
+                                "label": "Korespondencja (e-maile, dokumenty)",
+                                "llm_type": "Document",
+                                "ner_type": null,
+                                "id": "Korespondencja"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "KONTROLUJE",
+                                "source": "Agnieszka Malinowska",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "JEST_CZĘŚCIĄ",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "KSIĘGUJE_DLA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt X"
+                            },
+                            {
+                                "label": "KSIĘGUJE_DLA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt Hipnos"
+                            },
+                            {
+                                "label": "KSIĘGUJE_DLA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt Mapa"
+                            },
+                            {
+                                "label": "STOSUJE",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Strategia Kamuflażu"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Kluczodiagnostyka",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Prognozy Chmur",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Analiza Wibracji Roślin",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Rozmowy z Cieniem",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "POSIADA",
+                                "source": "Projekt X",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "POSIADA",
+                                "source": "Projekt Hipnos",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "POSIADA",
+                                "source": "Projekt Mapa",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZAWIERA_INFORMACJE_O",
+                                "source": "Korespondencja",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Korespondencja",
+                                "target": "Kluczodiagnostyka"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Korespondencja",
+                                "target": "Prognozy Chmur"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Korespondencja",
+                                "target": "Analiza Wibracji Roślin"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Korespondencja",
+                                "target": "Rozmowy z Cieniem"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Korespondencja",
+                                "target": "Projekt X"
+                            },
+                            {
+                                "label": "OMAWIA",
+                                "source": "Korespondencja",
+                                "target": "Strategia Kamuflażu"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 734,
+                        "time": 165.87485003471375
+                    }
                 }
             ]
         },
