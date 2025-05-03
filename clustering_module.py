@@ -11,9 +11,10 @@ from sklearn.metrics import silhouette_score # Do oceny jakości klastrowania (o
 from sklearn.preprocessing import StandardScaler # Do skalowania danych (ważne dla DBSCAN)
 import random # Do próbkowania tekstów
 # Dodano import dla typowania LLM i spacy
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Optional, Tuple # DODANO Optional
 from collections import Counter # Dodano import Counter
 import spacy # Dodano import spacy
+from scipy.spatial.distance import cdist # DODANO: Import cdist do obliczania odległości
 
 
 logger = logging.getLogger(__name__)
@@ -260,16 +261,16 @@ def generate_cluster_summary(
     if not cluster_indices or embeddings is None or centroids is None or llm is None or not point_id_to_text:
         logger.warning(f"⚠️ Brak wystarczających danych do wygenerowania podsumowania dla Klastra {cluster_id}.")
         return "Brak danych do wygenerowania podsumowania."
-    if cluster_id >= len(centroids):
+    # Sprawdź, czy cluster_id jest prawidłowym indeksem dla centroidów
+    if cluster_id < 0 or cluster_id >= len(centroids):
          logger.warning(f"⚠️ Nieprawidłowe cluster_id ({cluster_id}) lub brak centroidu dla tego klastra.")
          return "Błąd wewnętrzny: brak centroidu dla klastra."
 
     logger.info(f"📝 Rozpoczynanie generowania podsumowania dla Klastra {cluster_id} (punkty: {len(cluster_indices)}, reprezentanci: {num_representatives})...")
 
     try:
-        # Wybierz embeddingi i ID punktów dla bieżącego klastra
+        # Wybierz embeddingi dla bieżącego klastra
         cluster_embeddings = embeddings[cluster_indices]
-        cluster_point_ids = [point_id_list[i] for i in cluster_indices]
 
         # Pobierz centroid dla bieżącego klastra
         centroid = centroids[cluster_id]
@@ -278,7 +279,7 @@ def generate_cluster_summary(
         # cdist zwraca macierz odległości, bierzemy pierwszą (i jedyną) kolumnę
         distances = cdist(cluster_embeddings, centroid.reshape(1, -1), metric='cosine').flatten()
 
-        # Znajdź indeksy N najbliższych punktów (reprezentantów)
+        # Znajdź indeksy N najbliższych punktów (reprezentantów) w ramach *indeksów klastra*
         num_representatives_actual = min(num_representatives, len(cluster_indices))
         representative_indices_in_cluster = np.argsort(distances)[:num_representatives_actual]
 
@@ -286,8 +287,11 @@ def generate_cluster_summary(
         representative_texts = []
         current_length = 0
         for idx_in_cluster in representative_indices_in_cluster:
+            # Przekonwertuj indeks w ramach klastra na oryginalny indeks w pełnej macierzy embeddings
             original_index = cluster_indices[idx_in_cluster]
+            # Uzyskaj ID punktu odpowiadające oryginalnemu indeksowi
             point_id = point_id_list[original_index]
+            # Pobierz tekst dla tego ID punktu
             text = point_id_to_text.get(point_id)
             if text:
                  # Sprawdź, czy dodanie tego tekstu nie przekroczy limitu
@@ -297,14 +301,14 @@ def generate_cluster_summary(
                           logger.warning(f"   Pierwszy reprezentatywny tekst dla Klastra {cluster_id} był dłuższy niż max_context_length, został przycięty.")
                      break # Osiągnięto limit
                  representative_texts.append(text)
-                 current_length += len(text) + 5 # +5 dla separatora
+                 current_length += len(text) + 5 # +5 dla separatora "\n---\n"
 
         if not representative_texts:
             logger.warning(f"   Nie udało się pobrać tekstów reprezentantów dla Klastra {cluster_id}.")
             return "Nie można było pobrać tekstów reprezentantów."
 
         combined_texts = "\n---\n".join(representative_texts)
-        logger.info(f"   Użyto {len(representative_texts)} tekstów reprezentantów jako kontekstu (łączna długość: {current_length} znaków).")
+        logger.info(f"   Użyto {len(representative_texts)} tekstów reprezentantów jako kontekstu (łączna długość: ~{current_length} znaków).")
 
     except Exception as prep_e:
         logger.error(f"❌ Błąd podczas przygotowywania kontekstu reprezentantów dla Klastra {cluster_id}: {prep_e}", exc_info=True)

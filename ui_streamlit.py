@@ -234,7 +234,7 @@ def main():
     if 'cluster_assignments' not in st.session_state:
         st.session_state.cluster_assignments = None # Inicjalizuj jako None
     if 'cluster_labels' not in st.session_state:
-        st.session_state.cluster_labels = None # Inicjalizuj jako None
+        st.session_state.cluster_labels = {} # Inicjalizuj jako pusty słownik
     if 'qdrant_data_cache' not in st.session_state:
         st.session_state.qdrant_data_cache = None
     if 'selected_cluster_id' not in st.session_state:
@@ -342,8 +342,9 @@ def main():
             st.session_state.active_chat_id = new_chat_id
             if "editing_chat_id" in st.session_state: del st.session_state.editing_chat_id
             # Resetuj wyniki klastrowania i wybór przy tworzeniu nowego czatu
-            st.session_state.cluster_assignments = None
-            st.session_state.cluster_labels = None
+            # UWAGA: Nie resetujemy już assignments tutaj, bo ładujemy z Qdrant
+            # st.session_state.cluster_assignments = None
+            st.session_state.cluster_labels = None # Resetuj etykiety (nie są w Qdrant)
             st.session_state.qdrant_data_cache = None
             st.session_state.selected_cluster_id = None
             st.session_state.cluster_summaries = {} # Resetuj podsumowania
@@ -480,8 +481,10 @@ def main():
                     qdrant_data = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True)
                     st.session_state.qdrant_data_cache = qdrant_data # Zapisz dane w stanie sesji
                     st.session_state.selected_cluster_id = None # Resetuj wybór klastra
-                    st.session_state.cluster_summaries = {} # Resetuj podsumowania
-                    st.session_state.cluster_entities = {} # Resetuj encje
+                    # Resetuj tylko metadane generowane w UI, nie przypisania (bo zostaną nadpisane/załadowane)
+                    st.session_state.cluster_summaries = {}
+                    st.session_state.cluster_entities = {}
+                    st.session_state.cluster_labels = {} # Resetuj też etykiety, bo będą generowane na nowo
 
                     if not qdrant_data:
                          st.error("Nie udało się pobrać danych z Qdrant lub kolekcja jest pusta.")
@@ -534,6 +537,9 @@ def main():
                                       # Ten warunek raczej nie powinien wystąpić, jeśli jesteśmy w tym bloku, ale dla pewności
                                       st.warning("Nie utworzono przypisań klastrów, pomijanie aktualizacji Qdrant.")
 
+                                 # Ustaw status na OK po udanej analizie i zapisie
+                                 st.session_state.cluster_load_status = "loaded_ok"
+
                                  # Generowanie etykiet (bez zmian w wywołaniu, bo qdrant_data zawiera wszystko)
                                  if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
                                      with st.spinner("Generowanie etykiet dla klastrów..."):
@@ -557,23 +563,26 @@ def main():
                                  st.session_state.point_id_to_text_map = None
                                  st.session_state.point_id_list_ordered = None
                                  st.session_state.embeddings_matrix_cache = None
+                                 st.session_state.cluster_load_status = "error" # Ustaw status błędu
                          else:
                               st.warning("⚠️ Brak wektorów w pobranych danych do klastrowania.")
                               st.session_state.cluster_assignments = None
                               st.session_state.cluster_labels = None
+                              st.session_state.cluster_load_status = "loaded_empty" # Ustaw status pusty
                 except Exception as cluster_e:
                     logger.error(f"❌ Błąd podczas procesu klastrowania: {cluster_e}", exc_info=True)
                     st.error(f"Wystąpił błąd: {cluster_e}")
                     st.session_state.cluster_assignments = None
                     st.session_state.cluster_labels = None
                     st.session_state.qdrant_data_cache = None
+                    st.session_state.cluster_load_status = "error" # Ustaw status błędu
             st.rerun()
 
         # Wyświetlanie informacji o klastrach (jeśli istnieją lub wystąpił błąd ładowania)
         cluster_summary_container = st.container()
         with cluster_summary_container:
              load_status = st.session_state.get('cluster_load_status', 'not_loaded')
-             assignments_exist = 'cluster_assignments' in st.session_state and st.session_state.cluster_assignments # Sprawdź, czy słownik istnieje i nie jest pusty
+             assignments_exist = 'cluster_assignments' in st.session_state and st.session_state.cluster_assignments is not None and len(st.session_state.cluster_assignments) > 0 # Poprawione sprawdzenie
 
              # Wyświetl subheader tylko jeśli są klastry lub był błąd ładowania
              if assignments_exist or load_status == 'error':
@@ -581,30 +590,41 @@ def main():
 
              # Komunikaty o stanie ładowania
              if load_status == 'error':
-                 st.warning("⚠️ Nie udało się załadować poprzednich wyników klastrowania z pliku. Uruchom analizę ponownie.")
+                 st.warning("⚠️ Nie udało się załadować poprzednich wyników klastrowania z Qdrant. Uruchom analizę ponownie.")
              elif load_status == 'loaded_empty':
-                 st.info("ℹ️ Poprzednia analiza klastrów nie znalazła żadnych grup (lub plik był pusty). Uruchom analizę, aby spróbować ponownie.")
-             elif not assignments_exist and load_status != 'error': # Nie załadowano i nie było błędu - prawdopodobnie brak pliku
+                 st.info("ℹ️ Nie znaleziono zapisanych wyników klastrowania w Qdrant lub poprzednia analiza nie znalazła grup. Uruchom analizę, aby spróbować ponownie.")
+             elif not assignments_exist and load_status != 'error' and load_status != 'loaded_empty': # Nie załadowano i nie było błędu/pustego wyniku
                  st.info("ℹ️ Brak zapisanych wyników klastrowania. Uruchom analizę, aby wygenerować klastry.")
 
              # Wyświetl listę klastrów tylko jeśli istnieją
              if assignments_exist:
                  try:
+                     # Użyj Counter na wartościach słownika assignments
                      cluster_counts = Counter(st.session_state.cluster_assignments.values())
                      noise_points = cluster_counts.pop(-1, 0)
                      num_clusters_found = len(cluster_counts)
-                     st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
+                     if num_clusters_found > 0:
+                        st.write(f"Liczba znalezionych klastrów: {num_clusters_found}")
+                     elif noise_points > 0 : # Jeśli są tylko punkty szumu
+                         st.write(f"Nie znaleziono klastrów (tylko {noise_points} punktów szumu).")
+                     # else: # Jeśli assignments istniało, ale było puste po odfiltrowaniu szumu
+                     #     st.write("Nie znaleziono klastrów.") # Ten komunikat jest już wyżej
+
                      if noise_points > 0: st.write(f"Liczba punktów szumu/outlierów: {noise_points}")
+
+                     # Sortuj po ID klastra
                      sorted_clusters = sorted(cluster_counts.items())
                      for cluster_id, count in sorted_clusters:
                           label_text = f"Klaster {cluster_id}"
-                          if st.session_state.cluster_labels and cluster_id in st.session_state.cluster_labels:
+                          # Sprawdź, czy etykiety istnieją i czy jest etykieta dla tego ID
+                          if st.session_state.get('cluster_labels') and cluster_id in st.session_state.cluster_labels:
                               label_text += f": **{st.session_state.cluster_labels[cluster_id]}**"
                           if st.button(f"{label_text} ({count} punktów)", key=f"view_cluster_{cluster_id}"):
                               if st.session_state.selected_cluster_id == cluster_id:
                                    st.session_state.selected_cluster_id = None
                               else:
                                    st.session_state.selected_cluster_id = cluster_id
+                              # Resetuj metadane dla nowo wybranego klastra (będą generowane na żądanie)
                               if st.session_state.selected_cluster_id is not None:
                                    selected_id_local = st.session_state.selected_cluster_id
                                    if selected_id_local in st.session_state.cluster_summaries:
@@ -613,7 +633,7 @@ def main():
                                        del st.session_state.cluster_entities[selected_id_local]
                               st.rerun()
                  except Exception as e:
-                      logger.error(f"Błąd wyświetlania wyników klastrowania: {e}")
+                      logger.error(f"Błąd wyświetlania wyników klastrowania: {e}", exc_info=True)
                       st.error("Błąd przy wyświetlaniu podsumowania klastrów.")
 
         # Wyświetlanie szczegółów wybranego klastra
@@ -621,86 +641,112 @@ def main():
              selected_id = st.session_state.selected_cluster_id
              if st.session_state.cluster_assignments and any(cid == selected_id for cid in st.session_state.cluster_assignments.values()):
                   selected_label_text = f"Klaster {selected_id}"
-                  if st.session_state.cluster_labels and selected_id in st.session_state.cluster_labels:
-                       selected_label_text += f": **{st.session_state.cluster_labels[selected_id]}**"
+                  # Użyj .get() dla bezpiecznego dostępu do etykiet
+                  cluster_label = st.session_state.get('cluster_labels', {}).get(selected_id)
+                  if cluster_label:
+                       selected_label_text += f": **{cluster_label}**"
                   st.subheader(f"Szczegóły - {selected_label_text}")
                   try:
                       # --- Sprawdź, czy cache danych Qdrant jest dostępny ---
-                      if st.session_state.qdrant_data_cache is None:
-                           st.warning("Cache danych Qdrant jest niedostępny. Nie można wyświetlić szczegółów punktów. Spróbuj ponownie uruchomić analizę klastrów.")
-                           point_id_to_data = {}
-                           cluster_point_ids = []
-                           cluster_texts = []
+                      # Cache danych Qdrant jest teraz ładowany tylko przy analizie,
+                      # więc do wyświetlenia punktów musimy go pobrać ponownie, jeśli go nie ma.
+                      if 'qdrant_data_cache' not in st.session_state or st.session_state.qdrant_data_cache is None:
+                            with st.spinner("Pobieranie danych punktów..."):
+                                st.session_state.qdrant_data_cache = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(with_payload=True, with_vectors=False) # Tylko payload
+                            if st.session_state.qdrant_data_cache is None:
+                                st.warning("Nie udało się pobrać danych punktów z Qdrant.")
+                                point_id_to_data = {}
+                                cluster_point_ids = []
+                                cluster_texts = []
+                            else:
+                                point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
                       else:
                            point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
-                           cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
+
+                      # Pobierz ID punktów dla klastra (zawsze z session_state)
+                      cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
+
+                      # Pobierz teksty (jeśli mamy point_id_to_data)
+                      cluster_texts = []
+                      if point_id_to_data:
                            cluster_texts = [
-                           point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
-                           for pid in cluster_point_ids
-                           if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
-                       ]
+                               point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
+                               for pid in cluster_point_ids
+                               if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
+                           ]
+                      else:
+                           st.warning("Brak danych punktów, nie można wygenerować podsumowania/encji ani wyświetlić treści.")
+
+
                       col1_details, col2_details = st.columns(2)
                       with col1_details:
-                           if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
-                               # Sprawdź, czy mamy wszystkie potrzebne dane
-                               if ('chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and
-                                   'embeddings_matrix_cache' in st.session_state and st.session_state.embeddings_matrix_cache is not None and
-                                   'cluster_centroids' in st.session_state and st.session_state.cluster_centroids is not None and
-                                   'cluster_indices_map' in st.session_state and selected_id in st.session_state.cluster_indices_map and
-                                   'point_id_to_text_map' in st.session_state and st.session_state.point_id_to_text_map is not None and
-                                   'point_id_list_ordered' in st.session_state and st.session_state.point_id_list_ordered is not None):
+                           # Wyświetl podsumowanie, jeśli jest w stanie sesji
+                           if selected_id in st.session_state.cluster_summaries:
+                                st.markdown("**Podsumowanie klastra:**")
+                                st.markdown(st.session_state.cluster_summaries[selected_id])
+                                st.markdown("---")
+                           # Przycisk generowania podsumowania
+                           elif point_id_to_data: # Tylko jeśli mamy dane
+                                if st.button("📝 Generuj Podsumowanie", key=f"summarize_{selected_id}", use_container_width=True):
+                                    # Sprawdź, czy mamy wszystkie potrzebne dane (embeddings i centroidy są potrzebne!)
+                                    if ('chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm') and
+                                        'embeddings_matrix_cache' in st.session_state and st.session_state.embeddings_matrix_cache is not None and
+                                        'cluster_centroids' in st.session_state and st.session_state.cluster_centroids is not None and
+                                        'cluster_indices_map' in st.session_state and selected_id in st.session_state.cluster_indices_map and
+                                        'point_id_to_text_map' in st.session_state and st.session_state.point_id_to_text_map is not None and
+                                        'point_id_list_ordered' in st.session_state and st.session_state.point_id_list_ordered is not None):
 
-                                   with st.spinner(f"Generowanie podsumowania dla Klastra {selected_id}..."):
-                                       summary = generate_cluster_summary(
-                                           cluster_id=selected_id,
-                                           cluster_indices=st.session_state.cluster_indices_map[selected_id],
-                                           embeddings=st.session_state.embeddings_matrix_cache,
-                                           centroids=st.session_state.cluster_centroids,
-                                           point_id_to_text=st.session_state.point_id_to_text_map,
-                                           point_id_list=st.session_state.point_id_list_ordered,
-                                           llm=st.session_state.chatbot.llm,
-                                           num_representatives=5 # Można to uczynić konfigurowalnym
-                                       )
-                                       st.session_state.cluster_summaries[selected_id] = summary
-                                       # Zapisz stan po wygenerowaniu
-                                       # save_cluster_metadata(...) # Opcjonalnie, jeśli przywrócimy trwały zapis
-                                       st.rerun()
-                               elif not cluster_texts: # Obsługa przypadku, gdy nie ma tekstów (nie powinno się zdarzyć, jeśli są indeksy)
-                                   st.warning("Brak tekstów w klastrze do wygenerowania podsumowania.")
-                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
-                               elif not cluster_texts:
-                                   st.warning("Brak tekstów w klastrze.")
-                                   st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
-                               else: st.error("Błąd generowania podsumowania.")
+                                        with st.spinner(f"Generowanie podsumowania dla Klastra {selected_id}..."):
+                                            summary = generate_cluster_summary(
+                                                cluster_id=selected_id,
+                                                cluster_indices=st.session_state.cluster_indices_map[selected_id],
+                                                embeddings=st.session_state.embeddings_matrix_cache,
+                                                centroids=st.session_state.cluster_centroids,
+                                                point_id_to_text=st.session_state.point_id_to_text_map,
+                                                point_id_list=st.session_state.point_id_list_ordered,
+                                                llm=st.session_state.chatbot.llm,
+                                                num_representatives=5 # Można to uczynić konfigurowalnym
+                                            )
+                                            st.session_state.cluster_summaries[selected_id] = summary
+                                            # Zapisz stan po wygenerowaniu (jeśli używamy pliku cache dla metadanych)
+                                            # save_cluster_metadata(...) # Opcjonalnie
+                                            st.rerun()
+                                    elif not cluster_texts: # Obsługa przypadku, gdy nie ma tekstów
+                                        st.warning("Brak tekstów w klastrze do wygenerowania podsumowania.")
+                                        st.session_state.cluster_summaries[selected_id] = "Brak tekstów."
+                                    else:
+                                         st.error("Błąd generowania podsumowania: Brak potrzebnych danych (np. centroidów, embeddingów) w stanie sesji. Uruchom ponownie 'Analizuj / Odśwież Klastry'.")
+
                       with col2_details:
-                           if st.button("🧐 Pokaż Kluczowe Obiekty", key=f"entities_{selected_id}", use_container_width=True):
-                                if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and cluster_texts:
-                                     if st.session_state.chatbot.nlp is None: st.error("Model spaCy niedostępny.")
-                                     else:
-                                         with st.spinner(f"Ekstrakcja bytów..."):
-                                             entities = extract_key_entities(cluster_texts, st.session_state.chatbot.nlp)
-                                             st.session_state.cluster_entities[selected_id] = entities
-                                             # Zapisz wszystkie dane klastrowania natychmiast po wygenerowaniu
-                                             save_cluster_metadata(st.session_state.cluster_assignments, st.session_state.cluster_labels, st.session_state.cluster_summaries, st.session_state.cluster_entities)
-                                             st.rerun()
-                                elif not cluster_texts:
-                                     st.warning("Brak tekstów w klastrze.")
-                                     st.session_state.cluster_entities[selected_id] = []
-                                else: st.error("Błąd ekstrakcji bytów.")
-                      if selected_id in st.session_state.cluster_summaries:
-                           st.markdown("**Podsumowanie klastra:**")
-                           st.markdown(st.session_state.cluster_summaries[selected_id])
-                           st.markdown("---")
-                      if selected_id in st.session_state.cluster_entities:
-                           st.markdown("**Kluczowe Obiekty:**")
-                           entities_list = st.session_state.cluster_entities[selected_id]
-                           if entities_list:
-                               for entity_text, entity_label, count in entities_list:
-                                   st.markdown(f"- `{entity_text}` ({entity_label}): {count}")
-                           else: st.caption("_Brak bytów lub błąd ekstrakcji._")
-                           st.markdown("---")
+                           # Wyświetl encje, jeśli są w stanie sesji
+                           if selected_id in st.session_state.cluster_entities:
+                                st.markdown("**Kluczowe Obiekty:**")
+                                entities_list = st.session_state.cluster_entities[selected_id]
+                                if entities_list:
+                                    for entity_text, entity_label, count in entities_list:
+                                        st.markdown(f"- `{entity_text}` ({entity_label}): {count}")
+                                else: st.caption("_Brak bytów lub błąd ekstrakcji._")
+                                st.markdown("---")
+                           # Przycisk generowania encji
+                           elif point_id_to_data: # Tylko jeśli mamy dane
+                                if st.button("🧐 Pokaż Kluczowe Obiekty", key=f"entities_{selected_id}", use_container_width=True):
+                                     if 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'nlp') and cluster_texts:
+                                          if st.session_state.chatbot.nlp is None: st.error("Model spaCy niedostępny.")
+                                          else:
+                                              with st.spinner(f"Ekstrakcja bytów..."):
+                                                  entities = extract_key_entities(cluster_texts, st.session_state.chatbot.nlp)
+                                                  st.session_state.cluster_entities[selected_id] = entities
+                                                  # Zapisz stan po wygenerowaniu (jeśli używamy pliku cache dla metadanych)
+                                                  # save_cluster_metadata(...) # Opcjonalnie
+                                                  st.rerun()
+                                     elif not cluster_texts:
+                                          st.warning("Brak tekstów w klastrze.")
+                                          st.session_state.cluster_entities[selected_id] = []
+                                     else: st.error("Błąd ekstrakcji bytów.")
+
+                      # Wyświetlanie listy punktów (jeśli mamy dane)
                       if not cluster_point_ids: st.write("Brak punktów w klastrze.")
-                      elif not st.session_state.qdrant_data_cache: st.warning("Cache danych Qdrant niedostępny.")
+                      elif not point_id_to_data: st.warning("Nie można wyświetlić listy punktów (brak danych).")
                       else:
                           st.write(f"Punkty ({len(cluster_point_ids)}):")
                           points_shown = 0
@@ -723,7 +769,7 @@ def main():
                                        points_shown += 1
                                    else: st.warning(f"Brak danych payload dla punktu {point_id}")
                   except Exception as detail_e:
-                       logger.error(f"Błąd wyświetlania szczegółów klastra {selected_id}: {detail_e}")
+                       logger.error(f"Błąd wyświetlania szczegółów klastra {selected_id}: {detail_e}", exc_info=True)
                        st.error(f"Błąd przy wyświetlaniu szczegółów klastra {selected_id}.")
              else:
                   st.session_state.selected_cluster_id = None
@@ -765,6 +811,14 @@ def main():
                                       success = st.session_state.chatbot.clear_database()
                                       if success:
                                            st.success(f"✅ Kolekcja '{collection_name_to_clear}' została wyczyszczona.")
+                                           # Po wyczyszczeniu resetujemy stan klastrowania
+                                           st.session_state.cluster_assignments = None
+                                           st.session_state.cluster_labels = None
+                                           st.session_state.qdrant_data_cache = None
+                                           st.session_state.selected_cluster_id = None
+                                           st.session_state.cluster_summaries = {}
+                                           st.session_state.cluster_entities = {}
+                                           st.session_state.cluster_load_status = "loaded_empty" # Ustawiamy na pusty
                                       else:
                                            st.error(f"❌ Wystąpił błąd podczas czyszczenia kolekcji '{collection_name_to_clear}'.")
                                  except AttributeError:
@@ -857,6 +911,7 @@ def main():
                       st.session_state.selected_cluster_id = None
                       st.session_state.cluster_summaries = {} # Resetuj podsumowania
                       st.session_state.cluster_entities = {} # Resetuj encje
+                      st.session_state.cluster_load_status = "not_loaded" # Resetuj status ładowania
 
 
                  # --- Przetwarzanie URL ---
@@ -872,6 +927,7 @@ def main():
                               st.session_state.selected_cluster_id = None
                               st.session_state.cluster_summaries = {} # Resetuj podsumowania
                               st.session_state.cluster_entities = {} # Resetuj encje
+                              st.session_state.cluster_load_status = "not_loaded" # Resetuj status ładowania
                           except Exception as e:
                               logger.error(f"❌ Błąd przetwarzania URL: {str(e)}", exc_info=True)
                               st.error(f"Błąd podczas przetwarzania URL: {e}")
@@ -883,13 +939,14 @@ def main():
                  st.session_state.chats[st.session_state.active_chat_id]["messages"] = []
                  save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
                  logger.info(f"Wyczyszczono historię aktywnego czatu: {st.session_state.active_chat_id}")
-                 # Resetuj klastry przy resetowaniu czatu
-                 st.session_state.cluster_assignments = None
+                 # Resetuj klastry przy resetowaniu czatu (opcjonalne, bo ładujemy z Qdrant)
+                 # st.session_state.cluster_assignments = None
                  st.session_state.cluster_labels = None
                  st.session_state.qdrant_data_cache = None # Resetuj cache
                  st.session_state.selected_cluster_id = None
                  st.session_state.cluster_summaries = {} # Resetuj podsumowania
                  st.session_state.cluster_entities = {} # Resetuj encje
+                 # st.session_state.cluster_load_status = "not_loaded" # Można też zresetować status
             else:
                  logger.warning("Nie można zresetować czatu - brak aktywnego czatu.")
             st.rerun()

@@ -8,9 +8,14 @@ from langchain_core.embeddings import Embeddings
 from qdrant_client import QdrantClient
 # Zmieniono import CollectionInfo i CollectionStatus na ten z qdrant_client.http.models
 # Upewnij się, że te klasy są dostępne w qdrant_client.http.models w Twojej wersji qdrant-client
-from qdrant_client.http.models import Distance, VectorParams, CollectionInfo, CollectionStatus
+from qdrant_client.http.models import (
+    Distance, VectorParams, CollectionInfo, CollectionStatus,
+    PointStruct, UpdateResult, PointIdsList, Payload # DODANO: Importy dla operacji na payloadach
+)
 import os
 import logging
+from typing import Dict, List # DODANO: Import Dict i List
+import time # DODANO: Import time
 
 logger = logging.getLogger(__name__)
 
@@ -128,47 +133,16 @@ class QdrantConnector:
 
         logger.warning(f"🗑️ Próba usunięcia WSZYSTKICH punktów z kolekcji: {collection_name}")
         try:
-            # Sprawdź, czy kolekcja istnieje
+            # Sprawdź, czy kolekcja istnieje i usuń ją
             try:
                 self.client.get_collection(collection_name=collection_name)
-                logger.info(f"   Kolekcja '{collection_name}' istnieje. Usuwanie punktów...")
-
-                # Zdefiniuj filtr, który pasuje do wszystkich punktów (pusty filtr Must)
-                # Alternatywnie, jeśli znasz jakiś wspólny atrybut metadanych, można go użyć.
-                # Lepszym podejściem jest użycie scroll API do pobrania ID i usunięcie po ID,
-                # ale dla prostoty użyjemy delete z filtrem, który powinien działać dla mniejszych kolekcji.
-                # Qdrant < 1.7: Użyj pustego filtru `models.Filter()`
-                # Qdrant >= 1.7: Użyj `models.Filter(must=[])` lub po prostu `None` dla filtru
-                # Sprawdź wersję qdrant-client, jeśli to konieczne. Załóżmy nowszą wersję lub None.
-                from qdrant_client.http import models as rest
-
-                # Usuń wszystkie punkty używając pustego filtru `must` lub braku filtru
-                # Użycie 'wait=True' zapewnia, że operacja zostanie potwierdzona przed kontynuacją.
-                self.client.delete(
-                    collection_name=collection_name,
-                    points_selector=rest.PointIdsList(ids=[]), # To może nie działać zgodnie z oczekiwaniami dla "wszystkich"
-                    # Spróbujmy usunąć używając filtru, który zawsze jest prawdziwy lub braku filtru.
-                    # Według dokumentacji, aby usunąć wszystko, można użyć scroll API lub
-                    # jeśli ID są znane, PointIdsList.
-                    # Prostsze, choć potencjalnie mniej wydajne dla ogromnych kolekcji, jest delete z filtrem.
-                    # Filtr, który zawsze jest prawdziwy (np. sprawdzający istnienie jakiegoś pola,
-                    # które zawsze istnieje lub pusty `must` w nowszych wersjach).
-                    # Sprawdźmy pusty `must` dla Qdrant >= 1.7 lub None
-                    wait=True # Poczekaj na zakończenie operacji
-                )
-                # UWAGA: Skuteczność usuwania wszystkich punktów przez pusty filtr `delete` może zależeć
-                # od wersji Qdrant. Bardziej niezawodne jest usuwanie i tworzenie kolekcji na nowo,
-                # lub użycie scroll API do pobrania ID i ich usunięcie.
-                # Wracamy do metody usuwania i tworzenia na nowo, ale z lepszym logowaniem.
-
-                logger.info(f"   Próba usunięcia kolekcji: {collection_name}")
+                logger.info(f"   Kolekcja '{collection_name}' istnieje. Usuwanie kolekcji...")
                 self.client.delete_collection(collection_name=collection_name)
                 logger.info(f"   Usunięto kolekcję '{collection_name}'.")
-
             except Exception as e:
                  # Jeśli kolekcja nie istnieje, get_collection rzuci wyjątek.
                  logger.info(f"   Kolekcja '{collection_name}' nie istniała lub wystąpił błąd przy sprawdzaniu/usuwaniu: {e}.")
-                 # Upewnij się, że błąd nie jest krytyczny (np. problem z połączeniem)
+                 # Możemy kontynuować, bo celem jest i tak stworzenie nowej.
 
             # Utwórz kolekcję na nowo
             vector_size = self.vector_size # Pobierz rozmiar z instancji
@@ -202,7 +176,7 @@ class QdrantConnector:
         if not self.client:
             logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można pobrać danych.")
             return []
-        
+
         logger.info(f"⬇️ Pobieranie danych z kolekcji '{self.collection_name}' do klastrowania (limit: {limit})...")
         all_points_data = []
         next_page_offset = None
@@ -212,7 +186,7 @@ class QdrantConnector:
             while True:
                 # Używamy scroll API do pobierania partiami
                 # Poprawka: import rest musi być w zasięgu
-                from qdrant_client.http import models as rest 
+                from qdrant_client.http import models as rest
                 response, next_page_offset = self.client.scroll(
                     collection_name=self.collection_name,
                     limit=min(1000, limit - processed_count) if limit is not None else 1000, # Poprawka obsługi limitu
@@ -220,7 +194,7 @@ class QdrantConnector:
                     with_payload=with_payload,
                     with_vectors=with_vectors,
                 )
-                
+
                 if not response: # Jeśli nie ma więcej wyników
                     break
 
@@ -229,7 +203,7 @@ class QdrantConnector:
                      point_data = {
                          "id": record.id,
                          # Używamy getattr z domyślną wartością None, na wypadek gdyby wektor/payload nie został pobrany
-                         "vector": getattr(record, 'vector', None) if with_vectors else None, 
+                         "vector": getattr(record, 'vector', None) if with_vectors else None,
                          "payload": getattr(record, 'payload', None) if with_payload else None
                      }
                      all_points_data.append(point_data)
@@ -239,11 +213,11 @@ class QdrantConnector:
                 if limit is not None and processed_count >= limit:
                     logger.info(f"   Osiągnięto limit {limit} pobranych punktów.")
                     break
-                
+
                 # Jeśli next_page_offset jest None, to koniec danych
                 if next_page_offset is None:
                     break
-            
+
             logger.info(f"✅ Pomyślnie pobrano {len(all_points_data)} punktów z kolekcji '{self.collection_name}'.")
             return all_points_data
 
@@ -252,10 +226,11 @@ class QdrantConnector:
             return [] # Zwróć pustą listę w przypadku błędu
     # === KONIEC POPRAWNIE DODANEJ METODY ===
 
+    # === POPRAWIONA METODA AKTUALIZACJI PAYLOADU ===
     def update_payload_with_cluster_ids(self, assignments: Dict[str, int]):
         """
         Aktualizuje pole 'cluster_id' w payloadzie punktów w Qdrant na podstawie
-        słownika przypisań.
+        słownika przypisań przy użyciu client.set_payload (wsadowo).
 
         Args:
             assignments (Dict[str, int]): Słownik mapujący ID punktu (str) na ID klastra (int).
@@ -272,53 +247,35 @@ class QdrantConnector:
             return False
 
         logger.info(f"⚙️ Rozpoczynanie aktualizacji payloadów dla {len(assignments)} punktów w Qdrant (pole: cluster_id)...")
-        start_time = time.time() # Upewnij się, że 'import time' jest na górze pliku
+        start_time = time.time()
 
-        # Przygotuj listę punktów do aktualizacji payloadu
-        # Użyjemy metody upsert, która dodaje lub aktualizuje punkty/payload.
-        points_to_update = []
-        for point_id, cluster_id in assignments.items():
-            # Tworzymy payload tylko z polem cluster_id
-            # Ważne: To *ustawi* payload na TEN słownik, potencjalnie nadpisując inne pola!
-            # Lepsze podejście: użyć client.set_payload lub pobrać istniejący payload i zaktualizować.
-            # Poprawka: Użyjemy set_payload dla bezpieczeństwa.
-
-            # Zmieniamy podejście na client.set_payload
-            # Musimy importować odpowiednie modele
-            from qdrant_client.http import models as rest
-
-            # Aktualizujemy payload dla każdego punktu indywidualnie lub wsadowo,
-            # ale set_payload wymaga listy ID i jednego payloadu lub listy payloadów.
-            # Zrobimy to wsadowo dla wydajności, przygotowując listę ID i listę payloadów.
-            pass # Logika zostanie przeniesiona poniżej
-
-        # Przygotuj operacje dla set_payload
-        point_ids_list = list(assignments.keys())
-        payloads_list = [{"cluster_id": assignments[pid]} for pid in point_ids_list]
+        # Przygotuj listy ID punktów i odpowiadających im payloadów (tylko pole cluster_id)
+        point_ids = list(assignments.keys())
+        # Upewnij się, że cluster_id jest typu int, a nie np. np.int32
+        payloads_to_set = [{"cluster_id": int(cluster_id)} for cluster_id in assignments.values()]
 
         try:
-             # Użyj set_payload - bezpieczniejsze, aktualizuje tylko wskazane pole.
-             update_result: UpdateResult = self.client.set_payload(
-                 collection_name=self.collection_name,
-                 payload=payloads_list, # Lista payloadów do ustawienia
-                 points=point_ids_list,  # Lista odpowiadających ID punktów
-                 wait=True # Poczekaj na zakończenie operacji
-             )
+            # WAŻNE: Upewnij się, że importujesz Payload i UpdateResult (zrobione na górze pliku)
 
-             end_time = time.time()
-             logger.info(f"⏱️ Aktualizacja payloadów Qdrant (set_payload) zajęła: {end_time - start_time:.2f}s")
+            # Aktualizuj payload wsadowo używając set_payload
+            update_result: UpdateResult = self.client.set_payload(
+                collection_name=self.collection_name,
+                payload=payloads_to_set, # Lista payloadów
+                points=point_ids,       # Lista odpowiadających ID punktów
+                wait=True               # Poczekaj na zakończenie
+            )
 
-             # Sprawdzenie statusu w qdrant-client > 1.1.0 (status jest atrybutem UpdateResult)
-             # W starszych wersjach może być inaczej. Zakładamy nowszą wersję.
-             # Sprawdzenie, czy status istnieje i czy jest 'completed' lub 'acknowledged'
-             update_status = getattr(update_result, 'status', 'unknown')
+            end_time = time.time()
+            logger.info(f"⏱️ Aktualizacja payloadów Qdrant (set_payload wsadowo) zajęła: {end_time - start_time:.2f}s")
 
-             if update_status in ["completed", "acknowledged"]:
-                 logger.info(f"✅ Pomyślnie zaktualizowano payloady (cluster_id) dla {len(point_ids_list)} punktów w Qdrant.")
-                 return True
-             else:
-                 logger.error(f"❌ Aktualizacja payloadów Qdrant (set_payload) zakończona statusem: {update_status}")
-                 return False
+            update_status = getattr(update_result, 'status', 'unknown')
+            if update_status in ["completed", "acknowledged"]:
+                logger.info(f"✅ Pomyślnie ustawiono payload (cluster_id) dla {len(point_ids)} punktów w Qdrant.")
+                return True
+            else:
+                logger.error(f"❌ Ustawienie payloadów Qdrant zakończone statusem: {update_status}")
+                return False
         except Exception as e:
-             logger.error(f"❌ Błąd podczas aktualizacji payloadów w Qdrant (set_payload): {e}", exc_info=True)
+             logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (set_payload wsadowo): {e}", exc_info=True)
              return False
+    # === KONIEC POPRAWIONEJ METODY AKTUALIZACJI PAYLOADU ===
