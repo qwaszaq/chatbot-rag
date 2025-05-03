@@ -3477,6 +3477,1174 @@
                 {
                     "role": "user",
                     "content": "jakie nazwiska są w sprawie?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jakie nazwiska są w sprawie?\n\nOdpowiedź: W dokumencie wymienione są następujące nazwiska: Anna Bielak (insp.), Maciej Czysty (agent specjalny), Tomasz Służba (starszy agent), Janusz Wąs (nadkom.), Krystyna Zadrzyńska (asp. sztab.), Marek Bąk (sierż.), Andrzej W., dr Senny oraz 20 osób o imieniu Agnieszka.\n\nŹródło w dokumentach:\nTekst główny, akapit 1 i 2; raport wstępnej analizy CBA, ostatni akapit przed \"7.WNIOSEK\"; Raport końcowy Zespołu Śledczego CBŚP (ostatnia strona).\n\nKomentarz: Wymienione nazwiska pojawiają się w różnych kontekstach – jako funkcjonariusze zaangażowani w sprawę, osoby potencjalnie powiązane z grupą przestępczą lub beneficjenci nielegalnych działań. Imię \"Agnieszka\" odnosi się do 20 osób objętych śledztwem.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj3z6s_e5/code - 2025-04-25T233201.834.txt",
+                            "id": "b473af9b-7cfa-4ae2-bb90-003d0d1927de"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "bb32774c-0632-4ff6-8398-e2809156758b"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp49mg61na/code - 2025-04-25T232215.125.txt",
+                            "id": "98e544a9-8745-4374-aaf5-830666f0f36e"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Anna Bielak (insp.)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Anna Bielak"
+                            },
+                            {
+                                "label": "Maciej Czysty (agent specjalny)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Maciej Czysty"
+                            },
+                            {
+                                "label": "Tomasz Służba (starszy agent)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Tomasz Służba"
+                            },
+                            {
+                                "label": "Janusz Wąs (nadkom.)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Janusz Wąs"
+                            },
+                            {
+                                "label": "Krystyna Zadrzyńska (asp. sztab.)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Krystyna Zadrzyńska"
+                            },
+                            {
+                                "label": "Marek Bąk (sierż.)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Marek Bąk"
+                            },
+                            {
+                                "label": "Andrzej W.",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Andrzej W."
+                            },
+                            {
+                                "label": "dr Senny",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "dr Senny"
+                            },
+                            {
+                                "label": "Agnieszka (20 osób)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka (20 osób)"
+                            },
+                            {
+                                "label": "Centralne Biuro Antykorupcyjne (CBA)",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "CBA"
+                            },
+                            {
+                                "label": "Centralny Biuro Śledczy Policji (CBŚP)",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "CBŚP"
+                            },
+                            {
+                                "label": "Raport Wstępnej Analizy CBA",
+                                "llm_type": "Document",
+                                "ner_type": "orgName",
+                                "id": "Raport Wstępnej Analizy CBA"
+                            },
+                            {
+                                "label": "Raport Końcowy Zespołu Śledczego CBŚP",
+                                "llm_type": "Document",
+                                "ner_type": "orgName",
+                                "id": "Raport Końcowy Zespołu Śledczego CBŚP"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Anna Bielak",
+                                "target": "CBA"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Maciej Czysty",
+                                "target": "CBA"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Tomasz Służba",
+                                "target": "CBA"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Janusz Wąs",
+                                "target": "CBŚP"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Krystyna Zadrzyńska",
+                                "target": "CBŚP"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Marek Bąk",
+                                "target": "CBŚP"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Andrzej W.",
+                                "target": "Raport Końcowy Zespołu Śledczego CBŚP"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "dr Senny",
+                                "target": "Raport Końcowy Zespołu Śledczego CBŚP"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Agnieszka (20 osób)",
+                                "target": "Raport Końcowy Zespołu Śledczego CBŚP"
+                            },
+                            {
+                                "label": "GENERUJE",
+                                "source": "CBA",
+                                "target": "Raport Wstępnej Analizy CBA"
+                            },
+                            {
+                                "label": "GENERUJE",
+                                "source": "CBŚP",
+                                "target": "Raport Końcowy Zespołu Śledczego CBŚP"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "jakie nazwiska są w sprawie?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 247,
+                        "time": 81.98082208633423
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "jakie nazwiska podejrzanych są w sprawie?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jakie nazwiska podejrzanych są w sprawie?\n\nOdpowiedź: W dokumentach wymieniani są następujący funkcjonariusze zaangażowani w sprawę: nadkom. Janusz Wąs, asp. sztab. Krystyna Zadrzyńska i sierż. Marek Bąk (wszyscy z CBŚP). Ponadto, wielokrotnie pojawia się nazwisko \"Agnieszka\" - 20 podejrzanych o tym imieniu zostało zidentyfikowanych jako członkowie grupy przestępczej. W dokumencie wspomniano również nazwiska Andrzej W. oraz dr Senny, jednak ich rola w sprawie pozostaje niejasna i wymaga dalszego dochodzenia.\n\nŹródło w dokumentach:\n\n*   Wstęp: \"protokoły przesłuchań wszystkich 20 zidentyfikowanych podejrzanych o imieniu Agnieszka\"\n*   Syntesa Ustaleń Po Czwartej Iteracji Przesłuchań: wymienieni funkcjonariusze CBŚP.\n*   ZAŁĄCZNIK ŚCIŚLE TAJNY - ANALIZA OPERACYJNA: \"Andrzej W., inni beneficjenci\".\n*   ZAŁĄCZNIK ŚCIŚLE TAJNY - ANALIZA OPERACYJNA: \"dr Senny\"\n\nKomentarz: Dokumenty koncentrują się na grupie osób o imieniu Agnieszka, jednak konkretne nazwiska poza wymienionymi funkcjonariuszami i wspomnianymi osobami (Andrzej W. oraz dr Senny) nie są podane.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpceeoxzm5/code - 2025-04-25T231143.084.txt",
+                            "id": "2994ee74-2c28-4bff-bdf2-f7460c0f1c8d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "5af66a71-872e-435b-a50c-e8d9b218d492"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj3z6s_e5/code - 2025-04-25T233201.834.txt",
+                            "id": "b473af9b-7cfa-4ae2-bb90-003d0d1927de"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "jakie nazwiska podejrzanych są w sprawie?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 346,
+                        "time": 98.12725710868835
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "jakie nazwiska podejrzanych są w sprawie?\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jakie nazwiska podejrzanych są w sprawie?\n\nOdpowiedź: W sprawie oskarżone są następujące osoby: Agnieszka Baranowska, Agnieszkę Dąbrowska, Agnieszkę Grabowską, Agnieszkę Jankowską, Agnieszkę K. (Kowalczyk), Agnieszkę Kowalską, Agnieszkę Kwiatkowską, Agnieszkę Lisiecką, Agnieszkę M., Agnieszkę Malinowską, Agnieszkę Michalską, Agnieszkę Nowak, Agnieszkę Ostrowską, Agnieszkę Pawlak, Agnieszkę Piotrowską, Agnieszkę Szymańską, Agieszkę Wojciechowską, Agnieszkę Zając, Agnieszkę Zielińską oraz Agnieszkę [NAZWISKO USTALONE].\n\nŹródło w dokumentach: W całym dokumencie pojawiają się te nazwiska. Szczególnie wyraźnie wymienione są w początkowej części, gdzie przedstawiana jest lista oskarżonych: \"Oskarżone Agnieszkę Baranowską, Agnieszkę Dąbrowską...\".\n\nKomentarz: Lista ta jest wielokrotnie powtarzana w dokumencie. Dodatkowo wspomniane są nazwiska osób potencjalnie współdziałających (Andrzej W., Janusz Kowalski, dr Morfeusz Senny), jednak nie zostały one formalnie oskarżone.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "dc43d892-27cf-4171-a2b8-9ad7fe7643de"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpo_knl_eb/code - 2025-04-25T232802.476.txt",
+                            "id": "fa118119-e97f-45a1-a821-6b320a6bfa02"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp2v35os0z/code - 2025-04-25T232202.709.txt",
+                            "id": "9aa97806-2b2d-4c7b-95f3-893065643b5d"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "jakie nazwiska podejrzanych są w sprawie?\n\n",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 324,
+                        "time": 96.97606873512268
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "zbuduj graf powiązań z podejrzanymi w sprawie"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: zbuduj graf powiązań z podejrzanymi w sprawie\n\nOdpowiedź: Na podstawie dostarczonego tekstu, ZGP \"Agnieszka\" składa się z 20 oskarżonych kobiet imieniem Agnieszka. Poniżej przedstawiam listę wraz ze wskazanymi powiązaniami (w miarę możliwości):\n\n*   **Agnieszka Baranowska:** Nadużycie uprawnień w firmie \"Eko-Włókno\".\n*   **Agnieszka Dąbrowska:** Przedkładanie podrobionych dokumentów, prowadzenie firmy \"BeigeLife Innovations\". Powiązana z partnerem Januszem L.\n*   **Agnieszka Grabowska:** Wprowadzanie w błąd przy sprzedaży \"Map Onirycznych\", prowadzenie strony Atlas Snu.pl\n*   **Agnieszka Jankowska:** Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Lisiecką, Ostrowską, Zając, Piotrowską, Zielińską, Wojciechowską) na temat strategii i interesów grupy.\n*   **Agnieszka K. (Kowalczyk):** Wprowadzanie w błąd przy zgłaszaniu awarii sprzętu AGD.\n*   **Agnieszka Kowalska:** Powiązana z notatkami o \"aurze wibracyjnej\" roślin, korespondencja z Piotrowską.\n*   **Agnieszka Kwiatkowska:** Korupcja (płatności od firm).\n*   **Agnieszka Lisiecka:**  Korupcja (płatności od firm), tworzenie i wykorzystywanie \"Skali Obłocznej Lisieckiej\" do zmowy cenowej. Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Ostrowską, Zając, Piotrowską, Zielińską, Wojciechowską).\n*   **Agnieszka M.:** Transfer środków pochodzących z nielegalnego hazardu internetowego. Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Ostrowską, Zając, Piotrowską, Zielińską, Wojciechowską).\n*   **Agnieszka Malinowska:** Centralne zarządzanie finansami grupy i ich legalizacja. Bezpośrednia korespondencja z innymi oskarżonymi (Nowak, Lisiecka, Jankowska, Ostrowska, Zając, Piotrowska, Zielinska, Wojciechowska), pliki \"Projekt X\" na laptopie wskazują na centralne zarządzanie.\n*   **Agnieszka Michalska:** Ujawnienie tajemnic przedsiębiorstwa spółki \"BioInnova Tech\", kontakt z dr. Steinerem w Berlinie. Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Ostrowską, Zając, Piotrowską, Zielińską, Wojciechowską).\n*   **Agnieszka Nowak:** Przyjmowanie i transferowanie środków pochodzących z przestępstw. Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Lisiecka, Jankowska, Ostrowska, Zając, Piotrowska, Zielinska, Wojciechowska).\n*   **Agnieszka Ostrowska:** Wprowadzanie w błąd przy negocjacjach kontraktowych (\"Hypnos Consulting Group\"), potencjalna korupcja związana z zaświadczeniem lekarskim. Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Lisiecką, Zając, Piotrowską, Zielińską, Wojciechowską).\n*   **Agnieszka Pawlak:** Działania na szkodę spółek.\n*   **Agnieszka Piotrowska:** Korespondencja z Kowalską o \"aurze wibracyjnej\" roślin, Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Lisiecką, Ostrowską, Zając, Zielińską, Wojciechowską).\n*   **Agnieszka Szymańska:** Fałszowanie dokumentów i pozyskiwanie środków finansowych.\n*   **Agnieszka Wójcik:** Nielegalny hazard (wyścigi ślimaków) – jej udział w grupie jest niepewny.\n*   **Agnieszka Wojciechowska:** Powiązana z prezesem firmy deweloperskiej działającej na szkodę SREH, Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Lisiecką, Ostrowską, Zając, Piotrowską, Zielińską).\n*   **Agnieszka Zając:** Fałszowanie dokumentów i pozyskiwanie środków finansowych, korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Lisiecką, Ostrowską, Piotrowską, Zielińską, Wojciechowską).\n*   **Agnieszka Zielińska:** Bezpośrednia korespondencja z innymi oskarżonymi (Malinowską, Nowak, Jankowską, Lisiecką, Ostrowską, Zając, Piotrowską, Wojciechowską).\n\nŹródło w dokumentach: Cały dostarczony tekst.\n\nKomentarz: Powyższy graf przedstawia powiązania oparte wyłącznie na informacjach zawartych w tekście. Wiele z nich opiera się na korespondencji między podejrzanymi i wskazuje na skoordynowane działania, a także centralne zarządzanie finansami przez Agnieszkę Malinowską.  Niektóre relacje są bardziej precyzyjne niż inne (np. powiązania biznesowe), podczas gdy inne wskazują jedynie na kontakt komunikacyjny.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "d8311c3b-018a-4234-9884-6210aad7bb6c"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp49mg61na/code - 2025-04-25T232215.125.txt",
+                            "id": "5eedac39-8d42-4b82-a910-0570af5cd97b"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpw4ey8ybe/code - 2025-04-25T232209.257.txt",
+                            "id": "e015e9be-889c-44b8-840e-c7c92bd397a2"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Baranowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Baranowska"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "Janusz L.",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Janusz L."
+                            },
+                            {
+                                "label": "Agnieszka Grabowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Grabowska"
+                            },
+                            {
+                                "label": "Mapy Oniryczne",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": null,
+                                "id": "Mapy Oniryczne"
+                            },
+                            {
+                                "label": "Atlas Snu.pl",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "Atlas Snu.pl"
+                            },
+                            {
+                                "label": "Agnieszka Jankowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Jankowska"
+                            },
+                            {
+                                "label": "Agnieszka K. (Kowalczyk)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka K. (Kowalczyk)"
+                            },
+                            {
+                                "label": "Agnieszka Kowalska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "aura wibracyjna roślin",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "aura wibracyjna roślin"
+                            },
+                            {
+                                "label": "Agnieszka Kwiatkowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kwiatkowska"
+                            },
+                            {
+                                "label": "Agnieszka Lisiecka",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "Skala Obłoczna Lisieckiej",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Skala Obłoczna Lisieckiej"
+                            },
+                            {
+                                "label": "Agnieszka M.",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka M."
+                            },
+                            {
+                                "label": "nielegalny hazard internetowy",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": null,
+                                "id": "nielegalny hazard internetowy"
+                            },
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "Projekt X",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt X"
+                            },
+                            {
+                                "label": "Agnieszka Michalska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Michalska"
+                            },
+                            {
+                                "label": "dr Klaus Steiner",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "dr Klaus Steiner"
+                            },
+                            {
+                                "label": "Berlin",
+                                "llm_type": "Location",
+                                "ner_type": "placeName",
+                                "id": "Berlin"
+                            },
+                            {
+                                "label": "BioInnova Tech",
+                                "llm_type": "Organization",
+                                "ner_type": null,
+                                "id": "BioInnova Tech"
+                            },
+                            {
+                                "label": "Agnieszka Nowak",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Nowak"
+                            },
+                            {
+                                "label": "Agnieszka Ostrowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Ostrowska"
+                            },
+                            {
+                                "label": "Hypnos Consulting Group",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "Hypnos Consulting Group"
+                            },
+                            {
+                                "label": "Agnieszka Pawlak",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Pawlak"
+                            },
+                            {
+                                "label": "Agnieszka Piotrowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Piotrowska"
+                            },
+                            {
+                                "label": "Agnieszka Szymańska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Szymańska"
+                            },
+                            {
+                                "label": "Agnieszka Wójcik",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Wójcik"
+                            },
+                            {
+                                "label": "wyścigi ślimaków",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "wyścigi ślimaków"
+                            },
+                            {
+                                "label": "Agnieszka Wojciechowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Wojciechowska"
+                            },
+                            {
+                                "label": "SREH",
+                                "llm_type": "Organization",
+                                "ner_type": "persName",
+                                "id": "SREH"
+                            },
+                            {
+                                "label": "Agnieszka Zając",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Zając"
+                            },
+                            {
+                                "label": "Agnieszka Zielińska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Zielińska"
+                            },
+                            {
+                                "label": "ZGP 'Agnieszka'",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "Eko-Włókno",
+                                "llm_type": "Organization",
+                                "ner_type": null,
+                                "id": "Eko-Włókno"
+                            },
+                            {
+                                "label": "BeigeLife Innovations",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "NADUŻYWA_UPRAWNIEN",
+                                "source": "Agnieszka Baranowska",
+                                "target": "Eko-Włókno"
+                            },
+                            {
+                                "label": "PROWADZI",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "POWIĄZANA_Z",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "Janusz L."
+                            },
+                            {
+                                "label": "SPRZEDAJE",
+                                "source": "Agnieszka Grabowska",
+                                "target": "Mapy Oniryczne"
+                            },
+                            {
+                                "label": "PROWADZI",
+                                "source": "Agnieszka Grabowska",
+                                "target": "Atlas Snu.pl"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Nowak"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Ostrowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Zając"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Piotrowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Zielińska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Wojciechowska"
+                            },
+                            {
+                                "label": "POWIĄZANA_Z",
+                                "source": "Agnieszka Kowalska",
+                                "target": "aura wibracyjna roślin"
+                            },
+                            {
+                                "label": "TWORZY",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "Skala Obłoczna Lisieckiej"
+                            },
+                            {
+                                "label": "TRANSFERUJE_ŚRODKI_Z",
+                                "source": "Agnieszka M.",
+                                "target": "nielegalny hazard internetowy"
+                            },
+                            {
+                                "label": "ZARZĄDZA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "KONTROLUJE",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt X"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Nowak"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Jankowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Ostrowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Zając"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Piotrowska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Zielińska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Agnieszka Wojciechowska"
+                            },
+                            {
+                                "label": "UJAWNIA_TAJEMNICE",
+                                "source": "Agnieszka Michalska",
+                                "target": "BioInnova Tech"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Michalska",
+                                "target": "dr Klaus Steiner"
+                            },
+                            {
+                                "label": "ZNALEZIONO_W",
+                                "source": "Agnieszka Michalska",
+                                "target": "Berlin"
+                            },
+                            {
+                                "label": "OTRZYMUJE_ŚRODKI_Z",
+                                "source": "Agnieszka Nowak",
+                                "target": "nielegalny hazard internetowy"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Nowak",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "WPROWADZA_W_BŁĄD",
+                                "source": "Agnieszka Ostrowska",
+                                "target": "Hypnos Consulting Group"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Piotrowska",
+                                "target": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "PROWADZI",
+                                "source": "Agnieszka Wójcik",
+                                "target": "wyścigi ślimaków"
+                            },
+                            {
+                                "label": "DZIAŁA_NA_SZKODĘ",
+                                "source": "Agnieszka Wojciechowska",
+                                "target": "SREH"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "zbuduj graf powiązań z podejrzanymi w sprawie",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 1290,
+                        "time": 232.17325735092163
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Specyficzne \"metody\" Agnieszek, choć pozornie absurdalne, nie były jedynie narzędziem bezpośredniego oszustwa, ale integralnym elementem szerszej strategii kamuflażu i operacyjnej konspiracji grupy. Dowody wskazują na koordynację tych metod oraz ich wykorzystanie poza generowaniem dochodu.\n\nŹródło w dokumentach:\n\n*   „Płaszczykiem wysoko nietypowych metod, pseudonaukowych lub ezoterycznych narracji i pozorów dziwactwa.” (Wnioski Końcowe dla Archiwum X)\n*   \"Pliki nazwane konwencją \"Projekt [Dziwactwo/Metoda] AG\" zawierają szczegółowe kalkulacje zysków z działalności innych Agnieszek” (Centralne Zarządzanie Finansami i Strategią, odwołując się do laptopa A. Malinowskiej).\n*   „Wewnętrzna Komunikacja i Wsparcie: Materiały zabezpieczone u jednych podejrzanych… zawierają bezpośrednie odwołania do działalności innych Agnieszek... zapytania o \"możliwości użycia\" ich \"dziwactw” (Wewnętrzna Komunikacja i Wsparcie)\n*   „Korespondencja omawiająca 'metody kamuflażu' (np. plik u A. Wojciechowskiej)” (Dowody łączące Oskarzonych).\n*   Przykłady powiązań: zapytanie A. Kowalskiej o możliwość użycia jej \"stanu\" do \"odczytywania myśli negocjatorów” i połączenie „bio-sygnałów roślin z monitoringiem latarni (A. Majewskiej)”, co sugeruje wykorzystywanie różnych “dziwactw” w koordynowanych działaniach.\n*   „'Dziwactwa' te były integracyjnym elementem schematu działania ZGP \"Agnieszka\".” (Dowody łączące Oskarzonych).\n\nKomentarz: Materiał dowodowy sugeruje, że “dziwactwa” nie są przypadkowymi odchyleniami, lecz celowo tworzonymi i wdrażanymi rolami stanowiącymi element kamuflażu, kodowania informacji oraz zniekształcania rzeczywistości. Działania centralnego hubu finansowego (Agnieszka Malinowska) obejmują kalkulacje zysków generowanych przez te metody, wskazując na ich integrację w szerszym schemacie operacyjnym i finansowym grupy. ZGP funkcjonowała jak „wyrafinowane, multidyscyplinarne przedsiębiorstwo przestępcze”, gdzie każda Agnieszka miała określoną rolę i specjalizację w ramach tej zorganizowanej struktury.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "cf20f350-8fac-407a-8c8c-82ca37bb60a7"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp49mg61na/code - 2025-04-25T232215.125.txt",
+                            "id": "5eedac39-8d42-4b82-a910-0570af5cd97b"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp3qjymuau/code - 2025-04-25T231136.881.txt",
+                            "id": "1348c730-cd5e-41cf-af57-cc9e48733bc3"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZGP 'Agnieszka'",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "Centralny Hub Finansowy",
+                                "llm_type": "Concept",
+                                "ner_type": "orgName",
+                                "id": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka Kowalskiej",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "Prognozy Chmur Lisieckiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "Analiza Wibracji Roślin Michalskiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "Rozmowy z Cieniem Pawlak",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "Projekt [Dziwactwo/Metoda] AG",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt [Dziwactwo/Metoda] AG"
+                            },
+                            {
+                                "label": "Laptop A. Malinowskiej",
+                                "llm_type": "Document",
+                                "ner_type": "persName",
+                                "id": "Laptop A. Malinowskiej"
+                            },
+                            {
+                                "label": "Wewnętrzna Komunikacja i Wsparcie",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Wewnętrzna Komunikacja i Wsparcie"
+                            },
+                            {
+                                "label": "A. Wojciechowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "A. Wojciechowska"
+                            },
+                            {
+                                "label": "Metody Kamuflażu",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Metody Kamuflażu"
+                            },
+                            {
+                                "label": "Dowody łączące Oskarzonych",
+                                "llm_type": "Document",
+                                "ner_type": null,
+                                "id": "Dowody łączące Oskarzonych"
+                            },
+                            {
+                                "label": "A. Kowalska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "A. Kowalska"
+                            },
+                            {
+                                "label": "A. Majewska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "A. Majewska"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "KONTROLUJE",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "JEST_CZĘŚCIĄ",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Centralny Hub Finansowy"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "STOSUJE_METODĘ",
+                                "source": "ZGP 'Agnieszka'",
+                                "target": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "ZAWIERA_INFORMACJE_O",
+                                "source": "Projekt [Dziwactwo/Metoda] AG",
+                                "target": "Laptop A. Malinowskiej"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Projekt [Dziwactwo/Metoda] AG",
+                                "target": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Projekt [Dziwactwo/Metoda] AG",
+                                "target": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Projekt [Dziwactwo/Metoda] AG",
+                                "target": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Projekt [Dziwactwo/Metoda] AG",
+                                "target": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "NALEŻY_DO",
+                                "source": "Laptop A. Malinowskiej",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ODNOSI_SIĘ_DO",
+                                "source": "Wewnętrzna Komunikacja i Wsparcie",
+                                "target": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "ODNOSI_SIĘ_DO",
+                                "source": "Wewnętrzna Komunikacja i Wsparcie",
+                                "target": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "ODNOSI_SIĘ_DO",
+                                "source": "Wewnętrzna Komunikacja i Wsparcie",
+                                "target": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "ODNOSI_SIĘ_DO",
+                                "source": "Wewnętrzna Komunikacja i Wsparcie",
+                                "target": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "POSIADA_DOKUMENTY_O",
+                                "source": "A. Wojciechowska",
+                                "target": "Metody Kamuflażu"
+                            },
+                            {
+                                "label": "OPISUJĄ",
+                                "source": "Dowody łączące Oskarzonych",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "OPISUJĄ",
+                                "source": "Dowody łączące Oskarzonych",
+                                "target": "Metody Kamuflażu"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "A. Kowalska",
+                                "target": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "A. Majewska",
+                                "target": "Analiza Wibracji Roślin Michalskiej"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 757,
+                        "time": 170.41254878044128
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Materiały wskazują, że te nietypowe \"metody\" były integralną częścią szerszej strategii operacyjnej ZGP \"Agnieszka\", a nie jedynie środkiem do bezpośredniego oszustwa. Dowody sugerują koordynację i wykorzystanie tych metod poza generowaniem pierwotnego dochodu w następujący sposób:\n\n*   **Centralny Hub Finansowy Malinowskiej:** Agnieszka Malinowska, jako centralny punkt finansowy (konto 77...1980), zarządzała przepływami środków i była powiązana z innymi Agnieszkami poprzez pliki kalkulacyjne (\"Projekt X\"), korespondencję oraz logistykę.\n*   **Koordynacja i Wymiana Metod:** Znaleziono dowody na bezpośrednią komunikację między różnymi Agnieszkami (np. Lisiecka pytająca Kowalską o ocenę beneficjentów, Szymańska pytająca Kowalską o sejfy, Ostrowska pytająca o czytanie myśli), co wskazuje na wymianę informacji i potencjalne wykorzystywanie się nawzajem w swoich działaniach.\n*   **Specjalizacja i Podział Ról:**  Każda Agnieszka specjalizowała się w określonym obszarze (\"metodzie kamuflażu\"), co sugeruje koordynację i wykorzystanie ich specyficznych predyspozycji lub stworzenie pozorów specjalizacji.\n*   **Wykorzystanie do Profilowania Ofiar/Pozyskiwania Informacji:** Metoda kluczodiagnostyki Agnieszki Kowalskiej mogła być używana nie tylko do oszustw, ale również do profilowania potencjalnych ofiar i pozyskiwania informacji o zabezpieczeniach (notatka A. Szymańskiej).\n*   **Kamuflaż Działalności:** \"Dziwactwa\" i pseudonaukowe metody były częścią świadomej strategii kamuflażu, mającej na celu ukrycie przestępczej działalności grupy (plik \"Strategia Okienna i Latarniana AG\").\n* **Funkcja operacyjna w szerszym kontekście:** Wnioski końcowe wskazują na możliwość, że działania ZGP \"Agnieszka\" mogły być związane z operacjami wywiadowczymi kamuflażowymi lub indoktrynacją.\n\nŹródło w dokumentach:\n\n*   Podział Ról (fragment tekstu)\n*   Wnioski Końcowe dla Archiwum X\n*   Korespondencja między A. Lisiecką i A. Kowalską (cytat z zabezpieczonej korespondencji)\n*   Notatka A. Szymańskiej (\"Sprawdzić metodę Kluczarki - czy działa na klucze do sejfów?\")\n*   Plik \"Strategia Okienna i Latarniana AG\" (wzmianka o strategii maskowania)\n*   Analiza korespondencji z laptopa Agnieszki Zielińskiej / „Tkaczki”\n*   Notatki Agnieszki Michalskiej (\"Chlorofil\")\n\nKomentarz:  Współzależności te sugerują, że działania ZGP \"Agnieszka\" były bardziej złożone niż pojedyncze oszustwa. Wykorzystanie nietypowych metod było integralną częścią szerszej strategii operacyjnej, finansowej i dezinformacyjnej, mającej na celu ukrycie prawdziwej skali przestępstw i ich celów.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "cf20f350-8fac-407a-8c8c-82ca37bb60a7"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpfca_bewc/code - 2025-04-25T230550.641.txt",
+                            "id": "ed01e893-e2e0-4be8-9e65-b8e1fd8cde81"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp49mg61na/code - 2025-04-25T232215.125.txt",
+                            "id": "5eedac39-8d42-4b82-a910-0570af5cd97b"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska (centralny hub finansowy)",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZGP 'Agnieszka'",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "Kluczodiagnostyka Kowalskiej",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Kluczodiagnostyka Kowalskiej"
+                            },
+                            {
+                                "label": "Prognozy Chmur Lisieckiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Prognozy Chmur Lisieckiej"
+                            },
+                            {
+                                "label": "Analiza Wibracji Roślin Michalskiej",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Analiza Wibracji Roślin Michalskiej"
+                            },
+                            {
+                                "label": "Rozmowy z Cieniem Pawlak",
+                                "llm_type": "Method",
+                                "ner_type": "persName",
+                                "id": "Rozmowy z Cieniem Pawlak"
+                            },
+                            {
+                                "label": "Projekt X - plik kalkulacyjny",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt X"
+                            },
+                            {
+                                "label": "Agnieszka Kowalska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "Agnieszka Lisiecka",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "Agnieszka Szymańska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Szymańska"
+                            },
+                            {
+                                "label": "Agnieszka Ostrowska",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Ostrowska"
+                            },
+                            {
+                                "label": "Sejfy",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Sejfy"
+                            },
+                            {
+                                "label": "Strategia Okienna i Latarniana AG (strategia maskowania)",
+                                "llm_type": "Document",
+                                "ner_type": "persName",
+                                "id": "Strategia Okienna i Latarniana AG"
+                            },
+                            {
+                                "label": "Agnieszka Zielińska / 'Tkaczka'",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Zielińska / Tkaczka"
+                            },
+                            {
+                                "label": "Agnieszka Michalskiej ('Chlorofil')",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Chlorofil"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "ZARZĄDZA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "PROWADZI",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Projekt X"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Kluczodiagnostyka Kowalskiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Kluczodiagnostyka Kowalskiej",
+                                "target": "Sejfy"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Prognozy Chmur Lisieckiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Analiza Wibracji Roślin Michalskiej",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "WYKONUJE",
+                                "source": "Rozmowy z Cieniem Pawlak",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Szymańska",
+                                "target": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "WYSZUKIWANIE_INFORMACJI_O",
+                                "source": "Agnieszka Szymańska",
+                                "target": "Sejfy"
+                            },
+                            {
+                                "label": "KOMUNIKUJE_Z",
+                                "source": "Agnieszka Ostrowska",
+                                "target": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "MENTIONED_IN",
+                                "source": "Strategia Okienna i Latarniana AG",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "POWIĄZANA_Z",
+                                "source": "Agnieszka Zielińska / Tkaczka",
+                                "target": "ZGP 'Agnieszka'"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Chlorofil",
+                                "target": "Analiza Wibracji Roślin Michalskiej"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\n",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 906,
+                        "time": 85.01954817771912
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "Jakie konkretnie typy ćwiczeń wykonywała Agnieszka Wójcik ze swoimi ślimakami w godzinach porannych?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jakie konkretnie typy ćwiczeń wykonywała Agnieszka Wójcik ze swoimi ślimakami w godzinach porannych?\n\nOdpowiedź: Agnieszka Wójcik prowadziła \"poranne sesje rozciągające i koordynacyjne\" ze swoimi ślimakami, aby \"poprawić ich aerodynamikę i koncentrację przed właściwymi treningami szybkościowymi\". Używała \"cichego pukania\" jako \"rytmicznego sygnału startowego\", a szuranie jako \"dźwięku ślimaków poruszających się po specjalnej macie sensorycznej\". Dodatkowo, wydawała \"ciche komendy i pochwały\" kierowane do ślimaków.\n\nŹródło w dokumentach: „Prowadziła 'poranne sesje rozciągające i koordynacyjne' ze swoimi ślimakami, aby 'poprawić ich aerodynamikę i koncentrację przed właściwymi treningami szybkościowymi'. Ciche pukanie miało być 'rytmicznym sygnałem startowym', a szuranie 'dźwiękiem ślimaków poruszających się po specjalnej macie sensorycznej'. 'Odgłosy zachęcania' to jej ciche komendy i pochwały kierowane do 'zawodników’”.\n\nKomentarz: Brak dodatkowych szczegółów dotyczących konkretnych ćwiczeń rozciągających, poza użyciem maty sensorycznej.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp0xa7wka0/code - 2025-04-25T221657.239.txt",
+                            "id": "1ad620fc-388f-4272-95ec-c210e570b7c1"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpo_knl_eb/code - 2025-04-25T232802.476.txt",
+                            "id": "af235878-1156-4198-b7ab-cb3bccdb8312"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpry51rn2_/code - 2025-04-25T223432.026.txt",
+                            "id": "78654083-f487-4d69-814f-85ef4009f3f8"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "Jakie konkretnie typy ćwiczeń wykonywała Agnieszka Wójcik ze swoimi ślimakami w godzinach porannych?",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 322,
+                        "time": 40.779646158218384
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "a kto zbierał kurz"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Kto zbierał kurz?\n\nOdpowiedź: Zgłoszenie o kobiecie zbierającej kurz ze szczelin między płytkami podłogowymi za pomocą pędzelka i małej łopatki, umieszczając go w woreczkach strunowych, wpłynęło do służb na stacji metra Centrum. Osobą tą jest Agnieszka Nowak (\"Pył\").\n\nŹródło w dokumentach: \"Przebieg czynności: Otrzymano zgłoszenie od pracownika Metra Warszawskiego o kobiecie, która na peronie stacji, w oczekiwaniu na pociąg, zbierała kurz ze szczelin między płytkami podłogowymi za pomocą pędzelka i małej łopatki, umieszczając go w woreczkach strunowych.\" oraz \"Agnieszka Nowak (\"Pył\"): Sprzedaż \"historycznego kurzu z energetycznymi wibracjami\" za Monero na platformie TOR.\"\n\nKomentarz: W dokumentach wskazano również inne osoby zbierające nietypowe przedmioty (skarpetki - Agnieszka Baranowska, ale to nie jest tematem pytania).",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpstsw_n0q/code - 2025-04-25T221653.096.txt",
+                            "id": "aa20c853-1ddb-4939-b2c4-59f4c59001c3"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpyl6ogemg/code - 2025-04-25T223419.275.txt",
+                            "id": "9465eefa-4601-454e-ad58-df0778ebf6cc"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpw4ey8ybe/code - 2025-04-25T232209.257.txt",
+                            "id": "d537392b-b1df-42dc-a1d3-487f60424853"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "a kto zbierał kurz",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 256,
+                        "time": 28.56598973274231
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "a jaki policjant jest rozczarowany sprawą i przygląda się z boku?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: A jaki policjant jest rozczarowany sprawą i przygląda się z boku?\n\nOdpowiedź: Podkomisarz Adam Kaczmarek wyraża swoje rozczarowanie sprawą, pisząc \"Cyrk\" w notatce odręcznej. Dodatkowo wspomina o \"ścianie\", sugerując brak możliwości odkrycia prawdy i poczucie braku postępu w śledztwie. Zauważa również, że został przeniesiony do Lipinek Dolnych, co interpretuje jako próbę odsunięcia go od sprawy.\n\nŹródło w dokumentach:\n*   policjant_notes_part5_final.txt – Notatka osobista (ostatni wpis), fragment \"(Notatka Kaczmarka - odręczna): *Wiedziałem. Ściana. Znowu ściana. Wywiad? Jaki wywiad? Czy nasi wiedzą o tym PhytoGenix? Czy Michalska była ich agentką? A może podwójną? A ZGP 'Agnieszka' to tylko przykrywka dla operacji służb? Czyich? Naszych? Niemieckich? Kto kogo wykorzystuje? A ja mam się skupić na babach od skarpet... Cyrk.*\"\n*   policjant_notes_part5_final.txt – Notatka osobista (pierwszy akapit) - \"Czasem lepiej nie wiedzieć, jakie tryby kręcą się za kulisami.\"\n*   policjant_notes_part3.txt – „Szef wezwał mnie rano… potrzebna jest zmiana. Nabierzesz perspektywy\"\n\nKomentarz: Rozczarowanie Kaczmarka wynika z przekonania, że sprawa \"Agnieszek\" ma szerszy kontekst i powiązania międzynarodowe, które nie są badane przez jego przełożonych. Poczucie, że został odsunięty od sprawy pogłębia jego frustrację.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp2qdgc57e/code - 2025-05-03T180019.625.txt",
+                            "id": "a35bb8c7-2db2-4c38-bbc8-f6f7188ab648"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmprktj53_3/code - 2025-05-03T180907.012.txt",
+                            "id": "ed14ceef-9530-4c29-a2d6-0a8ee935dce0"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpk4xxw9bf/code - 2025-05-03T180609.374.txt",
+                            "id": "f01cd51a-97c8-407b-8cb5-c5c1ad476c8e"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "a jaki policjant jest rozczarowany sprawą i przygląda się z boku?",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 441,
+                        "time": 38.660956144332886
+                    }
                 }
             ]
         },

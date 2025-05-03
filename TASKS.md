@@ -43,6 +43,7 @@
 *   [ ] **Krok 4 (kontynuacja): Dalsze Ulepszanie Jakości Grafów** (Priorytet Średni/Niski) - Dostrajanie promptu, kolory, konfiguracja `agraph`.
 *   [ ] **Krok 5: Eksperymenty z Algorytmem Klastrowania** (Priorytet Niski) - BERTopic/HDBSCAN.
 *   [ ] Testowanie i Ewaluacja całości.
+*   [ ] **Implementacja Eksportu Grafu do Excel (.xlsx)** (Priorytet Niski/Średni) - Dodanie przycisku w UI (`ui_streamlit.py`) umożliwiającego pobranie pliku Excel z dwoma arkuszami: "Nodes" (lista węzłów z atrybutami) i "Edges" (lista krawędzi z etykietami). Wymaga dodania `openpyxl` do `requirements.txt` i użycia `pandas` do generowania pliku.
 
 ## Implementation Plan
 Aktualny plan rozwoju jest opisany w `PLAN_KLASTROWANIA.md`. Zakończono Krok 1 (Weryfikacja i Poprawa Kodu). Jesteśmy w trakcie implementacji Kroku 2 (Trwałe Przechowywanie w Qdrant).
