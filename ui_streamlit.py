@@ -26,6 +26,8 @@ from clustering_module import (
 from collections import Counter # Do zliczania punktów w klastrach
 # DODANO: Import dla typu LLM Google
 from langchain_google_genai import ChatGoogleGenerativeAI
+# Dodano import cdist
+from scipy.spatial.distance import cdist
 
 # Konfiguracja logowania
 logging.basicConfig(
@@ -230,18 +232,27 @@ def main():
     if 'filter_small_graphs' not in st.session_state:
         st.session_state.filter_small_graphs = True
     if 'cluster_assignments' not in st.session_state:
-        st.session_state.cluster_assignments = None
+        st.session_state.cluster_assignments = None # Inicjalizuj jako None
     if 'cluster_labels' not in st.session_state:
-        st.session_state.cluster_labels = None
+        st.session_state.cluster_labels = None # Inicjalizuj jako None
     if 'qdrant_data_cache' not in st.session_state:
         st.session_state.qdrant_data_cache = None
     if 'selected_cluster_id' not in st.session_state:
         st.session_state.selected_cluster_id = None
     if 'cluster_summaries' not in st.session_state:
-        st.session_state.cluster_summaries = {}
+        st.session_state.cluster_summaries = {} # Pusty słownik
     if 'cluster_entities' not in st.session_state:
-        st.session_state.cluster_entities = {}
-    # ---------------------------------------------------
+        st.session_state.cluster_entities = {} # Pusty słownik
+    if 'cluster_centroids' not in st.session_state:
+        st.session_state.cluster_centroids = None
+    if 'cluster_indices_map' not in st.session_state:
+        st.session_state.cluster_indices_map = None
+    if 'point_id_to_text_map' not in st.session_state:
+        st.session_state.point_id_to_text_map = None
+    if 'point_id_list_ordered' not in st.session_state:
+        st.session_state.point_id_list_ordered = None
+    if 'embeddings_matrix_cache' not in st.session_state:
+        st.session_state.embeddings_matrix_cache = None
 
     # --- Inicjalizacja chatbota ---
     if "chatbot" not in st.session_state:
@@ -254,6 +265,71 @@ def main():
             return
     # -----------------------------
 
+    # --- Ładowanie przypisań klastrów z Qdrant na starcie ---
+    if 'cluster_load_status' not in st.session_state:
+        st.session_state.cluster_load_status = "not_loaded" # Możliwe statusy: not_loaded, loaded_ok, loaded_empty, error
+
+    if 'cluster_data_loaded' not in st.session_state: # Flaga, aby ładować tylko raz na sesję
+        if "chatbot" in st.session_state and hasattr(st.session_state.chatbot, 'qdrant_connector'):
+            logger.info("🌀 Próba załadowania przypisań klastrów z metadanych Qdrant na starcie aplikacji...")
+            try:
+                # Pobierz wszystkie dane z payloadem (bez wektorów dla oszczędności pamięci)
+                qdrant_data_on_start = st.session_state.chatbot.qdrant_connector.get_all_data_for_clustering(
+                    with_payload=True, with_vectors=False, limit=None
+                )
+                if qdrant_data_on_start:
+                    loaded_assignments = {}
+                    found_any_cluster_id = False
+                    for point in qdrant_data_on_start:
+                        point_id = point.get('id')
+                        payload = point.get('payload')
+                        if point_id and payload and 'cluster_id' in payload:
+                             cluster_id_value = payload['cluster_id']
+                             # Sprawdź czy wartość jest sensowna (int)
+                             if isinstance(cluster_id_value, int):
+                                 loaded_assignments[point_id] = cluster_id_value
+                                 found_any_cluster_id = True
+                             else:
+                                 logger.warning(f"   Znaleziono nieprawidłowy typ dla cluster_id w payloadzie punktu {point_id}: {type(cluster_id_value)}")
+                        elif point_id and payload:
+                             # Punkt istnieje, ale nie ma pola cluster_id - to normalne, jeśli nie był klastrowany
+                             pass
+                        elif point_id:
+                             logger.warning(f"   Punkt {point_id} nie ma payloadu w danych z Qdrant.")
+
+                    if loaded_assignments:
+                        st.session_state.cluster_assignments = loaded_assignments
+                        st.session_state.cluster_load_status = "loaded_ok"
+                        logger.info(f"✅ Załadowano {len(loaded_assignments)} przypisań klastrów z metadanych Qdrant.")
+                        # UWAGA: Etykiety, podsumowania i encje NIE są ładowane z Qdrant.
+                        # Trzeba by je generować dynamicznie lub wczytać z osobnego pliku, jeśli są potrzebne na starcie.
+                        # Na razie resetujemy je, aby uniknąć niespójności ze starymi danymi z pliku.
+                        st.session_state.cluster_labels = {}
+                        st.session_state.cluster_summaries = {}
+                        st.session_state.cluster_entities = {}
+                    elif found_any_cluster_id: # Znaleziono pole cluster_id, ale miało zły typ
+                         st.session_state.cluster_assignments = {} # Ustaw na pusty
+                         st.session_state.cluster_load_status = "loaded_empty" # Traktuj jak brak danych
+                         logger.warning("⚠️ Znaleziono pola cluster_id, ale miały nieprawidłowy typ.")
+                    else: # Nie znaleziono żadnych punktów z polem cluster_id
+                         logger.info("ℹ️ Nie znaleziono informacji o klastrach ('cluster_id') w metadanych Qdrant.")
+                         st.session_state.cluster_assignments = None # Ustaw na None, aby UI pokazało info o braku danych
+                         st.session_state.cluster_load_status = "loaded_empty" # Traktuj jak brak danych (jeszcze nie klastrowano)
+                else:
+                    logger.warning("⚠️ Nie udało się pobrać danych z Qdrant na starcie lub kolekcja pusta.")
+                    st.session_state.cluster_assignments = None
+                    st.session_state.cluster_load_status = "error"
+            except Exception as load_exc:
+                logger.error(f"❌ Wyjątek podczas ładowania danych klastrowania z Qdrant: {load_exc}", exc_info=True)
+                st.session_state.cluster_assignments = None
+                st.session_state.cluster_load_status = "error"
+        else:
+            logger.error("❌ Nie można załadować danych klastrowania - obiekt chatbot lub qdrant_connector niedostępny.")
+            st.session_state.cluster_assignments = None
+            st.session_state.cluster_load_status = "error"
+
+        st.session_state.cluster_data_loaded = True # Oznacz próbę ładowania jako zakończoną
+    # ---------------------------------------------------
 
     # Panel boczny z opcjami
     with st.sidebar:
@@ -436,7 +512,27 @@ def main():
                                  st.session_state.cluster_assignments = dict(zip(point_ids, cluster_labels_array))
                                  st.session_state.cluster_centroids = centroids_array # Zapisz centroidy
                                  st.session_state.cluster_indices_map = cluster_indices_map # Zapisz mapę indeksów
-                                 st.success(f"✅ Klastrowanie zakończone. Znaleziono {len(set(cluster_labels_array) - {-1})} klastrów dla {len(point_ids)} punktów.")
+
+                                 # <<< NOWY KROK: Aktualizacja Qdrant >>>
+                                 if st.session_state.cluster_assignments:
+                                     with st.spinner("Aktualizacja danych klastrów w bazie wektorowej..."):
+                                         logger.info("Wywołanie update_payload_with_cluster_ids...")
+                                         # Upewnij się, że chatbot i qdrant_connector istnieją
+                                         if "chatbot" in st.session_state and hasattr(st.session_state.chatbot, 'qdrant_connector'):
+                                             update_success = st.session_state.chatbot.qdrant_connector.update_payload_with_cluster_ids(
+                                                 st.session_state.cluster_assignments
+                                             )
+                                             if update_success:
+                                                  logger.info("Aktualizacja payloadów Qdrant zakończona sukcesem.")
+                                                  st.success(f"✅ Klastrowanie zakończone i ID klastrów zapisane w Qdrant dla {len(st.session_state.cluster_assignments)} punktów.")
+                                             else:
+                                                  st.error("⚠️ Wystąpił błąd podczas aktualizacji ID klastrów w bazie Qdrant.")
+                                         else:
+                                              st.error("❌ Błąd krytyczny: Brak obiektu chatbota lub konektora Qdrant.")
+                                 # <<< KONIEC NOWEGO KROKU >>>
+                                 else:
+                                      # Ten warunek raczej nie powinien wystąpić, jeśli jesteśmy w tym bloku, ale dla pewności
+                                      st.warning("Nie utworzono przypisań klastrów, pomijanie aktualizacji Qdrant.")
 
                                  # Generowanie etykiet (bez zmian w wywołaniu, bo qdrant_data zawiera wszystko)
                                  if st.session_state.cluster_assignments and 'chatbot' in st.session_state and hasattr(st.session_state.chatbot, 'llm'):
@@ -473,11 +569,26 @@ def main():
                     st.session_state.qdrant_data_cache = None
             st.rerun()
 
-        # Wyświetlanie informacji o klastrach (jeśli istnieją)
+        # Wyświetlanie informacji o klastrach (jeśli istnieją lub wystąpił błąd ładowania)
         cluster_summary_container = st.container()
         with cluster_summary_container:
-             if st.session_state.cluster_assignments:
+             load_status = st.session_state.get('cluster_load_status', 'not_loaded')
+             assignments_exist = 'cluster_assignments' in st.session_state and st.session_state.cluster_assignments # Sprawdź, czy słownik istnieje i nie jest pusty
+
+             # Wyświetl subheader tylko jeśli są klastry lub był błąd ładowania
+             if assignments_exist or load_status == 'error':
                  st.subheader("Wyniki Klastrowania")
+
+             # Komunikaty o stanie ładowania
+             if load_status == 'error':
+                 st.warning("⚠️ Nie udało się załadować poprzednich wyników klastrowania z pliku. Uruchom analizę ponownie.")
+             elif load_status == 'loaded_empty':
+                 st.info("ℹ️ Poprzednia analiza klastrów nie znalazła żadnych grup (lub plik był pusty). Uruchom analizę, aby spróbować ponownie.")
+             elif not assignments_exist and load_status != 'error': # Nie załadowano i nie było błędu - prawdopodobnie brak pliku
+                 st.info("ℹ️ Brak zapisanych wyników klastrowania. Uruchom analizę, aby wygenerować klastry.")
+
+             # Wyświetl listę klastrów tylko jeśli istnieją
+             if assignments_exist:
                  try:
                      cluster_counts = Counter(st.session_state.cluster_assignments.values())
                      noise_points = cluster_counts.pop(-1, 0)
@@ -514,9 +625,16 @@ def main():
                        selected_label_text += f": **{st.session_state.cluster_labels[selected_id]}**"
                   st.subheader(f"Szczegóły - {selected_label_text}")
                   try:
-                      point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache} if st.session_state.qdrant_data_cache else {}
-                      cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
-                      cluster_texts = [
+                      # --- Sprawdź, czy cache danych Qdrant jest dostępny ---
+                      if st.session_state.qdrant_data_cache is None:
+                           st.warning("Cache danych Qdrant jest niedostępny. Nie można wyświetlić szczegółów punktów. Spróbuj ponownie uruchomić analizę klastrów.")
+                           point_id_to_data = {}
+                           cluster_point_ids = []
+                           cluster_texts = []
+                      else:
+                           point_id_to_data = {d['id']: d for d in st.session_state.qdrant_data_cache}
+                           cluster_point_ids = [pid for pid, cid in st.session_state.cluster_assignments.items() if cid == selected_id]
+                           cluster_texts = [
                            point_id_to_data.get(pid, {}).get('payload', {}).get('page_content', '')
                            for pid in cluster_point_ids
                            if point_id_to_data.get(pid, {}).get('payload', {}).get('page_content')
@@ -562,6 +680,8 @@ def main():
                                          with st.spinner(f"Ekstrakcja bytów..."):
                                              entities = extract_key_entities(cluster_texts, st.session_state.chatbot.nlp)
                                              st.session_state.cluster_entities[selected_id] = entities
+                                             # Zapisz wszystkie dane klastrowania natychmiast po wygenerowaniu
+                                             save_cluster_metadata(st.session_state.cluster_assignments, st.session_state.cluster_labels, st.session_state.cluster_summaries, st.session_state.cluster_entities)
                                              st.rerun()
                                 elif not cluster_texts:
                                      st.warning("Brak tekstów w klastrze.")

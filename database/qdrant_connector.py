@@ -251,3 +251,74 @@ class QdrantConnector:
             logger.error(f"❌ Błąd podczas pobierania danych z Qdrant za pomocą scroll: {str(e)}")
             return [] # Zwróć pustą listę w przypadku błędu
     # === KONIEC POPRAWNIE DODANEJ METODY ===
+
+    def update_payload_with_cluster_ids(self, assignments: Dict[str, int]):
+        """
+        Aktualizuje pole 'cluster_id' w payloadzie punktów w Qdrant na podstawie
+        słownika przypisań.
+
+        Args:
+            assignments (Dict[str, int]): Słownik mapujący ID punktu (str) na ID klastra (int).
+
+        Returns:
+            bool: True jeśli operacja się powiodła (lub nie było nic do zrobienia),
+                  False w przypadku błędu.
+        """
+        if not assignments:
+            logger.info("ℹ️ Brak przypisań klastrów do zaktualizowania w Qdrant.")
+            return True
+        if not self.client:
+            logger.error("❌ Błąd: Klient Qdrant nie jest zainicjalizowany w update_payload_with_cluster_ids.")
+            return False
+
+        logger.info(f"⚙️ Rozpoczynanie aktualizacji payloadów dla {len(assignments)} punktów w Qdrant (pole: cluster_id)...")
+        start_time = time.time() # Upewnij się, że 'import time' jest na górze pliku
+
+        # Przygotuj listę punktów do aktualizacji payloadu
+        # Użyjemy metody upsert, która dodaje lub aktualizuje punkty/payload.
+        points_to_update = []
+        for point_id, cluster_id in assignments.items():
+            # Tworzymy payload tylko z polem cluster_id
+            # Ważne: To *ustawi* payload na TEN słownik, potencjalnie nadpisując inne pola!
+            # Lepsze podejście: użyć client.set_payload lub pobrać istniejący payload i zaktualizować.
+            # Poprawka: Użyjemy set_payload dla bezpieczeństwa.
+
+            # Zmieniamy podejście na client.set_payload
+            # Musimy importować odpowiednie modele
+            from qdrant_client.http import models as rest
+
+            # Aktualizujemy payload dla każdego punktu indywidualnie lub wsadowo,
+            # ale set_payload wymaga listy ID i jednego payloadu lub listy payloadów.
+            # Zrobimy to wsadowo dla wydajności, przygotowując listę ID i listę payloadów.
+            pass # Logika zostanie przeniesiona poniżej
+
+        # Przygotuj operacje dla set_payload
+        point_ids_list = list(assignments.keys())
+        payloads_list = [{"cluster_id": assignments[pid]} for pid in point_ids_list]
+
+        try:
+             # Użyj set_payload - bezpieczniejsze, aktualizuje tylko wskazane pole.
+             update_result: UpdateResult = self.client.set_payload(
+                 collection_name=self.collection_name,
+                 payload=payloads_list, # Lista payloadów do ustawienia
+                 points=point_ids_list,  # Lista odpowiadających ID punktów
+                 wait=True # Poczekaj na zakończenie operacji
+             )
+
+             end_time = time.time()
+             logger.info(f"⏱️ Aktualizacja payloadów Qdrant (set_payload) zajęła: {end_time - start_time:.2f}s")
+
+             # Sprawdzenie statusu w qdrant-client > 1.1.0 (status jest atrybutem UpdateResult)
+             # W starszych wersjach może być inaczej. Zakładamy nowszą wersję.
+             # Sprawdzenie, czy status istnieje i czy jest 'completed' lub 'acknowledged'
+             update_status = getattr(update_result, 'status', 'unknown')
+
+             if update_status in ["completed", "acknowledged"]:
+                 logger.info(f"✅ Pomyślnie zaktualizowano payloady (cluster_id) dla {len(point_ids_list)} punktów w Qdrant.")
+                 return True
+             else:
+                 logger.error(f"❌ Aktualizacja payloadów Qdrant (set_payload) zakończona statusem: {update_status}")
+                 return False
+        except Exception as e:
+             logger.error(f"❌ Błąd podczas aktualizacji payloadów w Qdrant (set_payload): {e}", exc_info=True)
+             return False
