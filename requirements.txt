@@ -21,3 +21,4 @@ scikit-learn # Dla klastrowania
 pandas # Do obsługi danych
 numpy # Wymagane przez pandas/scikit-learn
 langchain-google-genai # Do obsługi API Google Gemini
+scipy # Wymagane do obliczeń naukowych (np. cdist w ui_streamlit)

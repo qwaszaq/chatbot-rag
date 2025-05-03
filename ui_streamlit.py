@@ -335,6 +335,9 @@ def main():
     if 'new_user_input_submitted' not in st.session_state:
         st.session_state.new_user_input_submitted = False
 
+    if 'filter_by_selected_cluster' not in st.session_state:
+        st.session_state.filter_by_selected_cluster = False
+
     # --- Inicjalizacja chatbota ---
     if "chatbot" not in st.session_state:
         try:
@@ -403,30 +406,34 @@ def main():
         loaded_metadata = load_cluster_metadata()
 
         if loaded_metadata:
-            # Sprawdź spójność liczby przypisań
+            # Załaduj metadane z pliku niezależnie od spójności
+            st.session_state.cluster_labels = loaded_metadata.get("labels", {})
+            st.session_state.cluster_summaries = loaded_metadata.get("summaries", {})
+            st.session_state.cluster_entities = loaded_metadata.get("entities", {})
+            load_timestamp = loaded_metadata.get('timestamp', 'N/A')
+            metadata_assignments_count = loaded_metadata.get('assignments_count')
+            logger.info(f"✅ Metadane klastrów (etykiety/podsumowania/encje) wstępnie załadowane z pliku JSON (Timestamp: {load_timestamp}, Liczba zapisanych przypisań: {metadata_assignments_count}).")
+
+            # Sprawdź spójność liczby przypisań i dodaj flagę ostrzeżenia
             assignments_from_qdrant = st.session_state.get('cluster_assignments')
             qdrant_assignments_count = len(assignments_from_qdrant) if assignments_from_qdrant is not None else 0
-            metadata_assignments_count = loaded_metadata.get('assignments_count')
 
-            if metadata_assignments_count is not None and metadata_assignments_count == qdrant_assignments_count:
-                # Liczba przypisań się zgadza - załaduj metadane z pliku
-                st.session_state.cluster_labels = loaded_metadata.get("labels", {})
-                st.session_state.cluster_summaries = loaded_metadata.get("summaries", {})
-                st.session_state.cluster_entities = loaded_metadata.get("entities", {})
-                load_timestamp = loaded_metadata.get('timestamp', 'N/A')
-                logger.info(f"✅ Metadane klastrów (etykiety/podsumowania/encje) załadowane z pliku JSON (Timestamp: {load_timestamp}). Spójne z przypisaniami z Qdrant ({qdrant_assignments_count}).")
-            elif metadata_assignments_count is not None:
-                # Liczba przypisań się nie zgadza - ostrzeżenie, nie ładuj metadanych z pliku
-                logger.warning(f"⚠️ Niespójność danych klastrowania! Liczba przypisań w Qdrant ({qdrant_assignments_count}) różni się od zapisanej w pliku JSON ({metadata_assignments_count}). Metadane z pliku nie zostaną załadowane. Uruchom 'Analizuj / Odśwież Klastry'.")
-                # Upewnij się, że stany są puste/domyślne
-                st.session_state.cluster_labels = {}
-                st.session_state.cluster_summaries = {}
-                st.session_state.cluster_entities = {}
-            else: # Brak assignments_count w pliku (starsza wersja?)
-                 logger.warning(f"⚠️ Brak 'assignments_count' w załadowanych metadanych z pliku {CLUSTER_METADATA_FILE}. Metadane z pliku nie zostaną załadowane. Uruchom 'Analizuj / Odśwież Klastry'.")
-                 st.session_state.cluster_labels = {}
-                 st.session_state.cluster_summaries = {}
-                 st.session_state.cluster_entities = {}
+            # Inicjalizacja flagi ostrzeżenia
+            if 'show_cluster_inconsistency_warning' not in st.session_state:
+                 st.session_state.show_cluster_inconsistency_warning = False
+
+            if metadata_assignments_count is not None and metadata_assignments_count != qdrant_assignments_count:
+                logger.warning(f"⚠️ Niespójność danych klastrowania! Liczba przypisań w Qdrant ({qdrant_assignments_count}) różni się od zapisanej w pliku JSON ({metadata_assignments_count}). Metadane mogą być nieaktualne.")
+                # Ustaw flagę, aby wyświetlić ostrzeżenie w UI
+                st.session_state.show_cluster_inconsistency_warning = True
+            elif metadata_assignments_count is None:
+                 logger.warning(f"⚠️ Brak 'assignments_count' w załadowanych metadanych z pliku {CLUSTER_METADATA_FILE}. Nie można sprawdzić spójności.")
+                 # Można też ustawić flagę ostrzeżenia w tym przypadku
+                 st.session_state.show_cluster_inconsistency_warning = True
+            else:
+                 # Liczba się zgadza, upewnij się, że flaga ostrzeżenia jest False
+                 st.session_state.show_cluster_inconsistency_warning = False
+
         else:
             # Plik nie istnieje lub błąd ładowania/parsowania (logowane w load_cluster_metadata)
             # Upewnij się, że stany są puste/domyślne
@@ -479,8 +486,9 @@ def main():
                     st.session_state.active_chat_id = chat_id
                     if "editing_chat_id" in st.session_state: del st.session_state.editing_chat_id
                     if "chat_to_delete_id" in st.session_state: del st.session_state.chat_to_delete_id
-                    # Resetuj wybór klastra przy zmianie czatu
+                    # Resetuj wybór klastra i flagę filtrowania przy zmianie czatu
                     st.session_state.selected_cluster_id = None
+                    st.session_state.filter_by_selected_cluster = False
                     st.rerun()
             with col2:
                  if st.button("✏️", key=f"edit_{chat_id}", help="Edytuj nazwę czatu"):
@@ -787,6 +795,9 @@ def main():
              # Wyświetl subheader tylko jeśli są klastry lub był błąd ładowania
              if assignments_exist or load_status == 'error':
                  st.subheader("Wyniki Klastrowania")
+                 # DODANO: Wyświetl ostrzeżenie o niespójności, jeśli flaga jest ustawiona
+                 if st.session_state.get('show_cluster_inconsistency_warning', False):
+                     st.warning("⚠️ **Uwaga:** Wyświetlone metadane klastrów (etykiety, itp.) mogą być nieaktualne, ponieważ liczba dokumentów w bazie zmieniła się od ostatniej analizy. Zalecane jest ponowne uruchomienie '🚀 Analizuj / Odśwież Klastry'.")
 
              # Komunikaty o stanie ładowania
              if load_status == 'error':
@@ -818,8 +829,10 @@ def main():
                           if st.button(f"{label_text} ({count} punktów)", key=f"view_cluster_{cluster_id}"):
                               if st.session_state.selected_cluster_id == cluster_id:
                                    st.session_state.selected_cluster_id = None
+                                   st.session_state.filter_by_selected_cluster = False # Resetuj flagę przy deselekcji
                               else:
                                    st.session_state.selected_cluster_id = cluster_id
+                                   st.session_state.filter_by_selected_cluster = False # Resetuj flagę przy wyborze nowego
                               st.rerun()
                  except Exception as e:
                       logger.error(f"Błąd wyświetlania wyników klastrowania: {e}", exc_info=True)
@@ -836,6 +849,15 @@ def main():
                        selected_label_text += f": **{cluster_label}**"
                   st.subheader(f"Szczegóły - {selected_label_text}")
                   try:
+                      # DODANO: Checkbox do filtrowania RAG
+                      st.session_state.filter_by_selected_cluster = st.checkbox(
+                          f"Filtruj następne zapytanie do Klastra {selected_id}",
+                          key=f"filter_checkbox_{selected_id}",
+                          value=st.session_state.get('filter_by_selected_cluster', False),
+                          help="Zaznacz, aby następne pytanie w polu poniżej było zadane tylko w kontekście dokumentów z tego klastra."
+                      )
+                      st.markdown("---")
+
                       # Wyświetl Podsumowanie (jeśli istnieje w stanie sesji)
                       cluster_summary = st.session_state.get('cluster_summaries', {}).get(selected_id)
                       st.markdown("**Podsumowanie klastra:**") # Wyświetl nagłówek zawsze
@@ -1033,7 +1055,10 @@ def main():
                           progress_bar.progress((i + 1) / num_files)
 
                       status_text.text("Zakończono przetwarzanie plików.")
-                      if processed_count > 0: st.success(f"✅ Przetworzono pomyślnie {processed_count} z {num_files} plików.")
+                      if processed_count > 0:
+                          st.success(f"✅ Przetworzono pomyślnie {processed_count} z {num_files} plików.")
+                          # DODANO: Komunikat o konieczności ponownej analizy klastrów
+                          st.info("ℹ️ Dodano nowe dokumenty. Aby uwzględnić je w analizie, uruchom ponownie '🚀 Analizuj / Odśwież Klastry'.")
                       if error_count > 0: st.error(f"❌ Wystąpiły błędy dla {error_count} z {num_files} plików.")
                       # Po przetworzeniu dokumentów, resetuj stan klastrowania i usuń plik metadanych
                       st.session_state.cluster_assignments = None
@@ -1082,6 +1107,7 @@ def main():
                  st.session_state.selected_cluster_id = None
                  st.session_state.cluster_summaries = {}
                  st.session_state.cluster_entities = {}
+                 st.session_state.filter_by_selected_cluster = False # Resetuj flagę filtrowania
                  # Usuń plik metadanych przy resecie czatu
                  try:
                       if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
@@ -1387,13 +1413,21 @@ def main():
                             # Sprawdź, czy ekstrahować graf
                             should_extract_graph = (st.session_state.selected_chat_mode == "Analityk Grafów (RAG)")
                             logger.info(f"   Ekstrakcja grafu: {'Włączona' if should_extract_graph else 'Wyłączona'}")
-                            # Przekazanie cluster_assignments i extract_graph do query
+                            # Sprawdź, czy filtrować po klastrze
+                            query_cluster_filter_id = None
+                            if st.session_state.get('filter_by_selected_cluster', False) and st.session_state.selected_cluster_id is not None:
+                                query_cluster_filter_id = st.session_state.selected_cluster_id
+                                logger.info(f"   Zapytanie będzie filtrowane do klastra ID: {query_cluster_filter_id}")
+                            # Przekazanie cluster_assignments, extract_graph ORAZ filter_cluster_id do query
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
                                 system_prompt_override=selected_prompt_text,
                                 cluster_assignments=st.session_state.get('cluster_assignments'), # Przekaż, jeśli istnieje
-                                extract_graph=should_extract_graph # Przekaż flagę ekstrakcji
+                                extract_graph=should_extract_graph, # Przekaż flagę ekstrakcji
+                                filter_cluster_id=query_cluster_filter_id # Przekaż ID klastra do filtrowania lub None
                             )
+                            # Resetuj flagę filtrowania PO wysłaniu zapytania
+                            st.session_state.filter_by_selected_cluster = False
                             # _generate_answer jest wywoływane wewnątrz query, więc response_dict już zawiera 'content' i 'metadata'
                             if response_dict and response_dict.get("content"):
                                 rag_response_content = response_dict["content"]
@@ -1419,7 +1453,9 @@ def main():
                             "metadata": response_metadata # DODANO: Zapis metadanych
                         })
                         save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
-                        # Flaga już zresetowana na początku bloku
+                        # Resetuj flagę filtrowania również po udanej odpowiedzi (na wszelki wypadek)
+                        st.session_state.filter_by_selected_cluster = False
+                        # Flaga new_user_input_submitted już zresetowana na początku bloku
                         st.rerun() # Odśwież, aby pokazać odpowiedź
 
                     except StopIteration as si:

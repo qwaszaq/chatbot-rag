@@ -170,14 +170,16 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
 
-    # Zmodyfikowana metoda query
+    # Zmodyfikowana metoda query - DODANO filter_cluster_id
     def query(self, question: str, system_prompt_override: Optional[str] = None,
               cluster_assignments: Optional[Dict[str, int]] = None,
               expand_context_clusters: int = 1, expand_context_docs: int = 2,
-              extract_graph: bool = False) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
+              extract_graph: bool = False,
+              filter_cluster_id: Optional[int] = None) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """
         Udziela odpowiedzi na pytanie korzystając z RAG.
-        Opcjonalnie rozszerza kontekst o dodatkowe dokumenty z dominujących klastrów.
+        Opcjonalnie rozszerza kontekst o dodatkowe dokumenty z dominujących klastrów
+        lub filtruje wyszukiwanie do konkretnego klastra.
 
         Args:
             question (str): Pytanie użytkownika.
@@ -187,6 +189,7 @@ class RAGChatbot:
             expand_context_clusters (int): Liczba dominujących klastrów do rozważenia przy rozszerzaniu kontekstu.
             expand_context_docs (int): Maksymalna liczba dodatkowych dokumentów do dodania z każdego dominującego klastra.
             extract_graph (bool): Czy próbować ekstrahować graf wiedzy z odpowiedzi. Domyślnie False.
+            filter_cluster_id (Optional[int]): ID klastra do filtrowania wyszukiwania. Jeśli None, brak filtrowania.
 
         Returns:
             tuple: Zawiera:
@@ -202,9 +205,14 @@ class RAGChatbot:
         try: # Główny blok try
             logger.info(f"❓ Otrzymałem pytanie: {question}")
 
-            # Wyszukaj podobne dokumenty w Qdrant
-            logger.info(f"🔍 Wyszukiwanie {self.top_k} podobnych dokumentów w Qdrant")
-            relevant_docs = self.qdrant_connector.similarity_search(question, k=self.top_k)
+            # Wyszukaj podobne dokumenty w Qdrant, przekazując filtr
+            log_filter_msg_query = f" (filtr: klaster {filter_cluster_id})" if filter_cluster_id is not None else ""
+            logger.info(f"🔍 Wyszukiwanie {self.top_k} podobnych dokumentów w Qdrant{log_filter_msg_query}")
+            relevant_docs = self.qdrant_connector.similarity_search(
+                question,
+                k=self.top_k,
+                filter_cluster_id=filter_cluster_id # Przekazanie filtra
+            )
 
             if not relevant_docs:
                 logger.info("❌ Nie znaleziono żadnych dokumentów pasujących do pytania")

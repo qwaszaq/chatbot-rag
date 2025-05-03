@@ -48,3 +48,58 @@
     *   Czy wydajność (zwłaszcza zapisu payloadów) jest akceptowalna?
 
 Ten plan zapewnia przejście na bardziej trwały i elastyczny sposób zarządzania wynikami klastrowania, wykorzystując bezpośrednio możliwości bazy Qdrant i otwierając drogę do zaawansowanego filtrowania RAG.
+---
+
+# Krok 4: Implementacja Filtrowania RAG ("Pytaj w Kontekście Klastra")
+
+**Cel:** Umożliwienie użytkownikowi zadawania pytań, które będą odpowiadane tylko na podstawie dokumentów (chunków) należących do wybranego klastra.
+
+**Szczegółowy Plan Implementacji:**
+
+1.  **Modyfikacja UI (`ui_streamlit.py`):**
+    *   **Cel:** Dodanie przycisku lub opcji "Pytaj w tym klastrze" w sekcji szczegółów wybranego klastra.
+    *   **Logika:** Po kliknięciu, pytanie użytkownika (np. z głównego pola `st.chat_input`) powinno być powiązane z ID wybranego klastra (`st.session_state.selected_cluster_id`).
+    *   **Przekazanie danych:** Zmodyfikować logikę wysyłania zapytania, aby przekazywała `selected_cluster_id` do funkcji `chatbot.query` w `app.py`, gdy użytkownik zada pytanie w kontekście klastra.
+
+2.  **Modyfikacja Logiki Aplikacji (`app.py`):**
+    *   **Cel:** Dostosowanie metody `query` do przyjmowania opcjonalnego parametru `filter_cluster_id: Optional[int] = None`.
+    *   **Logika:** Jeśli `filter_cluster_id` zostanie przekazany, należy przekazać go dalej do metody wyszukującej podobieństwo w `QdrantConnector`.
+
+3.  **Modyfikacja Połączenia z Bazą Danych (`database/qdrant_connector.py`):**
+    *   **Cel:** Zmodyfikowanie metody `similarity_search` (lub `search`), aby akceptowała opcjonalny parametr `filter_cluster_id: Optional[int] = None`.
+    *   **Logika:**
+        *   Jeśli `filter_cluster_id` jest podany, skonstruować obiekt filtra Qdrant (`qdrant_client.models.Filter`) z warunkiem `must` sprawdzającym równość pola `cluster_id` w payloadzie.
+        *   Przekazać filtr do metody `search` klienta Qdrant (`self.client.search(..., query_filter=...)`).
+        *   Jeśli `filter_cluster_id` jest `None`, wyszukiwanie odbywa się bez filtra.
+
+4.  **Testowanie:**
+    *   Sprawdzenie działania nowej opcji w UI.
+    *   Weryfikacja poprawności filtrowania wyników RAG.
+    *   Sprawdzenie braku regresji w globalnym wyszukiwaniu RAG.
+    *   Obsługa przypadków brzegowych (np. pusty klaster).
+
+**Diagram Przepływu (Mermaid):**
+
+```mermaid
+graph LR
+    A[UI: Użytkownik klika "Pytaj w klastrze X"] --> B(UI: Pobiera pytanie i cluster_id=X);
+    B --> C{App: Wywołanie query(pytanie, filter_cluster_id=X)};
+    C --> D{DB: Wywołanie similarity_search(vector, filter_cluster_id=X)};
+    D --> E[DB: Konstruuje filtr Qdrant: must=[cluster_id == X]];
+    E --> F[DB: Wykonuje client.search z filtrem];
+    F --> G[DB: Zwraca przefiltrowane wyniki];
+    G --> H{App: Przetwarza wyniki, generuje odpowiedź};
+    H --> I[UI: Wyświetla odpowiedź];
+
+    J[UI: Użytkownik zadaje pytanie globalnie] --> K(UI: Pobiera pytanie, cluster_id=None);
+    K --> L{App: Wywołanie query(pytanie, filter_cluster_id=None)};
+    L --> M{DB: Wywołanie similarity_search(vector, filter_cluster_id=None)};
+    M --> N[DB: Wykonuje client.search bez filtra];
+    N --> O[DB: Zwraca wyniki];
+    O --> P{App: Przetwarza wyniki, generuje odpowiedź};
+    P --> Q[UI: Wyświetla odpowiedź];
+
+    style E fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#f9f,stroke:#333,stroke-width:2px
+    style N fill:#ccf,stroke:#333,stroke-width:2px
+```

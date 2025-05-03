@@ -10,11 +10,12 @@ from qdrant_client import QdrantClient
 # Upewnij się, że te klasy są dostępne w qdrant_client.http.models w Twojej wersji qdrant-client
 from qdrant_client.http.models import (
     Distance, VectorParams, CollectionInfo, CollectionStatus,
-    PointStruct, UpdateResult, PointIdsList, Payload # DODANO: Importy dla operacji na payloadach
+    PointStruct, UpdateResult, PointIdsList, Payload,
+    Filter, FieldCondition, MatchValue # DODANO: Importy dla filtrowania
 )
 import os
 import logging
-from typing import Dict, List # DODANO: Import Dict i List
+from typing import Dict, List, Optional # DODANO: Import Dict, List i Optional
 import time # DODANO: Import time
 
 logger = logging.getLogger(__name__)
@@ -99,20 +100,76 @@ class QdrantConnector:
             raise # Propaguj błąd dalej
 
 
-    def similarity_search(self, query, k=99):
-        """Wyszukiwanie podobnych dokumentów"""
+    def similarity_search(self, query, k=99, filter_cluster_id: Optional[int] = None):
+        """
+        Wyszukiwanie podobnych dokumentów z opcjonalnym filtrowaniem po cluster_id.
+
+        Args:
+            query (str): Tekst zapytania.
+            k (int): Liczba wyników do zwrócenia.
+            filter_cluster_id (Optional[int]): ID klastra do filtrowania. Jeśli None, brak filtrowania.
+
+        Returns:
+            List[Document]: Lista znalezionych dokumentów LangChain.
+        """
         if not self.vectorstore:
             logger.error("❌ Qdrant vectorstore nie jest zainicjalizowany. Nie można wyszukać.")
             raise Exception("Qdrant vectorstore nie jest zainicjalizowany")
 
-        logger.info(f"🔍 Wyszukiwanie {k} podobnych dokumentów w Qdrant dla zapytania: '{query[:50]}...'")
+        query_filter = None
+        log_filter_msg = ""
+        if filter_cluster_id is not None:
+            logger.info(f"   Applying filter for cluster_id: {filter_cluster_id}")
+            # Upewnij się, że importujesz Filter, FieldCondition, MatchValue
+            # DODANO: Logowanie i konwersja typu PRZED utworzeniem FieldCondition
+            logger.debug(f"   Type of filter_cluster_id before int(): {type(filter_cluster_id)}, value: {filter_cluster_id}")
+            try:
+                # Logowanie typu przed konwersją
+                logger.debug(f"   Type of filter_cluster_id before conversion: {type(filter_cluster_id)}, value: {filter_cluster_id}")
+
+                # Użyj .item() do konwersji typów NumPy na natywne typy Python
+                # lub standardowego int() dla innych typów
+                if hasattr(filter_cluster_id, 'item'): # Sprawdź, czy to typ NumPy
+                    converted_cluster_id = filter_cluster_id.item()
+                else:
+                    converted_cluster_id = int(filter_cluster_id) # Standardowa konwersja dla innych typów
+
+                logger.debug(f"   Type of converted_cluster_id after conversion: {type(converted_cluster_id)}, value: {converted_cluster_id}")
+
+                # Dodatkowe sprawdzenie, czy wynik jest faktycznie int
+                if not isinstance(converted_cluster_id, int):
+                     raise TypeError(f"Converted cluster ID is not a standard Python int after conversion: type={type(converted_cluster_id)}")
+
+                query_filter = Filter(
+                    must=[
+                        FieldCondition(
+                            key="cluster_id", # Klucz w payloadzie
+                            match=MatchValue(value=converted_cluster_id) # Użyj skonwertowanej wartości
+                        )
+                    ]
+                )
+            except (ValueError, TypeError) as conv_err:
+                 logger.error(f"   Błąd konwersji filter_cluster_id na int: {conv_err}. Wyszukiwanie bez filtra klastra.")
+                 query_filter = None # W razie błędu konwersji, nie filtruj
+                 log_filter_msg = "" # Usuń informację o filtrze z logu
+
+            log_filter_msg = f" z filtrem cluster_id={filter_cluster_id}"
+
+        logger.info(f"🔍 Wyszukiwanie {k} podobnych dokumentów w Qdrant dla zapytania: '{query[:50]}'..." + log_filter_msg)
         try:
-            # Metoda similarity_search w QdrantConnector użyje swojego wewnętrznego embedding generatora do zapytania
-            results = self.vectorstore.similarity_search(query, k=k)
-            logger.info(f"✅ Znaleziono {len(results)} dokumentów.")
+            # Używamy similarity_search_with_score, aby potencjalnie mieć dostęp do score'ów
+            # Ważne: przekazujemy filtr do metody wyszukiwania vectorstore
+            results_with_scores = self.vectorstore.similarity_search_with_score(
+                query,
+                k=k,
+                filter=query_filter # Przekazanie filtra
+            )
+            # Wynik to lista krotek (Document, score), bierzemy tylko dokumenty
+            results = [doc for doc, score in results_with_scores]
+            logger.info(f"✅ Znaleziono {len(results)} dokumentów" + log_filter_msg + ".")
             return results
         except Exception as e:
-            logger.error(f"❌ Błąd podczas wyszukiwania w Qdrant: {str(e)}")
+            logger.error(f"❌ Błąd podczas wyszukiwania w Qdrant{log_filter_msg}: {str(e)}", exc_info=True)
             raise # Propaguj błąd dalej
 
     def get_client(self):

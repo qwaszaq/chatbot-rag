@@ -3300,6 +3300,183 @@
                         "tokens": 734,
                         "time": 165.87485003471375
                     }
+                },
+                {
+                    "role": "user",
+                    "content": "zidentyfikuj graf powiązań w klastrze."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Wystąpił błąd podczas przetwarzania pytania: 3 validation errors for MatchValue\nvalue.bool\n  Input should be a valid boolean [type=bool_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/bool_type\nvalue.int\n  Input should be a valid integer [type=int_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/int_type\nvalue.str\n  Input should be a valid string [type=string_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "zidentyfikuj graf powiązań w klastrze.",
+                    "metadata": null
+                },
+                {
+                    "role": "user",
+                    "content": "zidentyfikuj graf powiązań w klastrze.\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Wystąpił błąd podczas przetwarzania pytania: 3 validation errors for MatchValue\nvalue.bool\n  Input should be a valid boolean [type=bool_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/bool_type\nvalue.int\n  Input should be a valid integer [type=int_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/int_type\nvalue.str\n  Input should be a valid string [type=string_type, input_value=np.int32(0), input_type=int32]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "zidentyfikuj graf powiązań w klastrze.\n\n",
+                    "metadata": null
+                },
+                {
+                    "role": "user",
+                    "content": "zidentyfikuj graf powiązań w klastrze."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Zidentyfikuj graf powiązań w klastrze.\n\nOdpowiedź: W dokumencie wspomniano o stworzeniu \"grafu powiązań (tzw. link analysis) na podstawie metadanych plików, korespondencji, numerów telefonów, adresów email, zbieżności logowania (BTS, IP)\". Graf ten miał być wykorzystany do identyfikacji wzorców w nazwach plików i komunikacji oraz analizy ukrytych lub zaszyfrowanych fragmentów danych.\n\nŹródło w dokumentach: Dokument – tekst główny, akapit rozpoczynający się od \"Forensic Digital Data Fusion\".\n\nKomentarz: Kontekst nie precyzuje szczegółowej struktury tego grafu powiązań ani jego zawartości, jedynie wskazuje na metodę i dane wykorzystane do jego stworzenia. Nie ma również informacji o wizualizacji lub dostępie do samego grafu w udostępnionych materiałach.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj3z6s_e5/code - 2025-04-25T233201.834.txt",
+                            "id": "08cfab2c-9e20-40fa-b441-5e6591cc2288"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "a51ad749-6b8f-488f-b742-8753f2533f9d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpceeoxzm5/code - 2025-04-25T231143.084.txt",
+                            "id": "157e7661-7484-4974-b0fc-74a10a31f45b"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "zidentyfikuj graf powiązań w klastrze.",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 211,
+                        "time": 83.54896092414856
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "zidentyfikuj graf powiązań w klastrze.\n\n"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Zidentyfikuj graf powiązań w klastrze.\n\nOdpowiedź: W dokumencie wspomniano o stworzeniu grafu powiązań (tzw. link analysis) na podstawie metadanych plików, korespondencji, numerów telefonów, adresów email, zbieżności logowania (BTS, IP). Graf ten miał służyć do identyfikacji wzorców w nazwach plików i komunikacji oraz analizy ukrytych lub zaszyfrowanych fragmentów danych.\n\nŹródło w dokumentach: \n\"Forensic Digital Data Fusion: Integracja i analiza skrzyżowana danych cyfrowych z wszystkich zabezpieczonych nośników... Stworzono graf powiązań (tzw. link analysis) na podstawie metadanych plików, korespondencji...\"\n\nKomentarz: Dokument nie precyzuje zawartości tego grafu ani jego struktury poza wymienionymi danymi, na których został oparty.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpj3z6s_e5/code - 2025-04-25T233201.834.txt",
+                            "id": "08cfab2c-9e20-40fa-b441-5e6591cc2288"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmptfcs9t5z/code - 2025-04-25T230546.395.txt",
+                            "id": "a51ad749-6b8f-488f-b742-8753f2533f9d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpceeoxzm5/code - 2025-04-25T231143.084.txt",
+                            "id": "157e7661-7484-4974-b0fc-74a10a31f45b"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Graf Powiązań (Link Analysis)",
+                                "llm_type": "Concept",
+                                "ner_type": "persName",
+                                "id": "Graf Powiązań"
+                            },
+                            {
+                                "label": "Metadane Plików",
+                                "llm_type": "Document",
+                                "ner_type": null,
+                                "id": "Metadane Plików"
+                            },
+                            {
+                                "label": "Korespondencja (email, listy)",
+                                "llm_type": "Document",
+                                "ner_type": null,
+                                "id": "Korespondencja"
+                            },
+                            {
+                                "label": "Numery Telefonów",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Numery Telefonów"
+                            },
+                            {
+                                "label": "Adresy Email",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Adresy Email"
+                            },
+                            {
+                                "label": "Zbieżność Logowania (BTS, IP)",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Zbieżność Logowania (BTS, IP)"
+                            },
+                            {
+                                "label": "Wzorce w Nazwach Plików",
+                                "llm_type": "Concept",
+                                "ner_type": "geogName",
+                                "id": "Wzorce w Nazwach Plików"
+                            },
+                            {
+                                "label": "Analiza Ukrytych/Zaszyfrowanych Fragmentów Danych",
+                                "llm_type": "Method",
+                                "ner_type": null,
+                                "id": "Analiza Ukrytych Danych"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "BUDOWANY_NA_PODSTAWIE",
+                                "source": "Graf Powiązań",
+                                "target": "Metadane Plików"
+                            },
+                            {
+                                "label": "BUDOWANY_NA_PODSTAWIE",
+                                "source": "Graf Powiązań",
+                                "target": "Korespondencja"
+                            },
+                            {
+                                "label": "BUDOWANY_NA_PODSTAWIE",
+                                "source": "Graf Powiązań",
+                                "target": "Numery Telefonów"
+                            },
+                            {
+                                "label": "BUDOWANY_NA_PODSTAWIE",
+                                "source": "Graf Powiązań",
+                                "target": "Adresy Email"
+                            },
+                            {
+                                "label": "BUDOWANY_NA_PODSTAWIE",
+                                "source": "Graf Powiązań",
+                                "target": "Zbieżność Logowania (BTS, IP)"
+                            },
+                            {
+                                "label": "WYKRYWA",
+                                "source": "Graf Powiązań",
+                                "target": "Wzorce w Nazwach Plików"
+                            },
+                            {
+                                "label": "UMOŻLIWIA",
+                                "source": "Graf Powiązań",
+                                "target": "Analiza Ukrytych Danych"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "zidentyfikuj graf powiązań w klastrze.\n\n",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 209,
+                        "time": 28.581280946731567
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "jakie nazwiska są w sprawie?"
                 }
             ]
         },
