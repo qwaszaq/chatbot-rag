@@ -336,3 +336,210 @@ class QdrantConnector:
              logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (set_payload wsadowo): {e}", exc_info=True)
              return False
     # === KONIEC POPRAWIONEJ METODY AKTUALIZACJI PAYLOADU ===
+    
+    # === METODY DO ZARZĄDZANIA KOLEKCJAMI ===
+    def get_collections(self):
+        """
+        Pobiera listę wszystkich kolekcji z serwera Qdrant wraz z dodatkowymi informacjami.
+        
+        Returns:
+            dict: Słownik z nazwami kolekcji jako kluczami i informacjami o kolekcji jako wartościami.
+                 Format: {
+                     "nazwa_kolekcji": {
+                         "name": "nazwa_kolekcji",
+                         "vector_size": 1024,
+                         "points_count": 100,
+                         "status": "green"
+                     },
+                     ...
+                 }
+        """
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można pobrać listy kolekcji.")
+            return {}
+            
+        try:
+            collections_list = self.client.get_collections().collections
+            collections_info = {}
+            
+            for collection in collections_list:
+                collection_name = collection.name
+                try:
+                    # Pobierz szczegółowe informacje o kolekcji
+                    details = self.client.get_collection(collection_name=collection_name)
+                    vector_size = details.config.params.vectors.size
+                    points_count = details.vectors_count
+                    
+                    collections_info[collection_name] = {
+                        "name": collection_name,
+                        "vector_size": vector_size,
+                        "points_count": points_count,
+                        "status": str(details.status)
+                    }
+                except Exception as e:
+                    logger.warning(f"⚠️ Błąd podczas pobierania szczegółów kolekcji {collection_name}: {e}")
+                    collections_info[collection_name] = {
+                        "name": collection_name,
+                        "status": "error"
+                    }
+                    
+            logger.info(f"✅ Pobrano informacje o {len(collections_info)} kolekcjach.")
+            return collections_info
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas pobierania listy kolekcji: {e}")
+            return {}
+            
+    def switch_collection(self, new_collection_name, vector_size=None):
+        """
+        Przełącza na inną kolekcję bez konieczności tworzenia nowego obiektu QdrantConnector.
+        
+        Args:
+            new_collection_name (str): Nazwa kolekcji, na którą należy się przełączyć.
+            vector_size (int, optional): Rozmiar wektora do użycia, jeśli kolekcja nie istnieje.
+                                         Jeśli None, używany jest bieżący rozmiar.
+                                         
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można przełączyć kolekcji.")
+            return False
+            
+        if new_collection_name == self.collection_name and self.vectorstore is not None:
+            logger.info(f"ℹ️ Już używasz kolekcji '{new_collection_name}'. Nic nie zmieniono.")
+            return True
+            
+        # Zapamiętaj stare wartości na wypadek błędu
+        old_collection_name = self.collection_name
+        old_vectorstore = self.vectorstore
+        
+        try:
+            # Ustaw nową nazwę kolekcji
+            self.collection_name = new_collection_name
+            
+            # Ustaw rozmiar wektora
+            if vector_size is not None:
+                self.vector_size = vector_size
+                
+            # Sprawdź, czy kolekcja istnieje
+            collection_exists = False
+            try:
+                collection_info = self.client.get_collection(collection_name=new_collection_name)
+                collection_exists = True
+                # Aktualizuj rozmiar wektora na podstawie istniejącej kolekcji
+                self.vector_size = collection_info.config.params.vectors.size
+                logger.info(f"✅ Kolekcja '{new_collection_name}' istnieje. Rozmiar wektora: {self.vector_size}")
+            except Exception as e:
+                logger.info(f"ℹ️ Kolekcja '{new_collection_name}' nie istnieje lub wystąpił błąd: {e}")
+                collection_exists = False
+                
+            # Jeśli kolekcja nie istnieje, utwórz ją
+            if not collection_exists:
+                logger.info(f"✨ Tworzenie nowej kolekcji '{new_collection_name}' z rozmiarem wektora {self.vector_size}")
+                self.client.create_collection(
+                    collection_name=new_collection_name,
+                    vectors_config=VectorParams(size=self.vector_size, distance=Distance.COSINE)
+                )
+                logger.info(f"✅ Kolekcja '{new_collection_name}' utworzona pomyślnie.")
+                
+            # Zaktualizuj vectorstore dla nowej kolekcji
+            embeddings = None
+            if self.vectorstore:
+                embeddings = self.vectorstore.embeddings
+                
+            if embeddings is not None:
+                self.vectorstore = Qdrant(
+                    client=self.client,
+                    collection_name=new_collection_name,
+                    embeddings=embeddings
+                )
+                
+                logger.info(f"✅ Pomyślnie przełączono na kolekcję '{new_collection_name}'.")
+                return True
+            else:
+                logger.error(f"❌ Nie można zaktualizować vectorstore - brak obiektu embeddings.")
+                # Przywróć poprzednie wartości
+                self.collection_name = old_collection_name
+                self.vectorstore = old_vectorstore
+                return False
+        except Exception as e:
+            # W przypadku błędu przywróć poprzednie wartości
+            self.collection_name = old_collection_name
+            self.vectorstore = old_vectorstore
+            logger.error(f"❌ Błąd podczas przełączania na kolekcję '{new_collection_name}': {e}")
+            return False
+            
+    def create_collection(self, collection_name, vector_size=1024):
+        """
+        Tworzy nową kolekcję o podanej nazwie i rozmiarze wektora, bez przełączania się na nią.
+        
+        Args:
+            collection_name (str): Nazwa nowej kolekcji.
+            vector_size (int): Rozmiar wektora dla nowej kolekcji.
+            
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można utworzyć kolekcji.")
+            return False
+            
+        try:
+            # Sprawdź, czy kolekcja już istnieje
+            try:
+                self.client.get_collection(collection_name=collection_name)
+                logger.warning(f"⚠️ Kolekcja '{collection_name}' już istnieje. Nie utworzono nowej.")
+                return False
+            except Exception:
+                # Kolekcja nie istnieje, możemy ją utworzyć
+                pass
+                
+            # Utwórz nową kolekcję
+            self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE)
+            )
+            
+            logger.info(f"✅ Utworzono nową kolekcję '{collection_name}' z rozmiarem wektora {vector_size}.")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas tworzenia kolekcji '{collection_name}': {e}")
+            return False
+            
+    def delete_collection(self, collection_name):
+        """
+        Usuwa kolekcję o podanej nazwie.
+        
+        Args:
+            collection_name (str): Nazwa kolekcji do usunięcia.
+            
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        if not self.client:
+            logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można usunąć kolekcji.")
+            return False
+            
+        try:
+            # Sprawdź, czy kolekcja istnieje
+            try:
+                self.client.get_collection(collection_name=collection_name)
+            except Exception as e:
+                logger.warning(f"⚠️ Kolekcja '{collection_name}' nie istnieje lub wystąpił błąd: {e}")
+                return False
+                
+            # Usuń kolekcję
+            self.client.delete_collection(collection_name=collection_name)
+            
+            logger.info(f"✅ Usunięto kolekcję '{collection_name}'.")
+            
+            # Jeśli to była aktualnie używana kolekcja, zresetuj vectorstore
+            if collection_name == self.collection_name:
+                self.vectorstore = None
+                logger.info(f"ℹ️ Zresetowano vectorstore, ponieważ usunięto aktualnie używaną kolekcję.")
+                
+            return True
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas usuwania kolekcji '{collection_name}': {e}")
+            return False
+    # === KONIEC METOD DO ZARZĄDZANIA KOLEKCJAMI ===

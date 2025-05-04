@@ -338,6 +338,16 @@ def main():
 
     if 'filter_by_selected_cluster' not in st.session_state:
         st.session_state.filter_by_selected_cluster = False
+        
+    # Inicjalizacja stanów sesji związanych z kolekcjami
+    if 'collections_list' not in st.session_state:
+        st.session_state.collections_list = {}
+    if 'confirm_delete_collection' not in st.session_state:
+        st.session_state.confirm_delete_collection = None
+    if 'new_collection_name' not in st.session_state:
+        st.session_state.new_collection_name = ""
+    if 'new_collection_vector_size' not in st.session_state:
+        st.session_state.new_collection_vector_size = 1024
 
     # --- Inicjalizacja chatbota ---
     if "chatbot" not in st.session_state:
@@ -964,8 +974,180 @@ def main():
             key="filter_small_graphs_checkbox"
         )
         st.markdown("---")
+        
+        # === SEKCJA WYBORU KOLEKCJI ===
+        st.header("📚 Kolekcje Qdrant")
 
+        # Funkcja do odświeżania listy kolekcji
+        def refresh_collections():
+            if "chatbot" in st.session_state:
+                st.session_state.collections_list = st.session_state.chatbot.get_collections()
+                
+        # Przycisk odświeżania
+        if st.button("🔄 Odśwież listę kolekcji"):
+            refresh_collections()
+            
+        # Jeśli lista kolekcji jest pusta, załaduj ją
+        if not st.session_state.collections_list:
+            refresh_collections()
+            
+        # Wyświetl listę kolekcji w formie rozwijanej listy
+        collection_options = list(st.session_state.collections_list.keys())
+        
+        if collection_options:
+            # Znajdź aktualnie używaną kolekcję
+            current_collection = None
+            if "chatbot" in st.session_state and hasattr(st.session_state.chatbot, 'qdrant_connector'):
+                current_collection = st.session_state.chatbot.qdrant_connector.collection_name
+            
+            # Znajdź indeks aktualnie wybranej kolekcji
+            current_index = 0
+            if current_collection in collection_options:
+                current_index = collection_options.index(current_collection)
+            
+            # Funkcja formatująca dla selectbox
+            def format_collection(collection_name):
+                collection_info = st.session_state.collections_list[collection_name]
+                points_count = collection_info.get('points_count', 0)
+                vector_size = collection_info.get('vector_size', 'N/A')
+                return f"{collection_name} ({points_count} pkt, {vector_size} wym.)"
+            
+            selected_collection = st.selectbox(
+                "Wybierz kolekcję:",
+                options=collection_options,
+                index=current_index,
+                format_func=format_collection,
+                key="collection_selector"
+            )
+            
+            # Jeśli wybrano inną kolekcję niż aktualna
+            if selected_collection != current_collection:
+                st.info(f"Chcesz przełączyć się na kolekcję '{selected_collection}'. Kliknij przycisk, aby potwierdzić.")
+                
+                if st.button("🔄 Przełącz kolekcję", key="switch_collection_button"):
+                    with st.spinner(f"Przełączanie na kolekcję '{selected_collection}'..."):
+                        if "chatbot" in st.session_state:
+                            success = st.session_state.chatbot.switch_collection(selected_collection)
+                            if success:
+                                # Resetuj stan klastrowania
+                                st.session_state.cluster_assignments = None
+                                st.session_state.cluster_labels = {}
+                                st.session_state.qdrant_data_cache = None
+                                st.session_state.selected_cluster_id = None
+                                st.session_state.cluster_summaries = {}
+                                st.session_state.cluster_entities = {}
+                                
+                                # Resetuj status ładowania klastrów
+                                if 'cluster_data_loaded' in st.session_state:
+                                    del st.session_state.cluster_data_loaded
+                                if 'cluster_load_status' in st.session_state:
+                                    del st.session_state.cluster_load_status
+                                    
+                                st.success(f"✅ Pomyślnie przełączono na kolekcję '{selected_collection}'.")
+                                st.rerun()
+                            else:
+                                st.error(f"❌ Nie udało się przełączyć na kolekcję '{selected_collection}'.")
+        else:
+            st.warning("Nie znaleziono żadnych kolekcji. Utwórz nową kolekcję lub odśwież listę.")
+            
+        # Usuwanie kolekcji
+        if collection_options:
+            st.subheader("Usuwanie kolekcji")
+            
+            # Wybór kolekcji do usunięcia
+            if st.session_state.confirm_delete_collection:
+                st.warning(f"⚠️ Czy na pewno chcesz usunąć kolekcję '{st.session_state.confirm_delete_collection}'? Tej operacji nie można cofnąć!")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("✅ Tak, usuń", key="confirm_delete_collection_btn"):
+                        with st.spinner(f"Usuwanie kolekcji '{st.session_state.confirm_delete_collection}'..."):
+                            if "chatbot" in st.session_state:
+                                success = st.session_state.chatbot.delete_collection(st.session_state.confirm_delete_collection)
+                                
+                                if success:
+                                    st.success(f"✅ Kolekcja '{st.session_state.confirm_delete_collection}' została usunięta.")
+                                    
+                                    # Jeśli usunięto aktualnie używaną kolekcję, resetuj stan
+                                    current_collection = st.session_state.chatbot.qdrant_connector.collection_name
+                                    if st.session_state.confirm_delete_collection == current_collection:
+                                        # Resetuj stan klastrowania
+                                        st.session_state.cluster_assignments = None
+                                        st.session_state.cluster_labels = {}
+                                        st.session_state.qdrant_data_cache = None
+                                        st.session_state.selected_cluster_id = None
+                                        st.session_state.cluster_summaries = {}
+                                        st.session_state.cluster_entities = {}
+                                        
+                                        # Resetuj status ładowania klastrów
+                                        if 'cluster_data_loaded' in st.session_state:
+                                            del st.session_state.cluster_data_loaded
+                                        if 'cluster_load_status' in st.session_state:
+                                            del st.session_state.cluster_load_status
+                                else:
+                                    st.error(f"❌ Nie udało się usunąć kolekcji '{st.session_state.confirm_delete_collection}'.")
+                                    
+                                # Resetuj stan potwierdzenia i odśwież listę kolekcji
+                                st.session_state.confirm_delete_collection = None
+                                refresh_collections()
+                                st.rerun()
+                
+                with col2:
+                    if st.button("❌ Nie, anuluj", key="cancel_delete_collection_btn"):
+                        st.session_state.confirm_delete_collection = None
+                        st.rerun()
+            else:
+                delete_collection = st.selectbox(
+                    "Wybierz kolekcję do usunięcia:",
+                    options=collection_options,
+                    key="delete_collection_selector"
+                )
+                
+                if st.button("🗑️ Usuń kolekcję", key="delete_collection_btn"):
+                    st.session_state.confirm_delete_collection = delete_collection
+                    st.rerun()
 
+        # Tworzenie nowej kolekcji
+        st.subheader("Tworzenie nowej kolekcji")
+
+        # Pole na nazwę nowej kolekcji
+        new_collection_name = st.text_input(
+            "Nazwa nowej kolekcji:",
+            value=st.session_state.new_collection_name,
+            key="new_collection_name_input"
+        )
+
+        # Pole na rozmiar wektora
+        new_vector_size = st.number_input(
+            "Rozmiar wektora:",
+            min_value=64,
+            max_value=4096,
+            value=st.session_state.new_collection_vector_size,
+            step=64,
+            key="new_vector_size_input"
+        )
+
+        # Przycisk utworzenia kolekcji
+        if st.button("✨ Utwórz nową kolekcję", key="create_collection_btn"):
+            if new_collection_name:
+                with st.spinner(f"Tworzenie nowej kolekcji '{new_collection_name}'..."):
+                    if "chatbot" in st.session_state:
+                        success = st.session_state.chatbot.create_collection(new_collection_name, new_vector_size)
+                        if success:
+                            st.success(f"✅ Utworzono nową kolekcję '{new_collection_name}' z rozmiarem wektora {new_vector_size}.")
+                            # Odśwież listę kolekcji
+                            refresh_collections()
+                            # Wyczyść pole nazwy
+                            st.session_state.new_collection_name = ""
+                            st.rerun()
+                        else:
+                            st.error(f"❌ Nie udało się utworzyć kolekcji '{new_collection_name}'.")
+            else:
+                st.error("❌ Nazwa kolekcji nie może być pusta.")
+        # === KONIEC SEKCJI WYBORU KOLEKCJI ===
+        
+        st.markdown("---")
+        
         st.header("📁 Zarządzanie dokumentami")
 
         st.markdown("---")

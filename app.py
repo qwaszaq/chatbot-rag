@@ -790,6 +790,79 @@ JSON z wynikiem:
         else:
             logger.error("❌ Nie udało się wyczyścić bazy danych Qdrant.")
         return success
+        
+    def switch_collection(self, collection_name, vector_size=None):
+        """
+        Przełącza chatbota na inną kolekcję Qdrant.
+        
+        Args:
+            collection_name (str): Nazwa kolekcji, na którą należy się przełączyć.
+            vector_size (int, optional): Rozmiar wektora do użycia, jeśli kolekcja nie istnieje.
+            
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        logger.info(f"🔄 Przełączanie na kolekcję '{collection_name}'...")
+        
+        try:
+            # Przełącz kolekcję w QdrantConnector
+            success = self.qdrant_connector.switch_collection(collection_name, vector_size)
+            
+            if success:
+                logger.info(f"✅ Pomyślnie przełączono na kolekcję '{collection_name}'.")
+                return True
+            else:
+                logger.error(f"❌ Nie udało się przełączyć na kolekcję '{collection_name}'.")
+                return False
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas przełączania na kolekcję '{collection_name}': {e}")
+            return False
+            
+    def get_collections(self):
+        """
+        Pobiera listę wszystkich dostępnych kolekcji Qdrant.
+        
+        Returns:
+            dict: Słownik z informacjami o kolekcjach.
+        """
+        if hasattr(self, 'qdrant_connector') and self.qdrant_connector:
+            return self.qdrant_connector.get_collections()
+        else:
+            logger.error("❌ QdrantConnector nie jest zainicjalizowany.")
+            return {}
+            
+    def create_collection(self, collection_name, vector_size=1024):
+        """
+        Tworzy nową kolekcję Qdrant.
+        
+        Args:
+            collection_name (str): Nazwa nowej kolekcji.
+            vector_size (int): Rozmiar wektora dla nowej kolekcji.
+            
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        if hasattr(self, 'qdrant_connector') and self.qdrant_connector:
+            return self.qdrant_connector.create_collection(collection_name, vector_size)
+        else:
+            logger.error("❌ QdrantConnector nie jest zainicjalizowany.")
+            return False
+            
+    def delete_collection(self, collection_name):
+        """
+        Usuwa kolekcję Qdrant.
+        
+        Args:
+            collection_name (str): Nazwa kolekcji do usunięcia.
+            
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu.
+        """
+        if hasattr(self, 'qdrant_connector') and self.qdrant_connector:
+            return self.qdrant_connector.delete_collection(collection_name)
+        else:
+            logger.error("❌ QdrantConnector nie jest zainicjalizowany.")
+            return False
 
 # Kod poza klasą
 if __name__ == "__main__":
