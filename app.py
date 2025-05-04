@@ -54,7 +54,7 @@ class RAGChatbot:
 
         # Inicjalizacja komponentów
         self.document_loader = DocumentLoader()
-        self.text_splitter = TextSplitter(chunk_size=750, chunk_overlap=150) # ZMIANA: Zmniejszono chunk_size i overlap
+        self.text_splitter = TextSplitter(chunk_size=750, chunk_overlap=120) # ZMIANA: Zmieniono chunk_size i overlap
 
         # Inicjalizacja modelu embeddingowego
         self.embedding_generator = EmbeddingGenerator(

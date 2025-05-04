@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class TextSplitter:
-    def __init__(self, chunk_size=1000, chunk_overlap=200):
+    def __init__(self, chunk_size=750, chunk_overlap=120):
         """
         Inicjalizacja text splitter z wykorzystaniem RecursiveCharacterTextSplitter z LangChain
         """
