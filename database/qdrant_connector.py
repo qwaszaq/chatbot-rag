@@ -287,11 +287,11 @@ class QdrantConnector:
     def update_payload_with_cluster_ids(self, assignments: Dict[str, int]):
         """
         Aktualizuje pole 'cluster_id' w payloadzie punktów w Qdrant na podstawie
-        słownika przypisań przy użyciu client.set_payload (wsadowo).
-
+        słownika przypisań przy użyciu client.upsert (wsadowo) z PointStruct.
+        
         Args:
             assignments (Dict[str, int]): Słownik mapujący ID punktu (str) na ID klastra (int).
-
+        
         Returns:
             bool: True jeśli operacja się powiodła (lub nie było nic do zrobienia),
                   False w przypadku błędu.
@@ -302,38 +302,52 @@ class QdrantConnector:
         if not self.client:
             logger.error("❌ Błąd: Klient Qdrant nie jest zainicjalizowany w update_payload_with_cluster_ids.")
             return False
-
-        logger.info(f"⚙️ Rozpoczynanie aktualizacji payloadów dla {len(assignments)} punktów w Qdrant (pole: cluster_id)...")
+        
+        logger.info(f"⚙️ Rozpoczynanie aktualizacji payloadów dla {len(assignments)} punktów w Qdrant (pole: cluster_id) przy użyciu upsert...")
         start_time = time.time()
-
-        # Przygotuj listy ID punktów i odpowiadających im payloadów (tylko pole cluster_id)
-        point_ids = list(assignments.keys())
-        # Upewnij się, że cluster_id jest typu int, a nie np. np.int32
-        payloads_to_set = [{"cluster_id": int(cluster_id)} for cluster_id in assignments.values()]
-
+        
+        points_to_upsert = []
+        for point_id, cluster_id_value in assignments.items():
+            try:
+                # Upewnij się, że cluster_id jest typu int
+                converted_cluster_id = int(cluster_id_value)
+                
+                points_to_upsert.append(
+                    PointStruct(
+                        id=point_id,
+                        vector={}, # Nie aktualizujemy wektora w tej operacji
+                        payload={"cluster_id": converted_cluster_id} # Ustawiamy tylko pole cluster_id w payloadzie
+                    )
+                )
+            except (ValueError, TypeError) as e:
+                logger.error(f"❌ Błąd konwersji cluster_id dla punktu {point_id}: {e}. Pomijanie tego punktu.", exc_info=True)
+            except Exception as e:
+                 logger.error(f"❌ Nieoczekiwany błąd podczas tworzenia PointStruct dla punktu {point_id}: {e}", exc_info=True)
+        
+        if not points_to_upsert:
+            logger.warning("⚠️ Po przetworzeniu przypisań, brak poprawnych punktów do zaktualizowania payloadu.")
+            return False # Zwróć False, bo nic nie udało się zaktualizować
+            
         try:
-            # WAŻNE: Upewnij się, że importujesz Payload i UpdateResult (zrobione na górze pliku)
-
-            # Aktualizuj payload wsadowo używając set_payload
-            update_result: UpdateResult = self.client.set_payload(
+            # Używamy client.upsert z listą PointStruct
+            update_result: UpdateResult = self.client.upsert(
                 collection_name=self.collection_name,
-                payload=payloads_to_set, # Lista payloadów
-                points=point_ids,       # Lista odpowiadających ID punktów
-                wait=True               # Poczekaj na zakończenie
+                wait=True, # Poczekaj na zakończenie
+                points=points_to_upsert # Lista PointStruct
             )
-
+            
             end_time = time.time()
-            logger.info(f"⏱️ Aktualizacja payloadów Qdrant (set_payload wsadowo) zajęła: {end_time - start_time:.2f}s")
-
+            logger.info(f"⏱️ Aktualizacja payloadów Qdrant (upsert wsadowo) zajęła: {end_time - start_time:.2f}s")
+            
             update_status = getattr(update_result, 'status', 'unknown')
             if update_status in ["completed", "acknowledged"]:
-                logger.info(f"✅ Pomyślnie ustawiono payload (cluster_id) dla {len(point_ids)} punktów w Qdrant.")
+                logger.info(f"✅ Pomyślnie zaktualizowano payload (cluster_id) dla {len(points_to_upsert)} punktów w Qdrant przy użyciu upsert.")
                 return True
             else:
-                logger.error(f"❌ Ustawienie payloadów Qdrant zakończone statusem: {update_status}")
+                logger.error(f"❌ Upsert payloadów Qdrant zakończony statusem: {update_status}")
                 return False
         except Exception as e:
-             logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (set_payload wsadowo): {e}", exc_info=True)
+             logger.error(f"❌ Błąd podczas upsert payloadów w Qdrant: {e}", exc_info=True)
              return False
     # === KONIEC POPRAWIONEJ METODY AKTUALIZACJI PAYLOADU ===
     
