@@ -156,4 +156,13 @@ Użytkownik może:
 
 ## Schematy / Diagramy
 
-*(Tutaj w przyszłości można dodać schematy przepływu danych dla RAG i GrafRAG, diagram architektury systemu itp. Na potrzeby tej dokumentacji, opis tekstowy jest głównym źródłem informacji.)*
+*(Tutaj w przyszłości zostaną dodane graficzne schematy ilustrujące przepływ danych dla trybów RAG i GrafRAG oraz diagram architektury systemu. Poniżej znajduje się opis tekstowy tych schematów, który może posłużyć jako podstawa do ich stworzenia.)*
+
+**Schemat Przepływu Danych RAG:**
+Opisuje ścieżkę zapytania w trybie Analityk RAG: od zapytania użytkownika, poprzez wyszukiwanie w bazie wektorowej (Qdrant), reranking, selekcję kontekstu, generowanie odpowiedzi przez LLM, aż do prezentacji wyniku w UI. Wskazuje, skąd brane są dane (baza Qdrant, która została zbudowana w procesie ingestii danych) i jak są przetwarzane (embedding zapytania, wyszukiwanie wektorowe, reranking, użycie kontekstu przez LLM).
+
+**Schemat Przepływu Danych GrafRAG:**
+Opisuje ścieżkę zapytania w trybie Analityk Grafów. Jest to rozszerzenie schematu RAG. Po wygenerowaniu odpowiedzi przez LLM, proces kontynuuje się o etap ekstrakcji grafu wiedzy z tej odpowiedzi (przy użyciu LLM i modelu spaCy) i wizualizacji grafu w UI. Pokazuje, że dane do grafu pochodzą z tekstu odpowiedzi wygenerowanej przez LLM, a przetwarzanie obejmuje analizę tej odpowiedzi w celu identyfikacji bytów i relacji.
+
+**Diagram Architektury Systemu:**
+Przedstawia wysokopoziomową strukturę systemu, pokazując główne komponenty (UI, logika aplikacji, moduły przetwarzania danych, klastrowania, bazy danych) i ich interakcje ze sobą oraz z zewnętrznymi usługami (baza Qdrant, API LM Studio/Google Gemini). Ilustruje, jak moduły są ze sobą połączone i jakie role pełnią w całym systemie.
