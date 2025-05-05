@@ -4666,6 +4666,22 @@
                         "tokens": 126,
                         "time": 6.654219150543213
                     }
+                },
+                {
+                    "role": "user",
+                    "content": "kim jesteś?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Przepraszam, ale w dostarczonym kontekście nie ma informacji o tym, kim jestem. Nie posiadam żadnych danych identyfikujących mnie.\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "kim jesteś?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 33,
+                        "time": 4.926768064498901
+                    }
                 }
             ]
         },
@@ -4757,7 +4773,505 @@
                     "content": "Zmapuj powiązania komunikacyjne między Oskarżonymi Agnieszkami na podstawie zabezpieczonej korespondencji elektronicznej (maile, czaty, Signal, Threema), wskazując tematy rozmów (np. \"metody kamuflażu\", \"integracja metod\", \"wizualizacja danych\", \"transfer energii\")."
                 }
             ]
+        },
+        "a633c7cb-f121-457e-98d7-844d25cc99a9": {
+            "name": "Czat 3",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Jaką odpowiedź dała Agnieszka Kowalska (czytająca z kluczy) na prośbę funkcjonariusza o zademonstrowanie umiejętności na jego kluczach?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jaką odpowiedź dała Agnieszka Kowalska (czytająca z kluczy) na prośbę funkcjonariusza o zademonstrowanie umiejętności na jego kluczach?\n\nOdpowiedź: Pokazała funkcjonariuszowi pęk swoich własnych kluczy, mówiąc: \"Te do mieszkania brzmią bezpiecznie, ale te do piwnicy... ech, czuję w nich nutkę zapomnienia i melancholii\".\n\nŹródło w dokumentach: Przesłuchiwana Kowalska ponownie potwierdziła, że jej \"słuch kluczowy\" jest bardzo wyostrzony. (pierwszy akapit).\n\nKomentarz: Dokument nie wskazuje na reakcję Agnieszki Kowalskiej na prośbę o zbadanie kluczy funkcjonariusza - jedynie opisuje jej demonstrację umiejętności na własnych kluczach.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpyq0x7a49/code - 2025-04-25T221701.234.txt",
+                            "id": "4a661a62-588d-45c0-850a-855cca1fb2e1"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpfvyogo_2/code - 2025-05-03T182821.633.txt",
+                            "id": "f39645a6-ffd7-4038-84d8-96c85602311c"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpslki91_8/code - 2025-05-03T180026.753.txt",
+                            "id": "3ce75435-a1ab-478c-87de-b83bc8dda07c"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "Jaką odpowiedź dała Agnieszka Kowalska (czytająca z kluczy) na prośbę funkcjonariusza o zademonstrowanie umiejętności na jego kluczach?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 200,
+                        "time": 75.12082576751709
+                    }
+                }
+            ]
+        },
+        "cf09bd29-d25f-4b92-953b-43e9f71e380d": {
+            "name": "Czat 4",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Te specyficzne metody nie były jedynie narzędziem bezpośredniego oszustwa, ale integralnym elementem maskowania przestępczej działalności i konspiracji ZGP \"Agnieszka\". Dowody wskazują na koordynację tych metod oraz ich wykorzystanie poza generowaniem dochodu. Wszystkie Agnieszki konsekwentnie stosowały te \"dziwactwa\", które były omawiane w korespondencji (np. Lisiecka pytająca Kowalską o ocenę beneficjentów, Szymańska o sejfy) i służyły jako sposób na wzajemne wsparcie oraz integrację działań.\n\nŹródło w dokumentach:\n*   \"Podział Ról...wykorzystanie ich specyficznych predyspozycji lub stworzenie pozorów specjalizacji.\"\n*   \"...skala i charakter absurdalnych \"modus operandi komunikacyjnych\" i \"metod\" konsekwentnie stosowanych i bronionych przez wszystkie Agnieszki...\"\n*   \"Wewnętrzna Komunikacja i Wsparcie: ...bezpośrednie odwołania do działalności innych Agnieszek (pliki z kalkulacjami zysków z 'projektów' prowadzonych przez inne, korespondencja omawiająca metody…)\"\n*   „...metody maskowania przestępczej działalności i konspiracji…”\n*    \"Dowody takie jak pliki \"Projekt X\" u Malinowskiej, korespondencja omawiająca \"metody kamuflażu\"... wskazują na świadome uczestnictwo i koordynację działań w ramach ZGP “Agnieszka”.\"\n\nKomentarz: Metody te zdają się służyć jako element operacji wywiadowczej kamuflażowej, a także sugerować zaangażowanie ekspertów (psychologów, specjalistów IT) pomagających tworzyć i wdrażać narracje. Koordynacja z centralnym hubem finansowym Malinowskiej jest widoczna w przepływach pieniężnych i plikach kalkulacyjnych powiązanych z tymi \"metodami\" (np. „Projekt Hipnos - Negocjacje Strategiczne” u Malinowskiej, rozliczenia z Jankowską). Sugeruje to centralne zarządzanie finansowe i księgowość operacji, w której te metody odgrywały rolę generowania dochodu, ale również maskowania prawdziwej natury działalności grupy.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpp2ezb9w3/code - 2025-04-25T230546.395.txt",
+                            "id": "807d7f6d-46e3-4645-b69d-a2bc22645d2d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpt1h2f902/code - 2025-04-25T230550.641.txt",
+                            "id": "333b8c3e-37c0-4803-ac28-8ca0bca8b965"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp9fq0zmv_/code - 2025-04-25T232215.125.txt",
+                            "id": "d73dc17f-a492-4af5-b635-cf63cfc5b119"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 669,
+                        "time": 139.08093905448914
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "teraz stwórz graf powiązań dla powyższych danych."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Stwórz graf powiązań dla powyższych danych.\n\nOdpowiedź: Na podstawie dostarczonych materiałów, graf powiązań przedstawia się następująco:\n\n**Centralne postacie:**\n\n*   **Agnieszka Malinowska:** Odpowiedzialna za zarządzanie finansowe grupy (konto 77...1980) i koordynację działań.\n*   **Grupa \"Agnieszka\":** Składa się z co najmniej 20 osób o imieniu Agnieszka, w tym A. Baranowska, A. Dąbrowska, A. Grabowska, A. Jankowska, A. Lisiecka, A. Nowak, A. Ostrowska, A. Piotrowska, A. Szymańska, A. Wojciechowska, A. Zielińska i A. Zając. Współpracują w zakresie \"projektów\", \"strategii\", \"metod\" i wspólnych interesów.\n\n**Powiązania operacyjne:**\n\n*   **Lisiecka, Kwiatkowska, Ostrowska/Senny:** Powiązania korupcyjne, sprawa przekazana do CBA.\n*   **Michalska:** Szpiegostwo przemysłowe.\n*   **Zając/Jankowska:** Siatka logistyczna (oscyloskop w przesyłkach).\n*   **Nowak:** Pranie pieniędzy (kryptowaluty).\n*   **Szymańska:** Pranie pieniędzy (\"antytki\").\n*   **Zając:** Pranie pieniędzy (\"sztuka\").\n*   **Pawlak/\"Deweloperzy Cienia\":** Manipulacja rynkiem nieruchomości.\n*   **Kwiatkowska/\"Halna Wiedźma\":** Manipulacja rynkiem ubezpieczeń.\n\n**Powiązania komunikacyjne i dokumentacyjne:**\n\n*   Korespondencja między Oskarzonymi (e-maile, czaty - Signal, Threema) dotycząca strategii, metod i integracji działań.\n*   Pliki Malinowskiej jako dowód koordynacji.\n*   \"Strategia Okienna i Latarniana AG\" – dokument znaleziony u A. Wojciechowskiej.\n\n**Nietypowe elementy/dowody:**\n\n*   Grzanka \"Dowód Tostusia nr 1\" (Szymańska).\n*   Słoiczek z sokiem z mniszka z numerem rachunku bankowego ZGP (Kwiatkowska).\n\n**Dodatkowe wątki do sprawdzenia:**\n\n*   Przepływy finansowe z Cypru/Liechtensteinu/Seszel/Belize.\n*   Tożsamość dr. Klausa Steinera i PhytoGenix oraz powiązania ze służbami niemieckimi.\n*   Powiązania Kowalska-Majewska w Trójmieście.\n*   Rola Janusza L. w praniu pieniędzy.\n*   Wątek dr. Sennego i \"Sen-Med Sp. z o.o.\" - NIP, KRS, powiązania.\n\nŹródło w dokumentach: Cały dostarczony tekst (notatka Adama Kaczmarka oraz fragment Aktu Oskarżenia). Szczególnie istotne są punkty dotyczące dowodów łączących Oskarzonych, powiązań Kowalska-Reszta, dokumentacji związków przedmiot-osoba i wątków korupcyjnych.\n\nKomentarz: Graf został stworzony na podstawie informacji zawartych w dokumencie. Ze względu na specyfikę materiału (notatka śledczego oraz fragment aktu oskarżenia), niektóre powiązania są przedstawione jako hipotezy lub wymagają dalszego potwierdzenia (\"w teorii\", \"może\").\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpm8ybxq80/code - 2025-04-25T231143.084.txt",
+                            "id": "ede66040-70f4-46fd-86b3-4612d26ff935"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp9972u1uv/code - 2025-04-25T223549.768.txt",
+                            "id": "83ac7feb-3669-4273-b02e-1aa5c108a209"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp9fq0zmv_/code - 2025-04-25T232215.125.txt",
+                            "id": "d73dc17f-a492-4af5-b635-cf63cfc5b119"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "teraz stwórz graf powiązań dla powyższych danych.",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 832,
+                        "time": 98.76087617874146
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Metody te nie były jedynie narzędziem oszustwa, ale integralnym elementem strategii maskowania przestępczej działalności i konspiracji. Dowody wskazują na skoordynowane działania i koordynację tych „dziwactw” w ramach grupy ZGP \"Agnieszka\". Wiele z nich było omawianych i integrowanych przez członków grupy, a ich użycie miało charakter systematyczny.\n\nŹródło w dokumentach:\n*   \"Dowody łączące Oskarzonych (Powiązania wewnątrz ZGP \"Agnieszka\"): Najistotniejszy element... skala i charakter absurdalnych \"modus operandi komunikacyjnych\" i \"metod\" konsekwentnie stosowanych i bronionych przez wszystkie Agnieszki.\"\n*   „Korespondencja: Znaleziono bezpośrednią korespondencję między różnymi Oskarżonymi Agnieszkami… omawiającą „projekty”, „strategie”, „metody”, „integrację” ich „dziwactw” i wspólne interesy.”\n*   \"Materiał wyłączony do Archiwum X sugeruje, że ZGP \"Agnieszka\" to coś więcej niż zorganizowana grupa przestępcza… Ich metody i narracja, choć wykorzystane do celów przestępczych, wykazują stopień spójności, zaangażowania i systematyki.\"\n*   „Pliki zabezpieczone u jednych podejrzanych (szczególnie A. Malinowskiej, A. Lisieckiej…) zawierają bezpośrednie odwołania do działalności innych Agnieszek... o metodach maskowania”\n*  \"ZGP „Agnieszka” operuje … opierając swój modus operandi na zaawansowanych formach kamuflażu psychologicznego/retorycznego…”\n\nKomentarz: Dokumenty sugerują, że \"dziwactwa\" służyły jako narzędzie do maskowania przestępczej działalności oraz stanowiły integralną część strategii działania grupy.  Korespondencja i pliki znalezione na komputerach członkiń wskazują na wymianę informacji i koordynację metod, a także powiązania z działaniami centralnego hubu finansowego Malinowskiej (np. kalkulacje związane z \"Projekt Hipnos - Negocjacje Strategiczne\" na jej laptopie, plik „Strategia Okienna i Latarniana AG” u Wojciechowskiej). Metody te mogły być wykorzystywane nie tylko do generowania dochodu, ale również do profilowania ofiar (Kowalska), pozyskiwania informacji o zabezpieczeniach (Kowalska) oraz tworzenia spójnego, choć absurdalnego wizerunku grupy.",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpp2ezb9w3/code - 2025-04-25T230546.395.txt",
+                            "id": "807d7f6d-46e3-4645-b69d-a2bc22645d2d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpt1h2f902/code - 2025-04-25T230550.641.txt",
+                            "id": "333b8c3e-37c0-4803-ac28-8ca0bca8b965"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp9fq0zmv_/code - 2025-04-25T232215.125.txt",
+                            "id": "d73dc17f-a492-4af5-b635-cf63cfc5b119"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 739,
+                        "time": 152.31199193000793
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "stwórz graf do obiektów i zależności wynikających z poprzedniego zapytania Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?\n\nOdpowiedź: Specyficzne „metody” stosowane przez poszczególne “Agnieszki” były integralną częścią szerszej strategii działania ZGP, a nie tylko narzędziem do bezpośredniego oszustwa. Dowody wskazują na ich koordynację i wykorzystanie w celach operacyjnych, finansowych i potencjalnie dezinformacyjnych, z centralnym zarządzaniem przez Agnieszkę Malinowską.\n\nŹródło w dokumentach:\n\n*   Tekst główny: \"Podział Ról... sugeruje koordynację i wykorzystanie ich specyficznych predyspozycji lub stworzenie pozorów specjalizacji\".\n*   Tekst główny: „Korespondencja… omawiającą 'projekty', 'strategie', 'metody', 'integrację' ich 'dziwactw’”.\n*   Tekst główny: “Wspólna Dokumentacja Planistyczna i Finansowa: Znalezione na nośnikach szczegółowe pliki… zawierające analizę, planowanie i rozliczenie działalności poszczególnych Oskarżonych…” (odwołania do \"Projekt [Dziwactwo/Metoda] AG\").\n*   Tekst główny: „pliki 'Projekt X' u Malinowskiej, korespondencja omawiająca 'integrację metod', 'strategie maskowania’”.\n*   Agnieszka Kowalska (\"Kluczarka\"): Korespondencja z Lisiecką i Malinowską dot. wykorzystania jej metody do oceny potencjalnych ofiar i negocjacji, co sugeruje integrację w procesie oszustwa. (“Analiza korespondencji między nią a osobą o nicku \"Kosmiczna Rachunkowość\" (zidentyfikowaną jako Agnieszka Malinowska) ujawniła dyskusje na temat 'konwersji wartości cienia na waluty fiducjarne'”).\n*   Agnieszka Lisiecka (\"Chmura\"): Powiązania z Malinowską w kontekście finansowym i strategii. (“Analiza korespondencji (z komputera Agnieszki Malinowskiej / \"Kosmiczna Rachunkowość\") ujawniła e-maile, w których omawiają 'metody wizualizacji danych przyszłościowych'”).\n*   Agnieszka Michalska (\"Chlorofil\"): Zapytania o połączenie jej metody z analizą innych “Agnieszek”, sugerując wymianę wiedzy i koordynację. (“W zabezpieczonych notatkach Agnieszki Michalskiej znaleziono fragment: 'Sprawdzić Agę P. (Cień) - metoda analizy wibracji cienia nieruchomości, podobna do analizy wibracji roślin?'”).\n*   Agnieszka Pawlak (\"Cień\"): Powiązania z analizą \"wibracji cienia\" i potencjalną konwersją na waluty, co sugeruje udział w schemacie finansowym. (“Analiza korespondencji między nią a osobą o nicku \"Kosmiczna Rachunkowość\" (zidentyfikowaną jako Agnieszka Malinowska) ujawniła dyskusje na temat 'konwersji wartości cienia na waluty fiducjarne'”).\n*   Centralna rola Agnieszki Malinowskiej:  Zabezpieczone pliki finansowe, korespondencja i notatki wskazują na jej rolę jako \"centralnej księgowej\" i planistki, monitorującej i rozliczającej działania poszczególnych członków grupy. (\"Obecny kształt śledztwa… Malinowska jawiła się jako centralna postać, „księgowa” i „planistka” całego przedsięwzięcia”).\n\nKomentarz: Materiał wskazuje na celowe wykorzystanie pseudonaukowych i artystycznych metod nie tylko do oszustwa, ale również jako element kamuflażu, komunikacji wewnętrznej i potencjalnej dezinformacji. Koordynacja tych działań była centralnie zarządzana przez A. Malinowską, która pełniła rolę głównego hubu finansowego i planistycznego grupy.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpp2ezb9w3/code - 2025-04-25T230546.395.txt",
+                            "id": "807d7f6d-46e3-4645-b69d-a2bc22645d2d"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmp9fq0zmv_/code - 2025-04-25T232215.125.txt",
+                            "id": "d73dc17f-a492-4af5-b635-cf63cfc5b119"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpt1h2f902/code - 2025-04-25T230550.641.txt",
+                            "id": "333b8c3e-37c0-4803-ac28-8ca0bca8b965"
+                        }
+                    ],
+                    "graph_data": null,
+                    "prompt_answered": "stwórz graf do obiektów i zależności wynikających z poprzedniego zapytania Jak specyficzne, często pseudonaukowe lub artystyczne \"metody\" (np. kluczodiagnostyka Kowalskiej, prognozy chmur Lisieckiej, analiza wibracji roślin Michalskiej, rozmowy z cieniem Pawlak) były powiązane nie tylko z bezpośrednim oszustwem, ale również z szerszą strategią operacyjną, finansową lub dezinformacyjną ZGP \"Agnieszka\", w tym z działaniami centralnego hubu finansowego Agnieszki Malinowskiej? Czy istnieją dowody na koordynację tych metod lub ich wykorzystanie poza generowaniem pierwotnego dochodu?",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 1047,
+                        "time": 182.71579003334045
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "zbuduj graf dla centralnego hubu finansowego Agnieszki Malinowskiej, uwzględnij jak najwięcej relacji i zależności"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pytanie: zbuduj graf dla centralnego hubu finansowego Agnieszki Malinowskiej, uwzględnij jak najwięcej relacji i zależności\n\nOdpowiedź: Graf centralnego hubu finansowego Agnieszki Malinowskiej (nazywanej \"Czas\"/\"Kosmiczna Rachunkowość\") prezentuje się następująco:\n\n**Centralny Węzeł:** Agnieszka Malinowska (konto **771140...1980**) - Centralna Księgowa i Planistka ZGP „Agnieszka”.\n\n**Powiązania Bezpośrednie (przepływy finansowe):**\n\n*   **Agnieszka Nowak:** Transfery z konta FIAT Agnieszki Jankowskiej do konta Malinowskiej (8000 PLN w Q1 2023).\n*   **Agnieszka Dąbrowska (\"Beż\"):** Przelewy od \"BeigeLife Innovations\" Dąbrowskiej do \"NeutralTech Solutions Ltd\" na Cyprze, a następnie pośrednio powiązane z Malinowską.\n*   **Agnieszka Lisiecka:** Powiązania finansowe (szczegóły nieokreślone).\n*   **Agnieszka Kowalska (\"Instrukcja\"):** Odbiorca \"opłaty licencyjnej\" za jej system z konta Malinowskiej.\n*   **Agnieszka Jankowska (\"Echo\"/\"Dźwięk\"):** Przychody w ETH, transfery na konto Malinowskiej.\n*   **Agnieszka Zając (\"Guma\")**: Wspólne użycie papieru Fabriano ze znakiem oscyloskopu z Agnieszka Jankowską - sugeruje koordynację fałszerstw i przepływ środków przez obie osoby do Malinowskiej.\n\n**Powiązania Pośrednie (przez firmy):**\n\n*   **Astro-Precision Logistics:** Firma kontrolowana przez Malinowską, wykorzystywana do płatności na rzecz \"Chrono-Quantum Systems\" w Liechtensteinie (płatności za „licencję”).\n*   **NeutralTech Solutions Ltd (Cypr)**: Odbiorca środków z BeigeLife Innovations. Powiązanie z Malinowską nie jest bezpośrednie, ale pośredniczone przez Dąbrowską i transakcje.\n* **Chrono-Quantum Systems (Liechtenstein):** Płatności od Astro Precision Logistics.\n\n**Powiązania Operacyjne/Planistyczne:**\n\n*   **Wszystkie \"Agnieszki\":** Pliki z kalkulacjami zysków z działalności innych Agnieszek (\"Projekt Cień – Wyceny\", \"Projekt Ruina – Amortyzacja Obiektów\", \"Projekt Hipnos – Negocjacje Strategiczne\") znajdują się na laptopie Malinowskiej.\n*   **Pliki .xlsx, .docx, .pdf:**  Szczegółowe plany i rozliczenia działalności innych Agnieszek pod jednolitym nazewnictwem (\"Projekty AG\").\n* **\"Projekt Pył\"**: Materiały na laptopie Malinowskiej.\n\nŹródło w dokumentach:\n\n*   policjant_notes_part2.txt – cała treść, szczególnie sekcje poświęcone przepływom finansowym i roli Malinowskiej.\n*   Obserwacje zespołu śledczego - opisuje centralną rolę Malinowskiej w grupie.\n*   Analiza plików Malinowskiej (wspomniana w całym tekście).\n\nKomentarz: Graf ten przedstawia złożony system finansowy, w którym Agnieszka Malinowska pełni kluczową rolę koordynującą i księgową.  Wiele transakcji przechodzi przez pośredników i firmy-słupy z rajów podatkowych, co ma na celu ukrycie pochodzenia środków. Bez dostępu do pełnych danych finansowych (np. `transactions_agnieszka_extended.csv`) nie można jednak w pełni odtworzyć wszystkich powiązań.\n",
+                    "sources": [
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpslki91_8/code - 2025-05-03T180026.753.txt",
+                            "id": "4b175fc3-618a-4adc-b602-951745301d0b"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpanp4xean/code - 2025-05-03T182837.245.txt",
+                            "id": "79fde153-a253-4ff4-84ce-ba6a5e33cb6a"
+                        },
+                        {
+                            "name": "/var/folders/g6/3xpl3mkj4f95z4b35snszmkc0000gn/T/tmpff4o51cd/code - 2025-05-03T180907.012.txt",
+                            "id": "88b8c44c-1e3f-4184-954c-68ec901bf1d7"
+                        }
+                    ],
+                    "graph_data": {
+                        "directed": true,
+                        "multigraph": false,
+                        "graph": {},
+                        "nodes": [
+                            {
+                                "label": "Agnieszka Malinowska ('Czas', 'Kosmiczna Rachunkowość')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "Agnieszka Nowak",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Nowak"
+                            },
+                            {
+                                "label": "Agnieszka Dąbrowska ('Beż')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "Agnieszka Lisiecka",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Lisiecka"
+                            },
+                            {
+                                "label": "Agnieszka Kowalska ('Instrukcja')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Kowalska"
+                            },
+                            {
+                                "label": "Agnieszka Jankowska ('Echo', 'Dźwięk')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Jankowska"
+                            },
+                            {
+                                "label": "Agnieszka Zając ('Guma')",
+                                "llm_type": "Person",
+                                "ner_type": "persName",
+                                "id": "Agnieszka Zając"
+                            },
+                            {
+                                "label": "BeigeLife Innovations",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "BeigeLife Innovations"
+                            },
+                            {
+                                "label": "NeutralTech Solutions Ltd (Cypr)",
+                                "llm_type": "Organization",
+                                "ner_type": "orgName",
+                                "id": "NeutralTech Solutions Ltd"
+                            },
+                            {
+                                "label": "Astro-Precision Logistics",
+                                "llm_type": "Organization",
+                                "ner_type": null,
+                                "id": "Astro-Precision Logistics"
+                            },
+                            {
+                                "label": "Chrono-Quantum Systems (Liechtenstein)",
+                                "llm_type": "Organization",
+                                "ner_type": "placeName",
+                                "id": "Chrono-Quantum Systems"
+                            },
+                            {
+                                "label": "Projekt Cień – Wyceny",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Cień"
+                            },
+                            {
+                                "label": "Projekt Ruina – Amortyzacja Obiektów",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Ruina"
+                            },
+                            {
+                                "label": "Projekt Hipnos – Negocjacje Strategiczne",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Hipnos"
+                            },
+                            {
+                                "label": "Projekt Pył",
+                                "llm_type": "Project",
+                                "ner_type": null,
+                                "id": "Projekt Pył"
+                            },
+                            {
+                                "label": "Pliki 'Projekty AG'",
+                                "llm_type": "Document",
+                                "ner_type": null,
+                                "id": "Pliki .xlsx, .docx, .pdf"
+                            },
+                            {
+                                "label": "Środki 8000 PLN",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": null,
+                                "id": "8000 PLN"
+                            },
+                            {
+                                "label": "Kryptowaluta ETH",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": null,
+                                "id": "ETH"
+                            },
+                            {
+                                "label": "Opłata Licencyjna",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": null,
+                                "id": "Opłata Licencyjna"
+                            },
+                            {
+                                "label": "Cypr",
+                                "llm_type": "Location",
+                                "ner_type": "orgName",
+                                "id": "Cypr"
+                            },
+                            {
+                                "label": "Liechtenstein",
+                                "llm_type": "Location",
+                                "ner_type": "placeName",
+                                "id": "Liechtenstein"
+                            },
+                            {
+                                "label": "Konto Agnieszki Malinowskiej (771140...1980)",
+                                "llm_type": "FinancialAsset",
+                                "ner_type": "persName",
+                                "id": "Konto 771140...1980"
+                            },
+                            {
+                                "label": "Papier Fabriano ze znakiem oscyloskopu",
+                                "llm_type": "Concept",
+                                "ner_type": null,
+                                "id": "Fabriano - oscyloskop"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "label": "POSIADA",
+                                "source": "Agnieszka Malinowska",
+                                "target": "Konto 771140...1980"
+                            },
+                            {
+                                "label": "TRANSFERUJE_ŚRODKI_DO",
+                                "source": "Agnieszka Nowak",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "WYDAJE",
+                                "source": "Agnieszka Nowak",
+                                "target": "8000 PLN"
+                            },
+                            {
+                                "label": "TRANSFERUJE_ŚRODKI_DO",
+                                "source": "Agnieszka Dąbrowska",
+                                "target": "NeutralTech Solutions Ltd"
+                            },
+                            {
+                                "label": "MA_POWIĄZANIA_FINANSOWE_Z",
+                                "source": "Agnieszka Lisiecka",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "OTRZYMUJE_ŚRODKI_OD",
+                                "source": "Agnieszka Kowalska",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "TRANSFERUJE_ŚRODKI_DO",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "WYKORZYSTUJE",
+                                "source": "Agnieszka Jankowska",
+                                "target": "Fabriano - oscyloskop"
+                            },
+                            {
+                                "label": "WSPÓŁPRACUJE_Z",
+                                "source": "Agnieszka Zając",
+                                "target": "Agnieszka Jankowska"
+                            },
+                            {
+                                "label": "WYKORZYSTUJE",
+                                "source": "Agnieszka Zając",
+                                "target": "Fabriano - oscyloskop"
+                            },
+                            {
+                                "label": "PŁACI_ZA",
+                                "source": "BeigeLife Innovations",
+                                "target": "Agnieszka Dąbrowska"
+                            },
+                            {
+                                "label": "MA_SIEDZIBĘ_W",
+                                "source": "NeutralTech Solutions Ltd",
+                                "target": "Cypr"
+                            },
+                            {
+                                "label": "POŚREDNICZY_DLA",
+                                "source": "NeutralTech Solutions Ltd",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "PŁACI_ZA",
+                                "source": "Astro-Precision Logistics",
+                                "target": "Chrono-Quantum Systems"
+                            },
+                            {
+                                "label": "KONTROLUJE",
+                                "source": "Astro-Precision Logistics",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "MA_SIEDZIBĘ_W",
+                                "source": "Chrono-Quantum Systems",
+                                "target": "Liechtenstein"
+                            },
+                            {
+                                "label": "ZNALEZIONY_NA",
+                                "source": "Projekt Cień",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZNALEZIONY_NA",
+                                "source": "Projekt Ruina",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZNALEZIONY_NA",
+                                "source": "Projekt Hipnos",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZNALEZIONY_NA",
+                                "source": "Projekt Pył",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "ZNALEZIONE_U",
+                                "source": "Pliki .xlsx, .docx, .pdf",
+                                "target": "Agnieszka Malinowska"
+                            },
+                            {
+                                "label": "OTRZYMUJE",
+                                "source": "ETH",
+                                "target": "Agnieszka Jankowska"
+                            },
+                            {
+                                "label": "DOTYCZY",
+                                "source": "Opłata Licencyjna",
+                                "target": "Agnieszka Kowalska"
+                            }
+                        ]
+                    },
+                    "prompt_answered": "zbuduj graf dla centralnego hubu finansowego Agnieszki Malinowskiej, uwzględnij jak najwięcej relacji i zależności",
+                    "metadata": {
+                        "model": "gemma-3-27b-it",
+                        "tokens": 877,
+                        "time": 165.6288058757782
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "to masz te dane z pliku transactions_agnieszka_extended.csv \n\n--- START OF FILE financial_flows_agnieszka.txt ---\nZGP AGNIESZKA - ZSYNTEZOWANA LISTA WYBRANYCH PRZEPŁYWÓW FINANSOWYCH (SZKIC PROCESOWY)\n\n(Opracowano na podstawie analizy akt PR Wa I Ds. 1.2024, w tym analizy finansowej, danych z zabezpieczonych nośników IT, dokumentacji firm, zeznań świadków i podejrzanych; stan na 30.07.2024)\n\n| ID    | Data       | Nadawca (Typ/Ident.)                     | Odbiorca (Typ/Ident.)                          | Kwota        | Waluta     | Opis Transakcji (wg dokumentów / rzeczywiste maskowanie)                                  | Uwagi/Powiązanie ze Sprawą (nr sprawy pierwotnej / ustalenia śledztwa)                                                                    |\n| :---- | :--------- | :--------------------------------------- | :--------------------------------------------- | :----------- | :--------- | :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |\n| F_001 | 2022-03-10 | CASINO_ONLINE_BETA                       | AG_Nowak (Pył)                                 | 50000        | XMR        | Pranie pieniędzy: Płatność za konsultacje oniryczne / *Wypłata z nielegalnego kasyna*    | KSP-PG/0251/PRANIE/2024; Powiązane z działalnością Piotrowskiej (\"Gołąb\")? Analiza blockchain.                                           |\n| F_002 | 2022-04-25 | RETROTECH_BUYER_781 (Kolekcjoner Jap.)   | AG_Szymanska (Toster)                          | 8000         | USD        | Sprzedaż Tostera Model T-17 \"Tesla Spark\" + Certyfikat Pochodzenia                      | KWP-RZ/PG/0095/FALSZ_ANTYK/2024; Sprzedaż za zawyżoną cenę, pranie pieniędzy.                                                              |\n| F_003 | 2022-05-15 | AG_Szymanska (Toster)                    | AG_Malinowska (Czas) `771140...1980`           | 15000        | PLN        | Rozliczenie Projekt Toster AG                                                           | KMP-TOR/PG/0118/NIERZET_DOK/2024; Plik `Projekt Toster - Antyki Energetyczne.xlsx`. Centralizacja finansów ZGP.                       |\n| F_004 | 2022-07-21 | VICTIM_Kowalska_005 (Emeryt Krk)         | AG_Kowalska (Kluczarka)                        | 4000         | PLN        | Płatność za sesję rezonansu kwantowego / *Konsultacja kluczodiagnostyczna*                | KMP-GD/PG/0315/OSZUSTWO_FIN/2024; Część gotówkowa - udokumentowano wpłatę tylko części na konto bankowe.                                   |\n| F_005 | 2022-08-18 | BUDIMPOL_CONSTRUCTION_S.A.               | Fundacja_Niebieskie_Perspektywy (A. Lisiecka)    | 150000       | PLN        | Darowizna na cele statutowe (Rozwój metod obserwacji atmosferycznych)                   | KWP-RZ/PG/0089/PRZETARG/2024; Płatność za \"chmurne prognozy\", wątek korupcyjny.                                                               |\n| F_006 | 2022-09-01 | Fundacja_Niebieskie_Perspektywy          | RP_Belize_02                                   | 50000        | PLN        | Opłata za analizy energetyczne *maskowanie wypływu środków*                                | KWP-RZ/PG/0089/PRZETARG/2024; Transfer do raju podatkowego, pranie pieniędzy.                                                               |\n| F_007 | 2022-11-01 | CZYSCIEX_POL_S.A. (Kontrakt Niezrealizowany)| Eko-Włókno sp. z o.o.                          | -315700      | PLN        | (SZKODA) Konieczność utylizacji materiału tekstyl. (8.2 t) i straty z niezrealizowanych kontr. | KMP-LDZ/PG/0411/MISMANAG/2024; Skutek działań AG_Baranowska (Skarpeta).                                                                      |\n| F_008 | 2022-12-05 | NCBR (Instytucja Państw.)                | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 2500000      | PLN        | Dotacja celowa na \"Beżowy Spokój Plus\"                                                  | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Część wyłudzonej dotacji. Fałszywe dokumenty, zawyżony kosztorys.                                          |\n| F_009 | 2023-01-15 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska)| RP_Cypr (NeutralTech Solutions Ltd.)             | 1500000      | PLN        | Zakup \"beżowej linii produkcyjnej\" i aparatury (\"Beżoskop 3000\")                         | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Fałszywe faktury, wyprowadzenie środków z dotacji do raju podatkowego.                                    |\n| F_010 | 2023-02-28 | AG_Nowak (Pył)                           | AG_Malinowska (Czas) `771140...1980`           | 8000         | PLN        | Rozliczenie energii pyłu wg rezonansu (transfer krypto-fiat)                            | KSP-PG/0251/PRANIE/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer części środków od A. Nowak do A. Malinowskiej. Plik `Projekt Pył`. |\n| F_011 | 2023-03-05 | VICTIM_Grabowska_011 (Klient Olst.)      | AG_Grabowska (Mapa)                            | 5000         | PLN        | Zakup Mapy Onirycznej \"Szlak do Źródła Wiecznej Młodości\" + konsultacja oniryczna           | KMP-OL/PG/0155/MAPY_SKARBOW/2024; Oszustwo, sprzedaż map do fikcyjnych \"skarbów\".                                                         |\n| F_012 | 2023-04-01 | Janusz_Kowalski (Lumen Perfectum)        | AG_M_ ([Nazwisko], Latarnia)                 | 12000        | PLN        | Opłata za dokumentację projektową [maskowanie za przekazanie poufnych danych oświetl.]    | KMP-GDY/PG/0198/ZAKL_PRZET/2024; Płatność za dane umożliwiające \"ustawienie\" oferty przetargowej, wątek korupcyjny.                        |\n| F_013 | 2023-05-10 | Andrzej_W. (ModernBuild)                 | AG_Pawlak (Cień)                               | 10000        | EUR        | Honorarium za ekspertyzę nieruchomości / *Płatność za fałszywy operat szacunkowy*        | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024; Płatność za zaniżenie/zawyżenie wartości nieruchomości w operacie.                                       |\n| F_014 | 2023-06-20 | DR_Klaus_Steiner (UBS Switzerland)       | AG_Michalska (Chlorofil)                       | 80000        | EUR        | Grant na badania intergatunkowej komunikacji informatycznej roślin / *Płatność za szpiegostwo* | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Płatność za dane BioInnova Tech od konkurencyjnej firmy PhytoGenix.                                       |\n| F_015 | 2023-07-01 | AG_Grabowska (Mapa)                      | AG_Malinowska (Czas) `771140...1980`           | 2000         | PLN        | Zwrot zaliczki + 10% wibracji energetycznych (Projekt Mapa)                            | KMP-OL/PG/0155/MAPY_SKARBOW/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer od AG_Grabowska do centralnego konta AG_Malinowskiej.         |\n| F_016 | 2023-08-01 | HYPNOS_CONSULTING_GROUP_S.A. (Stanisław H.)| AG_Malinowska (Czas) `771140...1980`           | 35000        | EUR        | Opłata za analizę rynku globalnego / *Prowizja od strat firm w negocjacjach A. Ostrowskiej* | KWP-SZ/PG/0277/OSZUSTWO_KONTRAKT/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Wyprowadzenie środków z Hypnos, maskowanie zysków grupy.         |\n| F_017 | 2023-09-10 | ASTRO-PRECISION_LOGISTICS (A. Malinowska)| RP_Liechtenstein (Chrono-Quantum Systems)      | 50000        | EUR        | Zakup \"synchronizatora kwantowo-czasowego\" / *Pranie pieniędzy, fikcyjny koszt*            | KMP-TOR/PG/0118/NIERZET_DOK/2024; Defraudacja z Astro-Precision, wyprowadzenie do raju podatkowego.                                       |\n| F_018 | 2023-10-10 | VICTIM_Zajac_007 (Galeria Sztuki WAW)    | AG_Zajac (Guma)                                | 8000         | EUR        | Sprzedaż dzieła \"Wenus z Gumą V\" - kolekcja J.-P. Dubois / *Oszustwo, podróbka*          | KP-KR-I/PG/0115/PODROBKI_SZTUKI/2024; Sprzedaż podrobionego dzieła za zawyżoną cenę.                                                      |\n| F_019 | 2023-11-21 | AG_Jankowska (Echo) (Przez giełdę krypto)| AG_Malinowska (Czas) `771140...1980`           | 0.8          | ETH        | Konwersja wartości fali dźwiękowej na energię fiducjarną                               | KP-PW/PG/0052/FAŁSZ_AUDIO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków z \"Projekt Echo\".                                        |\n| F_020 | 2023-12-15 | JANUSZ_L. (Partner Zając)                | RP_Seszele_01                                  | 30000        | PLN        | Zwrot pożyczki [maskowanie wyprowadzenia pieniędzy uzyskanych przez Zając]               | KP-KR-I/PG/0115/PODROBKI_SZTUKI/2024; Pranie pieniędzy przez konto partnera, wyprowadzenie środków za granicę.                               |\n| F_021 | 2024-01-05 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 2300000      | PLN        | Transza kredytu technologicznego                                                        | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Dalsze wyłudzenia.                                                                                       |\n| F_022 | 2024-02-14 | Firma_BeigeLife_Innovations              | AG_Wojciechowska (Ruina) Fenestra Lucida Services| 50000        | PLN        | Faktura za \"doradztwo wizualne - rewitalizacja obszarów zdegradowanych\"                  | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024, KMP-KAT/PG/0210/NIERUCH_SZKODA/2024; Finansowanie działań Wojciechowskiej (destrukcja) z dotacji.          |\n| F_023 | 2024-03-01 | VICTIM_Piotrowska_003 (Firma PR WAW)     | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 20000        | PLN        | Płatność za Raport Wywiadu Gołębiego \"Analiza Sektora Energetycznego Wersja Gołębia\"     | KSP-PG/0288/OSZUSTWO_INFO/2024; Oszustwo, sprzedaż fikcyjnych raportów.                                                                 |\n| F_024 | 2024-03-15 | HAZARD_XYZ_007 (Platforma TOR)           | AG_Nowak (Pył)                                 | 150000       | USD        | Rozliczenie operacji krypto/wibracji *Transakcja z nielegalnego hazardu, pranie*         | KSP-PG/0251/PRANIE/2024; Kolejny duży wpływ nielegalnych środków w krypto.                                                                 |\n| F_025 | 2024-03-20 | WICEPREZES_Jan_N._(BUDIMPOL)             | AG_Lisiecka (Chmura)                           | 10000        | PLN        | Wynagrodzenie za usługi doradcze                                                        | KWP-RZ/PG/0089/PRZETARG/202_4; Kolejna regularna płatność korupcyjna dla A. Lisieckiej.                                                   |\n| F_026 | 2024-03-31 | AG_Piotrowska (Gołąb) PIA NIP 527...     | AG_Malinowska (Czas) `771140...1980`           | 20000        | PLN        | Rozliczenie Projekt Gołąb AG - Analiza Skrzydlata                                       | KSP-PG/0288/OSZUSTWO_INFO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków od A. Piotrowskiej do A. Malinowskiej.               |\n| F_027 | 2024-04-05 | AG_Pawlak (Cień)                         | AG_Malinowska (Czas) `771140...1980`           | 5000         | EUR        | Konwersja wartości cienia na walutę fiducjarną (token platynowy przelany)                | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków od A. Pawlak (z platyny?) do A. Malinowskiej.      |\n| F_028 | 2024-04-10 | AN DROBENEFIKJENT_Kwiatkowska (Wł. Pens.) | AG_Kwiatkowska (Wiatr)                         | 1000         | PLN        | Usługa doradztwa energetycznego                                                         | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Płatność za ekspertyzę, przygotowanie do wyłudzenia.                                                 |\n| F_029 | 2024-05-01 | ANDRZEJ_S. (\"Podmuch Halnego\")          | AG_Kwiatkowska (Wiatr)                         | 2000         | PLN        | Symboliczny udział w energii wdzięczności (2% odszk.) / *Prowizja od wyłudzonego odszkodowania* | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Związek z beneficjentem oszustwa ubezpieczeniowego.                                                  |\n| F_030 | 2024-05-02 | VICTIM_Ostrowska_001 (Baltic Shipping)   | HYPNOS_CONSULTING_GROUP_S.A.                     | -500000      | EUR        | (SZKODA) Straty z negocjacji umowy BSL/HCG/11/2024 po \"strategicznym śnie\" A. Ostrowskiej | KWP-SZ/PG/0277/OSZUSTWO_KONTRAKT/2024; Efekt manipulacji negocjacjami.                                                                     |\n| F_031 | 2024-05-20 | AG_Malinowska (Czas) `771140...1980`     | RP_Seszele_01                                  | 100000       | EUR        | Zakup pakietu danych kosmicznego - Analiza rezonansu / *Pranie pieniędzy, wyprowadzenie środków* | KMP-TOR/PG/0118/NIERZET_DOK/2024; Duży transfer środków z konta centralnego ZGP.                                                           |\n| F_032 | 2024-06-01 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 1500000      | PLN        | Kolejna transza kredytu technologicznego *przed planowanym aresztowaniem*                | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Kontynuacja wyłudzeń przed zatrzymaniem.                                                              |\n| F_033 | 2024-06-02 | ANDRZEJ_W. (ModernBuild)                 | Gotówka (dla AG_Pawlak? Innej osoby w ZGP?)      | 10000        | PLN        | Konsultacje architektoniczne [maskowanie za przekazanie korzyści, cz. gotówki]            | CBŚP-PG/0058/POSWIERCZ_NIEPR/2024; Dalsza płatność od partnera grupy \"Deweloperzy Cienia\", możliwe na koszty operacyjne.                  |\n| F_034 | 2024-06-03 | HYDROTECH_RZESZOW_sp_z_o.o.              | AG_Lisiecka (Chmura)                           | 5000         | PLN        | Wsparcie badań meteorologicznych                                                        | KWP-RZ/PG/0089/PRZETARG/2024; Kolejna płatność od firmy budowlanej.                                                                        |\n| F_035 | 2024-06-04 | PIAReport_Buyer_001 (Klient Piotrowska)  | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 50000        | PLN        | Zakup Raportu PIA - wersja rozszerzona                                                  | KSP-PG/0288/OSZUSTWO_INFO/2024; Jeden z ostatnich dużych udokumentowanych przychodów z \"gołębi\".                                          |\n| F_036 | 2024-06-05 | AG_Kwiatkowska (Wiatr)                   | KASA_STEFCZYKA (Konto A.K.)                    | 20000        | PLN        | Zapis na cele charytatywne                                                              | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Umyślne maskowanie dochodów.                                                                          |\n| F_037 | 2024-06-06 | VICTIM_Zielińska_002 (Turysta z DE)      | AG_Zielińska (Tkaczka)                         | 1500         | EUR        | Sprzedaż Swetra \"Splot Fortuny\" - kolecja '24                                          | KPP-ZAK/PG/0033/SWETRY_INWEST/2024; Płatność za zawyżony produkt z pseudowłaściwościami.                                                 |\n| F_038 | 2024-06-08 | AG_Malinowska (Czas) `771140...1980`     | RP_Belize_02                                   | 80000        | EUR        | Korekta czasoprzestrzeni bilansowej - dylatacja płynności *pranie, wyprowadzenie*         | KMP-TOR/PG/0118/NIERZET_DOK/2024; Duży transfer zagraniczny przed aresztowaniami grupy.                                                     |\n| F_039 | 2024-06-09 | ANTIQUE_COLLECTOR_POL_001                | AG_Szymanska (Toster)                          | 12000        | USD        | Sprzedaż Artefaktu Tostera PRL T-20 \"Maria\" + Certyfikat Świadomości Artefaktu           | KWP-RZ/PG/0095/FALSZ_ANTYK/2024; Jeden z najdroższych sprzedanych tosterów.                                                               |\n| F_040 | 2024-06-10 | VIACARPATIA_ASFALT_sp_jawna              | AG_Lisiecka (Chmura)                           | 7000         | PLN        | Wkład na rozwój wiedzy o fluktuacjach atmosferycznych                                     | KWP-RZ/PG/0089/PRZETARG/2024; Płatność od kolejnej firmy w zamian za \"doradztwo\" dot. przetargów.                                       |\n| F_041 | 2024-06-11 | AG_Nowak (Pył)                           | AG_Malinowska (Czas) `771140...1980`           | 0.5          | BTC        | Konwersja Monero do BTC - opłata za utrzymanie stabilności kanału energetycznego          | KSP-PG/0251/PRANIE/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Dalsze mieszanie środków, użycie innej krypto przed aresztowaniem Nowak.         |\n| F_042 | 2024-06-12 | AG_Kowalska (Kluczarka)                  | Gotówka (Niewiadomy Cel, ukryte)             | 20000        | PLN        | Transfer pozytywnych wibracji finansowych poza system tradycyjny                         | KMP-GD/PG/0315/OSZUSTWO_FIN/2024; Brak udokumentowania tej kwoty na kontach AG_Kowalskiej - gotówka 'spod stołu'.                            |\n| F_043 | 2024-06-13 | BUILD_COMPANY_001 (Klient Lisiecka/Piotr.) | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 30000        | PLN        | Płatność za Analizę Sytuacji Konkurencyjnej w Sektorze Deweloperskim wg PIA              | KSP-PG/0288/OSZUSTWO_INFO/2024; Płatność od firmy powiązanej z branżą budowlaną - zbieżność z AG_Lisiecką i AG_Pawlak.                     |\n| F_044 | 2024-06-14 | ANDRZEJ_S. (\"Podmuch Halnego\")          | Gotówka (do AG_Kwiatkowska?)                   | 5000         | PLN        | Wynagrodzenie za wkład w witalność miejsca *Płatność za ułatwienie wyłudzenia, gotówka*   | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Płatność gotówkowa dla uniknięcia śladu, jednak świadkowie wskazali na wręczanie kopert.                  |\n| F_045 | 2024-06-15 | AG_Jankowska (Echo) (Przez giełdę krypto)| AG_Malinowska (Czas) `771140...1980`           | 0.5          | ETH        | Konwersja esencji technologicznej - końcowe rozliczenie                                 | KP-PW/PG/0052/FAŁSZ_AUDIO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków z \"Projekt Echo\" przed aresztowaniem Jankowskiej.        |\n| F_046 | 2024-06-16 | AG_Wójcik (Ślimak)                       | AG_Malinowska (Czas) `771140...1980`           | 500          | PLN        | Prowizja Admin AG - Szybki Bill *Część zysku z nielegalnego hazardu ślimaków*            | KPP-GM/PG/0045/HAZARD/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Niski kwotowo, ale systematyczny transfer potwierdzający strukturę.             |\n| F_047 | 2024-06-17 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 1000000      | PLN        | Końcowa transza kredytu technologicznego *przed planowanym aresztowaniem*                | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Ostatni udokumentowany wpływ przed aresztowaniem Dąbrowskiej.                                          |\n| F_048 | 2024-06-18 | PIAReport_Buyer_002 (Klient Piotrowska)  | Gotówka (do AG_Piotrowska?)                    | 30000        | PLN        | Zapłata za raport Wywiadu Gołębiego - gotówka [działanie na krawędzi zatrzymania]       | KSP-PG/0288/OSZUSTWO_INFO/2024; Próba transakcji gotówkowej w obliczu zbliżającego się aresztowania, wskazuje na świadomość AG_Piotrowskiej. |\n| F_049 | 2024-06-19 | ANDRZEJ_W. (ModernBuild)                 | Gotówka (znalezione w futerale u A. Pawlak?)     | N/D (Platyna)| PLN/PLT    | \"Tokeny wdzięczności\" za ostatni operat szacunkowy                                      | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024; Zabezpieczenie fizycznej korzyści majątkowej w postaci sztabek platyny.                                |\n| F_050 | 2024-06-20 | RP_Belize_02                             | AG_Malinowska (Czas) `771140...1980`           | 10000        | USD        | Zwrot 'niewykorzystanych środków rezerwowych' *pranie pieniędzy powrotne*               | KMP-TOR/PG/0118/NIERZET_DOK/2024; Wskazuje na ruch środków z powrotem do centralnego konta przed zatrzymaniem (zbieranie \"wojennej\" kasy?). |\n| F_051 | 2024-06-21 | BANK_ZACHODNI_WBK_S.A.                   | Zatrzymanie/Zabezpieczenie Konta (AG_Michalska) | 80000        | EUR        | Zabezpieczone środki na koncie po przelewie od dr. Steinera                            | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Konfiskata mienia pochodzącego z przestępstwa.                                                          |\n| F_052 | 2024-06-25 | AG_Malinowska (Czas) `771140...1980`     | RP_Seszele_01                                  | 20000        | USD        | Uregulowanie faktury Chrono-Quantum - rata kosmiczna                                    | KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer tuż przed aresztowaniem A. Malinowskiej.                                                       |\n| F_053 | 2024-06-26 | BIOGENE_RESEARCH_Ltd. (Klient Michalska?)| DR_Klaus_Steiner (UBS Switzerland)             | 120000       | CHF        | Płatność za patent genetyczny nr X/YZ / *Potencjalne dalsze pranie środków A. Michalskiej/grupy* | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Wskazuje na potencjalną sprzedaż/pranie przez Steinera na rzecz AG.                                      |\n\n--- END OF FILE financial_flows_agnieszka.txt ---"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Na podstawie dostarczonego pliku `financial_flows_agnieszka.txt`, oto informacje dotyczące danych transakcyjnych:\n\n*   **Plik zawiera zsyntetyzowaną listę przepływów finansowych** opracowaną na podstawie analizy akt PR Wa I Ds. 1.2024, danych IT, dokumentacji firm i zeznań świadków.\n*   **Lista obejmuje okres od marca 2022 do czerwca 2024.**\n*   **Zawiera 53 transakcje (F_001 - F_053).**\n*   **Dane dla każdej transakcji:** ID, Data, Nadawca (Typ/Ident.), Odbiorca (Typ/Ident.), Kwota, Waluta, Opis Transakcji i Uwagi/Powiązanie ze Sprawą.\n*   **Wiele transakcji powiązanych jest z różnymi sprawami śledczymi**, oznaczonymi kodem sprawy, np.: KSP-PG/0251/PRANIE/2024, KWP-RZ/PG/0095/FALSZ_ANTYK/2024.\n*   **Wiele transakcji wskazuje na podejrzenie prania pieniędzy, fałszowania antyków, oszustw finansowych i korupcji.**\n*   **Osoby kluczowe powiązane z przepływami:** Agnieszka Nowak (\"Pył\"), Agnieszka Szymanska (\"Toster\"), Agnieszka Malinowska (\"Czas\"), Anna Lisiecka (\"Chmura\"), Andrzej W. (\"Podmuch Halnego\") oraz Klaus Steiner.\n*   **Wiele transakcji ma maskowane opisy**, np. \"Konsultacje oniryczne\", \"Analizy energetyczne\" lub \"Korekta czasoprzestrzeni bilansowej\".\n*   **Wiele transakcji wykorzystuje kryptowaluty (XMR, ETH, BTC).**\n*  **Ostatnie transakcje wskazują na działania podejmowane tuż przed aresztowaniami.**",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "to masz te dane z pliku transactions_agnieszka_extended.csv \n\n--- START OF FILE financial_flows_agnieszka.txt ---\nZGP AGNIESZKA - ZSYNTEZOWANA LISTA WYBRANYCH PRZEPŁYWÓW FINANSOWYCH (SZKIC PROCESOWY)\n\n(Opracowano na podstawie analizy akt PR Wa I Ds. 1.2024, w tym analizy finansowej, danych z zabezpieczonych nośników IT, dokumentacji firm, zeznań świadków i podejrzanych; stan na 30.07.2024)\n\n| ID    | Data       | Nadawca (Typ/Ident.)                     | Odbiorca (Typ/Ident.)                          | Kwota        | Waluta     | Opis Transakcji (wg dokumentów / rzeczywiste maskowanie)                                  | Uwagi/Powiązanie ze Sprawą (nr sprawy pierwotnej / ustalenia śledztwa)                                                                    |\n| :---- | :--------- | :--------------------------------------- | :--------------------------------------------- | :----------- | :--------- | :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |\n| F_001 | 2022-03-10 | CASINO_ONLINE_BETA                       | AG_Nowak (Pył)                                 | 50000        | XMR        | Pranie pieniędzy: Płatność za konsultacje oniryczne / *Wypłata z nielegalnego kasyna*    | KSP-PG/0251/PRANIE/2024; Powiązane z działalnością Piotrowskiej (\"Gołąb\")? Analiza blockchain.                                           |\n| F_002 | 2022-04-25 | RETROTECH_BUYER_781 (Kolekcjoner Jap.)   | AG_Szymanska (Toster)                          | 8000         | USD        | Sprzedaż Tostera Model T-17 \"Tesla Spark\" + Certyfikat Pochodzenia                      | KWP-RZ/PG/0095/FALSZ_ANTYK/2024; Sprzedaż za zawyżoną cenę, pranie pieniędzy.                                                              |\n| F_003 | 2022-05-15 | AG_Szymanska (Toster)                    | AG_Malinowska (Czas) `771140...1980`           | 15000        | PLN        | Rozliczenie Projekt Toster AG                                                           | KMP-TOR/PG/0118/NIERZET_DOK/2024; Plik `Projekt Toster - Antyki Energetyczne.xlsx`. Centralizacja finansów ZGP.                       |\n| F_004 | 2022-07-21 | VICTIM_Kowalska_005 (Emeryt Krk)         | AG_Kowalska (Kluczarka)                        | 4000         | PLN        | Płatność za sesję rezonansu kwantowego / *Konsultacja kluczodiagnostyczna*                | KMP-GD/PG/0315/OSZUSTWO_FIN/2024; Część gotówkowa - udokumentowano wpłatę tylko części na konto bankowe.                                   |\n| F_005 | 2022-08-18 | BUDIMPOL_CONSTRUCTION_S.A.               | Fundacja_Niebieskie_Perspektywy (A. Lisiecka)    | 150000       | PLN        | Darowizna na cele statutowe (Rozwój metod obserwacji atmosferycznych)                   | KWP-RZ/PG/0089/PRZETARG/2024; Płatność za \"chmurne prognozy\", wątek korupcyjny.                                                               |\n| F_006 | 2022-09-01 | Fundacja_Niebieskie_Perspektywy          | RP_Belize_02                                   | 50000        | PLN        | Opłata za analizy energetyczne *maskowanie wypływu środków*                                | KWP-RZ/PG/0089/PRZETARG/2024; Transfer do raju podatkowego, pranie pieniędzy.                                                               |\n| F_007 | 2022-11-01 | CZYSCIEX_POL_S.A. (Kontrakt Niezrealizowany)| Eko-Włókno sp. z o.o.                          | -315700      | PLN        | (SZKODA) Konieczność utylizacji materiału tekstyl. (8.2 t) i straty z niezrealizowanych kontr. | KMP-LDZ/PG/0411/MISMANAG/2024; Skutek działań AG_Baranowska (Skarpeta).                                                                      |\n| F_008 | 2022-12-05 | NCBR (Instytucja Państw.)                | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 2500000      | PLN        | Dotacja celowa na \"Beżowy Spokój Plus\"                                                  | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Część wyłudzonej dotacji. Fałszywe dokumenty, zawyżony kosztorys.                                          |\n| F_009 | 2023-01-15 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska)| RP_Cypr (NeutralTech Solutions Ltd.)             | 1500000      | PLN        | Zakup \"beżowej linii produkcyjnej\" i aparatury (\"Beżoskop 3000\")                         | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Fałszywe faktury, wyprowadzenie środków z dotacji do raju podatkowego.                                    |\n| F_010 | 2023-02-28 | AG_Nowak (Pył)                           | AG_Malinowska (Czas) `771140...1980`           | 8000         | PLN        | Rozliczenie energii pyłu wg rezonansu (transfer krypto-fiat)                            | KSP-PG/0251/PRANIE/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer części środków od A. Nowak do A. Malinowskiej. Plik `Projekt Pył`. |\n| F_011 | 2023-03-05 | VICTIM_Grabowska_011 (Klient Olst.)      | AG_Grabowska (Mapa)                            | 5000         | PLN        | Zakup Mapy Onirycznej \"Szlak do Źródła Wiecznej Młodości\" + konsultacja oniryczna           | KMP-OL/PG/0155/MAPY_SKARBOW/2024; Oszustwo, sprzedaż map do fikcyjnych \"skarbów\".                                                         |\n| F_012 | 2023-04-01 | Janusz_Kowalski (Lumen Perfectum)        | AG_M_ ([Nazwisko], Latarnia)                 | 12000        | PLN        | Opłata za dokumentację projektową [maskowanie za przekazanie poufnych danych oświetl.]    | KMP-GDY/PG/0198/ZAKL_PRZET/2024; Płatność za dane umożliwiające \"ustawienie\" oferty przetargowej, wątek korupcyjny.                        |\n| F_013 | 2023-05-10 | Andrzej_W. (ModernBuild)                 | AG_Pawlak (Cień)                               | 10000        | EUR        | Honorarium za ekspertyzę nieruchomości / *Płatność za fałszywy operat szacunkowy*        | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024; Płatność za zaniżenie/zawyżenie wartości nieruchomości w operacie.                                       |\n| F_014 | 2023-06-20 | DR_Klaus_Steiner (UBS Switzerland)       | AG_Michalska (Chlorofil)                       | 80000        | EUR        | Grant na badania intergatunkowej komunikacji informatycznej roślin / *Płatność za szpiegostwo* | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Płatność za dane BioInnova Tech od konkurencyjnej firmy PhytoGenix.                                       |\n| F_015 | 2023-07-01 | AG_Grabowska (Mapa)                      | AG_Malinowska (Czas) `771140...1980`           | 2000         | PLN        | Zwrot zaliczki + 10% wibracji energetycznych (Projekt Mapa)                            | KMP-OL/PG/0155/MAPY_SKARBOW/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer od AG_Grabowska do centralnego konta AG_Malinowskiej.         |\n| F_016 | 2023-08-01 | HYPNOS_CONSULTING_GROUP_S.A. (Stanisław H.)| AG_Malinowska (Czas) `771140...1980`           | 35000        | EUR        | Opłata za analizę rynku globalnego / *Prowizja od strat firm w negocjacjach A. Ostrowskiej* | KWP-SZ/PG/0277/OSZUSTWO_KONTRAKT/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Wyprowadzenie środków z Hypnos, maskowanie zysków grupy.         |\n| F_017 | 2023-09-10 | ASTRO-PRECISION_LOGISTICS (A. Malinowska)| RP_Liechtenstein (Chrono-Quantum Systems)      | 50000        | EUR        | Zakup \"synchronizatora kwantowo-czasowego\" / *Pranie pieniędzy, fikcyjny koszt*            | KMP-TOR/PG/0118/NIERZET_DOK/2024; Defraudacja z Astro-Precision, wyprowadzenie do raju podatkowego.                                       |\n| F_018 | 2023-10-10 | VICTIM_Zajac_007 (Galeria Sztuki WAW)    | AG_Zajac (Guma)                                | 8000         | EUR        | Sprzedaż dzieła \"Wenus z Gumą V\" - kolekcja J.-P. Dubois / *Oszustwo, podróbka*          | KP-KR-I/PG/0115/PODROBKI_SZTUKI/2024; Sprzedaż podrobionego dzieła za zawyżoną cenę.                                                      |\n| F_019 | 2023-11-21 | AG_Jankowska (Echo) (Przez giełdę krypto)| AG_Malinowska (Czas) `771140...1980`           | 0.8          | ETH        | Konwersja wartości fali dźwiękowej na energię fiducjarną                               | KP-PW/PG/0052/FAŁSZ_AUDIO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków z \"Projekt Echo\".                                        |\n| F_020 | 2023-12-15 | JANUSZ_L. (Partner Zając)                | RP_Seszele_01                                  | 30000        | PLN        | Zwrot pożyczki [maskowanie wyprowadzenia pieniędzy uzyskanych przez Zając]               | KP-KR-I/PG/0115/PODROBKI_SZTUKI/2024; Pranie pieniędzy przez konto partnera, wyprowadzenie środków za granicę.                               |\n| F_021 | 2024-01-05 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 2300000      | PLN        | Transza kredytu technologicznego                                                        | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Dalsze wyłudzenia.                                                                                       |\n| F_022 | 2024-02-14 | Firma_BeigeLife_Innovations              | AG_Wojciechowska (Ruina) Fenestra Lucida Services| 50000        | PLN        | Faktura za \"doradztwo wizualne - rewitalizacja obszarów zdegradowanych\"                  | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024, KMP-KAT/PG/0210/NIERUCH_SZKODA/2024; Finansowanie działań Wojciechowskiej (destrukcja) z dotacji.          |\n| F_023 | 2024-03-01 | VICTIM_Piotrowska_003 (Firma PR WAW)     | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 20000        | PLN        | Płatność za Raport Wywiadu Gołębiego \"Analiza Sektora Energetycznego Wersja Gołębia\"     | KSP-PG/0288/OSZUSTWO_INFO/2024; Oszustwo, sprzedaż fikcyjnych raportów.                                                                 |\n| F_024 | 2024-03-15 | HAZARD_XYZ_007 (Platforma TOR)           | AG_Nowak (Pył)                                 | 150000       | USD        | Rozliczenie operacji krypto/wibracji *Transakcja z nielegalnego hazardu, pranie*         | KSP-PG/0251/PRANIE/2024; Kolejny duży wpływ nielegalnych środków w krypto.                                                                 |\n| F_025 | 2024-03-20 | WICEPREZES_Jan_N._(BUDIMPOL)             | AG_Lisiecka (Chmura)                           | 10000        | PLN        | Wynagrodzenie za usługi doradcze                                                        | KWP-RZ/PG/0089/PRZETARG/202_4; Kolejna regularna płatność korupcyjna dla A. Lisieckiej.                                                   |\n| F_026 | 2024-03-31 | AG_Piotrowska (Gołąb) PIA NIP 527...     | AG_Malinowska (Czas) `771140...1980`           | 20000        | PLN        | Rozliczenie Projekt Gołąb AG - Analiza Skrzydlata                                       | KSP-PG/0288/OSZUSTWO_INFO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków od A. Piotrowskiej do A. Malinowskiej.               |\n| F_027 | 2024-04-05 | AG_Pawlak (Cień)                         | AG_Malinowska (Czas) `771140...1980`           | 5000         | EUR        | Konwersja wartości cienia na walutę fiducjarną (token platynowy przelany)                | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków od A. Pawlak (z platyny?) do A. Malinowskiej.      |\n| F_028 | 2024-04-10 | AN DROBENEFIKJENT_Kwiatkowska (Wł. Pens.) | AG_Kwiatkowska (Wiatr)                         | 1000         | PLN        | Usługa doradztwa energetycznego                                                         | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Płatność za ekspertyzę, przygotowanie do wyłudzenia.                                                 |\n| F_029 | 2024-05-01 | ANDRZEJ_S. (\"Podmuch Halnego\")          | AG_Kwiatkowska (Wiatr)                         | 2000         | PLN        | Symboliczny udział w energii wdzięczności (2% odszk.) / *Prowizja od wyłudzonego odszkodowania* | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Związek z beneficjentem oszustwa ubezpieczeniowego.                                                  |\n| F_030 | 2024-05-02 | VICTIM_Ostrowska_001 (Baltic Shipping)   | HYPNOS_CONSULTING_GROUP_S.A.                     | -500000      | EUR        | (SZKODA) Straty z negocjacji umowy BSL/HCG/11/2024 po \"strategicznym śnie\" A. Ostrowskiej | KWP-SZ/PG/0277/OSZUSTWO_KONTRAKT/2024; Efekt manipulacji negocjacjami.                                                                     |\n| F_031 | 2024-05-20 | AG_Malinowska (Czas) `771140...1980`     | RP_Seszele_01                                  | 100000       | EUR        | Zakup pakietu danych kosmicznego - Analiza rezonansu / *Pranie pieniędzy, wyprowadzenie środków* | KMP-TOR/PG/0118/NIERZET_DOK/2024; Duży transfer środków z konta centralnego ZGP.                                                           |\n| F_032 | 2024-06-01 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 1500000      | PLN        | Kolejna transza kredytu technologicznego *przed planowanym aresztowaniem*                | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Kontynuacja wyłudzeń przed zatrzymaniem.                                                              |\n| F_033 | 2024-06-02 | ANDRZEJ_W. (ModernBuild)                 | Gotówka (dla AG_Pawlak? Innej osoby w ZGP?)      | 10000        | PLN        | Konsultacje architektoniczne [maskowanie za przekazanie korzyści, cz. gotówki]            | CBŚP-PG/0058/POSWIERCZ_NIEPR/2024; Dalsza płatność od partnera grupy \"Deweloperzy Cienia\", możliwe na koszty operacyjne.                  |\n| F_034 | 2024-06-03 | HYDROTECH_RZESZOW_sp_z_o.o.              | AG_Lisiecka (Chmura)                           | 5000         | PLN        | Wsparcie badań meteorologicznych                                                        | KWP-RZ/PG/0089/PRZETARG/2024; Kolejna płatność od firmy budowlanej.                                                                        |\n| F_035 | 2024-06-04 | PIAReport_Buyer_001 (Klient Piotrowska)  | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 50000        | PLN        | Zakup Raportu PIA - wersja rozszerzona                                                  | KSP-PG/0288/OSZUSTWO_INFO/2024; Jeden z ostatnich dużych udokumentowanych przychodów z \"gołębi\".                                          |\n| F_036 | 2024-06-05 | AG_Kwiatkowska (Wiatr)                   | KASA_STEFCZYKA (Konto A.K.)                    | 20000        | PLN        | Zapis na cele charytatywne                                                              | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Umyślne maskowanie dochodów.                                                                          |\n| F_037 | 2024-06-06 | VICTIM_Zielińska_002 (Turysta z DE)      | AG_Zielińska (Tkaczka)                         | 1500         | EUR        | Sprzedaż Swetra \"Splot Fortuny\" - kolecja '24                                          | KPP-ZAK/PG/0033/SWETRY_INWEST/2024; Płatność za zawyżony produkt z pseudowłaściwościami.                                                 |\n| F_038 | 2024-06-08 | AG_Malinowska (Czas) `771140...1980`     | RP_Belize_02                                   | 80000        | EUR        | Korekta czasoprzestrzeni bilansowej - dylatacja płynności *pranie, wyprowadzenie*         | KMP-TOR/PG/0118/NIERZET_DOK/2024; Duży transfer zagraniczny przed aresztowaniami grupy.                                                     |\n| F_039 | 2024-06-09 | ANTIQUE_COLLECTOR_POL_001                | AG_Szymanska (Toster)                          | 12000        | USD        | Sprzedaż Artefaktu Tostera PRL T-20 \"Maria\" + Certyfikat Świadomości Artefaktu           | KWP-RZ/PG/0095/FALSZ_ANTYK/2024; Jeden z najdroższych sprzedanych tosterów.                                                               |\n| F_040 | 2024-06-10 | VIACARPATIA_ASFALT_sp_jawna              | AG_Lisiecka (Chmura)                           | 7000         | PLN        | Wkład na rozwój wiedzy o fluktuacjach atmosferycznych                                     | KWP-RZ/PG/0089/PRZETARG/2024; Płatność od kolejnej firmy w zamian za \"doradztwo\" dot. przetargów.                                       |\n| F_041 | 2024-06-11 | AG_Nowak (Pył)                           | AG_Malinowska (Czas) `771140...1980`           | 0.5          | BTC        | Konwersja Monero do BTC - opłata za utrzymanie stabilności kanału energetycznego          | KSP-PG/0251/PRANIE/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Dalsze mieszanie środków, użycie innej krypto przed aresztowaniem Nowak.         |\n| F_042 | 2024-06-12 | AG_Kowalska (Kluczarka)                  | Gotówka (Niewiadomy Cel, ukryte)             | 20000        | PLN        | Transfer pozytywnych wibracji finansowych poza system tradycyjny                         | KMP-GD/PG/0315/OSZUSTWO_FIN/2024; Brak udokumentowania tej kwoty na kontach AG_Kowalskiej - gotówka 'spod stołu'.                            |\n| F_043 | 2024-06-13 | BUILD_COMPANY_001 (Klient Lisiecka/Piotr.) | PIA_Dział_Operacji_Skrzydlatych (A. Piotrowska) | 30000        | PLN        | Płatność za Analizę Sytuacji Konkurencyjnej w Sektorze Deweloperskim wg PIA              | KSP-PG/0288/OSZUSTWO_INFO/2024; Płatność od firmy powiązanej z branżą budowlaną - zbieżność z AG_Lisiecką i AG_Pawlak.                     |\n| F_044 | 2024-06-14 | ANDRZEJ_S. (\"Podmuch Halnego\")          | Gotówka (do AG_Kwiatkowska?)                   | 5000         | PLN        | Wynagrodzenie za wkład w witalność miejsca *Płatność za ułatwienie wyłudzenia, gotówka*   | KPP-NT/PG/0021/OSZUSTWO_UBEZP/2024; Płatność gotówkowa dla uniknięcia śladu, jednak świadkowie wskazali na wręczanie kopert.                  |\n| F_045 | 2024-06-15 | AG_Jankowska (Echo) (Przez giełdę krypto)| AG_Malinowska (Czas) `771140...1980`           | 0.5          | ETH        | Konwersja esencji technologicznej - końcowe rozliczenie                                 | KP-PW/PG/0052/FAŁSZ_AUDIO/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer środków z \"Projekt Echo\" przed aresztowaniem Jankowskiej.        |\n| F_046 | 2024-06-16 | AG_Wójcik (Ślimak)                       | AG_Malinowska (Czas) `771140...1980`           | 500          | PLN        | Prowizja Admin AG - Szybki Bill *Część zysku z nielegalnego hazardu ślimaków*            | KPP-GM/PG/0045/HAZARD/2024, KMP-TOR/PG/0118/NIERZET_DOK/2024; Niski kwotowo, ale systematyczny transfer potwierdzający strukturę.             |\n| F_047 | 2024-06-17 | BGK (Instytucja Państw.)                 | BeigeLife Innovations sp. z o.o. (A. Dąbrowska) | 1000000      | PLN        | Końcowa transza kredytu technologicznego *przed planowanym aresztowaniem*                | KWP-LDZ/PG/0415/DOTACJA_BEZ/2024; Ostatni udokumentowany wpływ przed aresztowaniem Dąbrowskiej.                                          |\n| F_048 | 2024-06-18 | PIAReport_Buyer_002 (Klient Piotrowska)  | Gotówka (do AG_Piotrowska?)                    | 30000        | PLN        | Zapłata za raport Wywiadu Gołębiego - gotówka [działanie na krawędzi zatrzymania]       | KSP-PG/0288/OSZUSTWO_INFO/2024; Próba transakcji gotówkowej w obliczu zbliżającego się aresztowania, wskazuje na świadomość AG_Piotrowskiej. |\n| F_049 | 2024-06-19 | ANDRZEJ_W. (ModernBuild)                 | Gotówka (znalezione w futerale u A. Pawlak?)     | N/D (Platyna)| PLN/PLT    | \"Tokeny wdzięczności\" za ostatni operat szacunkowy                                      | CBŚP-PG/0058/POSWIADCZ_NIEPR/2024; Zabezpieczenie fizycznej korzyści majątkowej w postaci sztabek platyny.                                |\n| F_050 | 2024-06-20 | RP_Belize_02                             | AG_Malinowska (Czas) `771140...1980`           | 10000        | USD        | Zwrot 'niewykorzystanych środków rezerwowych' *pranie pieniędzy powrotne*               | KMP-TOR/PG/0118/NIERZET_DOK/2024; Wskazuje na ruch środków z powrotem do centralnego konta przed zatrzymaniem (zbieranie \"wojennej\" kasy?). |\n| F_051 | 2024-06-21 | BANK_ZACHODNI_WBK_S.A.                   | Zatrzymanie/Zabezpieczenie Konta (AG_Michalska) | 80000        | EUR        | Zabezpieczone środki na koncie po przelewie od dr. Steinera                            | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Konfiskata mienia pochodzącego z przestępstwa.                                                          |\n| F_052 | 2024-06-25 | AG_Malinowska (Czas) `771140...1980`     | RP_Seszele_01                                  | 20000        | USD        | Uregulowanie faktury Chrono-Quantum - rata kosmiczna                                    | KMP-TOR/PG/0118/NIERZET_DOK/2024; Transfer tuż przed aresztowaniem A. Malinowskiej.                                                       |\n| F_053 | 2024-06-26 | BIOGENE_RESEARCH_Ltd. (Klient Michalska?)| DR_Klaus_Steiner (UBS Switzerland)             | 120000       | CHF        | Płatność za patent genetyczny nr X/YZ / *Potencjalne dalsze pranie środków A. Michalskiej/grupy* | KWP-PO/PGK/0077/SZPIEG_GOSP/2024; Wskazuje na potencjalną sprzedaż/pranie przez Steinera na rzecz AG.                                      |\n\n--- END OF FILE financial_flows_agnieszka.txt ---",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 451,
+                        "time": 49.29630470275879
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "czesc"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć! :)\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "czesc",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 6,
+                        "time": 0.9865579605102539
+                    }
+                }
+            ]
+        },
+        "45d335d8-477d-4a0f-ae38-69bb23736462": {
+            "name": "Czat 5",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "cześć"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cześć! Jak mogę Ci pomóc?\n",
+                    "sources": [],
+                    "graph_data": null,
+                    "prompt_answered": "cześć",
+                    "metadata": {
+                        "model": "lmstudio-community/gemma-3-12b-it",
+                        "tokens": 11,
+                        "time": 1.2406771183013916
+                    }
+                }
+            ]
         }
     },
-    "active_chat_id": "4ff7878a-974d-458c-adaf-01ecd4d10a07"
+    "active_chat_id": "45d335d8-477d-4a0f-ae38-69bb23736462"
 }

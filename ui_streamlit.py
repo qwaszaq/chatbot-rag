@@ -11,6 +11,8 @@ import json # Dodano import json
 import networkx as nx # Dodano import networkx
 from streamlit_agraph import agraph, Node, Edge, Config # Dodano importy dla wizualizacji grafu
 import textwrap # Dodano import textwrap do zawijania etykiet
+import io # DODANO: Do obsługi plików w pamięci
+from pypdf import PdfReader # DODANO: Do odczytu PDF
 # Dodano import dla obiektu odpowiedzi LLM z LangChain, aby móc sprawdzić jego typ
 from langchain_core.messages import AIMessage, HumanMessage
 import warnings # Dodano do obsługi FutureWarning
@@ -267,6 +269,9 @@ def main():
 
     if 'filter_by_selected_cluster' not in st.session_state:
         st.session_state.filter_by_selected_cluster = False
+    # DODANO: Inicjalizacja dla plików kontekstowych
+    if 'context_files' not in st.session_state:
+        st.session_state.context_files = {} # Słownik: {nazwa_pliku: tresc}
 
     # --- Inicjalizacja chatbota ---
     if "chatbot" not in st.session_state:
@@ -332,51 +337,76 @@ def main():
             st.session_state.cluster_assignments = None
             st.session_state.cluster_load_status = "error"
 
-        # Następnie załaduj metadane (etykiety, podsumowania, encje) z QDRANT (Iteracja 2)
-        # Na razie inicjalizujemy jako puste, zostaną załadowane w Iteracji 2
-        # loaded_metadata = load_cluster_metadata() # USUNIĘTO
-        loaded_metadata = None # Zostanie załadowane w Iteracji 2
-        # Inicjalizacja stanów metadanych (jeśli nie istnieją)
+        # --- ŁADOWANIE METADANYCH KLASTRÓW (ETYKIETY, PODSUMOWANIA, ENCJE) Z QDRANT ---
+        logger.info("🌀 Próba załadowania metadanych klastrów (etykiety, podsumowania, encje) z Qdrant...")
+        loaded_metadata = None
+        if "chatbot" in st.session_state and hasattr(st.session_state.chatbot, 'qdrant_connector'):
+            try:
+                # Wywołaj nową (lub istniejącą) metodę do ładowania metadanych
+                loaded_metadata = st.session_state.chatbot.qdrant_connector.load_cluster_metadata_from_qdrant()
+                if loaded_metadata:
+                    logger.info(f"✅ Załadowano {len(loaded_metadata)} rekordów metadanych klastrów z Qdrant.")
+                    # Rozpakuj metadane do odpowiednich stanów sesji
+                    st.session_state.cluster_labels = {k: v.get('label') for k, v in loaded_metadata.items() if v.get('label')}
+                    st.session_state.cluster_summaries = {k: v.get('summary') for k, v in loaded_metadata.items() if v.get('summary')}
+                    st.session_state.cluster_entities = {k: v.get('entities', []) for k, v in loaded_metadata.items()} # Zawsze przypisz listę, nawet pustą
+                else:
+                    logger.info("ℹ️ Nie znaleziono zapisanych metadanych klastrów w Qdrant.")
+                    # Upewnij się, że stany są puste, jeśli nic nie załadowano
+                    st.session_state.cluster_labels = {}
+                    st.session_state.cluster_summaries = {}
+                    st.session_state.cluster_entities = {}
+            except AttributeError as ae:
+                 # Jeśli metoda load_cluster_metadata_from_qdrant jeszcze nie istnieje
+                 if 'load_cluster_metadata_from_qdrant' in str(ae):
+                      logger.warning("⚠️ Metoda 'load_cluster_metadata_from_qdrant' nie istnieje w QdrantConnector. Metadane nie zostaną załadowane.")
+                 else:
+                      logger.error(f"❌ Błąd atrybutu podczas ładowania metadanych klastrów: {ae}")
+                 st.session_state.cluster_labels = {}
+                 st.session_state.cluster_summaries = {}
+                 st.session_state.cluster_entities = {}
+            except Exception as meta_load_exc:
+                logger.error(f"❌ Wyjątek podczas ładowania metadanych klastrów z Qdrant: {meta_load_exc}", exc_info=True)
+                st.session_state.cluster_labels = {}
+                st.session_state.cluster_summaries = {}
+                st.session_state.cluster_entities = {}
+        else:
+            logger.error("❌ Nie można załadować metadanych klastrów - obiekt chatbot lub qdrant_connector niedostępny.")
+            st.session_state.cluster_labels = {}
+            st.session_state.cluster_summaries = {}
+            st.session_state.cluster_entities = {}
+        # ---------------------------------------------------------------------------------
+
+        # Inicjalizacja pozostałych stanów metadanych (jeśli nie istnieją)
+        # Te linie są teraz mniej krytyczne, bo powyższy blok powinien je ustawić, ale zostawmy dla bezpieczeństwa
         if 'cluster_labels' not in st.session_state: st.session_state.cluster_labels = {}
         if 'cluster_summaries' not in st.session_state: st.session_state.cluster_summaries = {}
         if 'cluster_entities' not in st.session_state: st.session_state.cluster_entities = {}
         if 'show_cluster_inconsistency_warning' not in st.session_state: st.session_state.show_cluster_inconsistency_warning = False # Reset flagi
 
-        if loaded_metadata: # Ta sekcja będzie aktywowana w Iteracji 2 po dodaniu ładowania z Qdrant
-            # Załaduj metadane z Qdrant niezależnie od spójności (sprawdzanie poniżej)
-            st.session_state.cluster_labels = loaded_metadata.get("labels", {})
-            st.session_state.cluster_summaries = loaded_metadata.get("summaries", {})
-            st.session_state.cluster_entities = loaded_metadata.get("entities", {})
-            load_timestamp = loaded_metadata.get('timestamp', 'N/A')
-            metadata_assignments_count = loaded_metadata.get('assignments_count')
-            logger.info(f"✅ Metadane klastrów (etykiety/podsumowania/encje) wstępnie załadowane z pliku JSON (Timestamp: {load_timestamp}, Liczba zapisanych przypisań: {metadata_assignments_count}).")
+        # --- Sprawdzanie spójności danych klastrowania (opcjonalne, na razie zakomentowane) ---
+        # Można dodać logikę sprawdzania spójności między liczbą przypisań a liczbą metadanych,
+        # ale wymagałoby to dodania np. liczby punktów do zapisywanych metadanych.
+        # Na razie zakładamy, że dane są spójne lub ostrzeżenie nie jest konieczne.
+        # if 'show_cluster_inconsistency_warning' not in st.session_state:
+        #      st.session_state.show_cluster_inconsistency_warning = False
+        # assignments_from_qdrant = st.session_state.get('cluster_assignments')
+        # qdrant_assignments_count = len(assignments_from_qdrant) if assignments_from_qdrant is not None else 0
+        # metadata_count = len(st.session_state.get('cluster_labels', {})) # Sprawdzamy np. po etykietach
+        # if qdrant_assignments_count > 0 and metadata_count > 0 and qdrant_assignments_count != metadata_count:
+        #      logger.warning(f"⚠️ Potencjalna niespójność danych klastrowania! Liczba przypisań w Qdrant ({qdrant_assignments_count}) różni się od liczby załadowanych metadanych ({metadata_count}).")
+        #      st.session_state.show_cluster_inconsistency_warning = True
+        # else:
+        #      st.session_state.show_cluster_inconsistency_warning = False
+        # --------------------------------------------------------------------------------
 
-            # Sprawdź spójność liczby przypisań i dodaj flagę ostrzeżenia
-            assignments_from_qdrant = st.session_state.get('cluster_assignments')
-            qdrant_assignments_count = len(assignments_from_qdrant) if assignments_from_qdrant is not None else 0
+        # USUNIĘTO stary blok warunkowy 'if loaded_metadata:' i powiązaną logikę ładowania z pliku JSON
+        # oraz logikę sprawdzania spójności opartą na pliku JSON.
 
-            # Inicjalizacja flagi ostrzeżenia
-            if 'show_cluster_inconsistency_warning' not in st.session_state:
-                 st.session_state.show_cluster_inconsistency_warning = False
-
-            if metadata_assignments_count is not None and metadata_assignments_count != qdrant_assignments_count:
-                logger.warning(f"⚠️ Niespójność danych klastrowania! Liczba przypisań w Qdrant ({qdrant_assignments_count}) różni się od zapisanej w pliku JSON ({metadata_assignments_count}). Metadane mogą być nieaktualne.")
-                # Ustaw flagę, aby wyświetlić ostrzeżenie w UI
-                st.session_state.show_cluster_inconsistency_warning = True
-            elif metadata_assignments_count is None:
-                 logger.warning(f"⚠️ Brak 'assignments_count' w załadowanych metadanych. Nie można sprawdzić spójności.") # Usunięto odwołanie do pliku
-                 # Można też ustawić flagę ostrzeżenia w tym przypadku
-                 st.session_state.show_cluster_inconsistency_warning = True
-            else:
-                 # Liczba się zgadza, upewnij się, że flaga ostrzeżenia jest False
-                 st.session_state.show_cluster_inconsistency_warning = False
-
-        else:
-            # Plik nie istnieje lub błąd ładowania/parsowania (logowane w load_cluster_metadata)
-            # Upewnij się, że stany są puste/domyślne
-            st.session_state.cluster_labels = {}
-            st.session_state.cluster_summaries = {}
-            st.session_state.cluster_entities = {}
+        # Inicjalizacja flagi ostrzeżenia (jeśli jej nie ma) - teraz zawsze False na starcie,
+        # ponieważ nie sprawdzamy już spójności z nieistniejącym plikiem JSON.
+        if 'show_cluster_inconsistency_warning' not in st.session_state:
+             st.session_state.show_cluster_inconsistency_warning = False
 
         st.session_state.cluster_data_loaded = True # Oznacz próbę ładowania jako zakończoną
     # ---------------------------------------------------
@@ -694,11 +724,16 @@ def main():
                                          save_meta_success = st.session_state.chatbot.qdrant_connector.save_cluster_metadata_to_qdrant(
                                              cluster_metadata_to_save
                                          )
-                                         if save_meta_success:
+                                         # POPRAWKA: Sprawdź wynik przed wyświetleniem komunikatu
+                                         if save_meta_success is True: # Jawne sprawdzenie True
                                              logger.info("✅ Pomyślnie zapisano metadane klastrów do Qdrant.")
-                                             st.success("✅ Metadane klastrów zapisane w Qdrant.") # Dodaj komunikat dla użytkownika
-                                         else:
-                                             st.error("⚠️ Wystąpił błąd podczas zapisywania metadanych klastrów do Qdrant.")
+                                             st.success("✅ Metadane klastrów zapisane w Qdrant.")
+                                         elif save_meta_success is False: # Jawne sprawdzenie False
+                                              # Logowanie błędu już powinno być w metodzie QdrantConnector
+                                              st.error("⚠️ Wystąpił błąd podczas zapisywania metadanych klastrów do Qdrant (funkcja zwróciła False).")
+                                         # else: # Obsługa przypadków, gdyby funkcja zwróciła coś innego niż bool (nie powinno się zdarzyć)
+                                         #    logger.warning(f"Nieoczekiwana wartość zwrócona przez save_cluster_metadata_to_qdrant: {save_meta_success}")
+                                         #    st.warning("Otrzymano nieoczekiwany status zapisu metadanych.")
                                  else:
                                      logger.warning("Brak metadanych klastrów (poza szumem) do zapisania.")
 
@@ -915,8 +950,68 @@ def main():
         )
         st.markdown("---")
 
+        # === SEKCJA PLIKÓW KONTEKSTOWYCH (TYLKO DLA LLM) ===
+        st.header("📄 Pliki Kontekstowe (dla LLM)")
+        context_file_uploader = st.file_uploader(
+            "Dodaj pliki TXT/PDF jako dodatkowy kontekst (nie będą indeksowane w RAG)",
+            type=["txt", "pdf"],
+            accept_multiple_files=True,
+            key="context_uploader"
+        )
 
-        st.header("📁 Zarządzanie dokumentami")
+        if context_file_uploader:
+            new_context_files = {}
+            context_upload_errors = []
+            with st.spinner("Przetwarzanie plików kontekstowych..."):
+                for uploaded_file in context_file_uploader:
+                    file_name = uploaded_file.name
+                    try:
+                        if file_name.lower().endswith(".txt"):
+                            # Odczyt pliku TXT
+                            stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
+                            content = stringio.read()
+                            new_context_files[file_name] = content
+                            logger.info(f"📄 Odczytano plik TXT jako kontekst: {file_name}")
+                        elif file_name.lower().endswith(".pdf"):
+                            # Odczyt pliku PDF za pomocą pypdf
+                            pdf_bytes = io.BytesIO(uploaded_file.getvalue())
+                            reader = PdfReader(pdf_bytes)
+                            content = ""
+                            for page in reader.pages:
+                                content += page.extract_text() + "\n"
+                            new_context_files[file_name] = content
+                            logger.info(f"📄 Odczytano plik PDF jako kontekst: {file_name}")
+                    except Exception as e:
+                        error_msg = f"Błąd odczytu pliku kontekstowego '{file_name}': {e}"
+                        logger.error(error_msg, exc_info=True)
+                        context_upload_errors.append(error_msg)
+
+            # Aktualizuj stan sesji tylko nowymi/zaktualizowanymi plikami
+            # To pozwala na dodawanie kolejnych plików bez nadpisywania poprzednich
+            st.session_state.context_files.update(new_context_files)
+
+            if context_upload_errors:
+                for error in context_upload_errors:
+                    st.error(error)
+
+        # Wyświetlanie listy załadowanych plików kontekstowych i przycisku czyszczenia
+        if st.session_state.context_files:
+            st.subheader("Załadowane pliki kontekstowe:")
+            for filename in st.session_state.context_files.keys():
+                st.markdown(f"- `{filename}`")
+            if st.button("Wyczyść pliki kontekstowe", key="clear_context_files"):
+                st.session_state.context_files = {}
+                # Wyczyść też sam uploader, ustawiając jego wartość na pustą listę
+                # To wymaga specyficznego klucza, który nadaliśmy uploaderowi
+                # Używamy st.session_state['key'] do ustawienia wartości uploadera
+                st.session_state.context_uploader = [] # Resetuj stan uploadera
+                logger.info("🧹 Wyczyściłem listę plików kontekstowych.")
+                st.rerun()
+        st.markdown("---")
+        # === KONIEC SEKCJI PLIKÓW KONTEKSTOWYCH ===
+
+
+        st.header("📁 Zarządzanie dokumentami (RAG)")
 
         st.markdown("---")
         st.subheader("⚠️ Strefa niebezpieczna")
@@ -1347,10 +1442,14 @@ def main():
                         if st.session_state.use_gemini_api:
                             logger.info("✨ Tryb: Google Gemini API")
                             if st.session_state.chatbot.gemini_llm:
-                                # Wywołaj dedykowaną metodę dla Gemini
-                                response_dict = st.session_state.chatbot._generate_gemini_answer(last_user_prompt)
+                                # Wywołaj dedykowaną metodę dla Gemini, przekazując pliki kontekstowe
+                                context_files_content_dict = st.session_state.get('context_files', {}) # Zmieniono nazwę zmiennej dla jasności
+                                response_dict = st.session_state.chatbot._generate_gemini_answer(
+                                    question=last_user_prompt,
+                                    context_files_content=context_files_content_dict # Przekazujemy słownik
+                                )
                                 if response_dict and response_dict.get("content"):
-                                    gemini_response = response_dict["content"]
+                                    gemini_response = response_dict["content"] # Treść odpowiedzi
                                     if hasattr(gemini_response, 'content'):
                                         response_content_str = gemini_response.content
                                     elif isinstance(gemini_response, str):
@@ -1402,9 +1501,13 @@ def main():
                             if st.session_state.get('filter_by_selected_cluster', False) and st.session_state.selected_cluster_id is not None:
                                 query_cluster_filter_id = st.session_state.selected_cluster_id
                                 logger.info(f"   Zapytanie będzie filtrowane do klastra ID: {query_cluster_filter_id}")
+                            # Pobierz pliki kontekstowe
+                            context_files_content_dict = st.session_state.get('context_files', {}) # Zmieniono nazwę zmiennej dla jasności
                             # Przekazanie cluster_assignments, extract_graph ORAZ filter_cluster_id do query
+                            # DODANO: context_files_content
                             response_dict, sources, graph_data = st.session_state.chatbot.query(
                                 question=last_user_prompt,
+                                context_files_content=context_files_content_dict, # Przekazujemy słownik
                                 system_prompt_override=selected_prompt_text,
                                 cluster_assignments=st.session_state.get('cluster_assignments'), # Przekaż, jeśli istnieje
                                 extract_graph=should_extract_graph, # Przekaż flagę ekstrakcji

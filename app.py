@@ -170,15 +170,18 @@ class RAGChatbot:
             logger.error(f"❌ Błąd podczas przetwarzania dokumentu: {str(e)}")
             return False
 
-    # Zmodyfikowana metoda query - DODANO filter_cluster_id
+    # Zmodyfikowana metoda query - DODANO filter_cluster_id i context_files_content
     def query(self, question: str, system_prompt_override: Optional[str] = None,
               cluster_assignments: Optional[Dict[str, int]] = None,
               expand_context_clusters: int = 1, expand_context_docs: int = 2,
               extract_graph: bool = False,
-              filter_cluster_id: Optional[int] = None) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
+              filter_cluster_id: Optional[int] = None,
+              context_files_content: Optional[Dict[str, str]] = None) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """
         Udziela odpowiedzi na pytanie korzystając z RAG.
         Opcjonalnie rozszerza kontekst o dodatkowe dokumenty z dominujących klastrów
+        lub filtruje wyszukiwanie do konkretnego klastra.
+        Opcjonalnie dołącza treść z podanych plików jako dodatkowy kontekst.
         lub filtruje wyszukiwanie do konkretnego klastra.
 
         Args:
@@ -190,6 +193,7 @@ class RAGChatbot:
             expand_context_docs (int): Maksymalna liczba dodatkowych dokumentów do dodania z każdego dominującego klastra.
             extract_graph (bool): Czy próbować ekstrahować graf wiedzy z odpowiedzi. Domyślnie False.
             filter_cluster_id (Optional[int]): ID klastra do filtrowania wyszukiwania. Jeśli None, brak filtrowania.
+            context_files_content (Optional[Dict[str, str]]): Słownik z nazwami plików i ich treścią do dodania jako kontekst dla LLM.
 
         Returns:
             tuple: Zawiera:
@@ -323,48 +327,54 @@ class RAGChatbot:
                  logger.warning("⚠️ Nie podano system_prompt_override do metody query. Używanie pustego promptu systemowego.")
                  system_prompt_override = ""
 
-            response_dict = self._generate_answer(question, context, system_prompt_text=system_prompt_override)
+            # Przekazujemy context_files_content do _generate_answer
+            response_dict = self._generate_answer(
+                question=question,
+                context=context,
+                system_prompt_text=system_prompt_override,
+                context_files_content=context_files_content # DODANO
+            )
             sources = top_sources # Używamy zebranych źródeł (tylko top 3, nawet jeśli kontekst rozszerzony)
 
-            logger.info("✅ Odpowiedź została pomyślnie wygenerowana wraz z metadanymi")
+            logger.info("✅ Odpowiedź RAG została pomyślnie wygenerowana wraz z metadanymi")
 
             # --- Ekstrakcja grafu wiedzy z odpowiedzi ---
             graph_data = None # Initialize graph_data to None
             answer_text_content = None
             if response_dict and response_dict.get("content"):
-                 content_data = response_dict["content"]
-                 if isinstance(content_data, AIMessage):
-                      answer_text_content = content_data.content
-                 elif isinstance(content_data, str):
-                      # Sprawdź, czy to nie jest komunikat o błędzie (brak metadanych)
-                      if response_dict.get("metadata") is not None:
-                           answer_text_content = content_data
-                      else:
-                           logger.warning("Pomijanie ekstrakcji grafu z komunikatu o błędzie LLM.")
-                 else:
-                      logger.warning(f"Nieoczekiwany typ treści odpowiedzi: {type(content_data)}. Pomijanie ekstrakcji grafu.")
+                content_data = response_dict["content"]
+                if isinstance(content_data, AIMessage):
+                    answer_text_content = content_data.content
+                elif isinstance(content_data, str):
+                    # Sprawdź, czy to nie jest komunikat o błędzie (brak metadanych)
+                    if response_dict.get("metadata") is not None:
+                        answer_text_content = content_data
+                    else:
+                        logger.warning("Pomijanie ekstrakcji grafu z komunikatu o błędzie LLM.")
+                else:
+                    logger.warning(f"Nieoczekiwany typ treści odpowiedzi: {type(content_data)}. Pomijanie ekstrakcji grafu.")
             else:
-                 logger.warning("Brak treści w odpowiedzi LLM. Pomijanie ekstrakcji grafu.")
+                logger.warning("Brak treści w odpowiedzi LLM. Pomijanie ekstrakcji grafu.")
 
 
             # --- Ekstrakcja grafu wiedzy z odpowiedzi (TYLKO jeśli zażądano) ---
             if extract_graph and answer_text_content: # WARUNEK DODANY TUTAJ
-                 logger.info("🕸️ Próba ekstrakcji grafu wiedzy z odpowiedzi LLM (tryb grafowy)...")
-                 try:
-                      # Wywołanie metody ekstrakcji grafu
-                      graph = self._extract_graph_from_response(answer_text_content)
+                logger.info("🕸️ Próba ekstrakcji grafu wiedzy z odpowiedzi LLM (tryb grafowy)...")
+                try:
+                    # Wywołanie metody ekstrakcji grafu
+                    graph = self._extract_graph_from_response(answer_text_content)
 
-                      if graph and graph.nodes:
-                           # Serializacja grafu do formatu node-link oczekiwanego przez streamlit-agraph
-                           graph_data = nx.node_link_data(graph)
-                           logger.info(f"✅ Pomyślnie wyekstrahowano i zserializowano graf z {len(graph.nodes)} węzłami i {len(graph.edges)} krawędziami.")
-                      else:
-                           logger.info("ℹ️ Nie udało się wyekstrahować znaczących relacji do grafu z odpowiedzi lub LLM zwrócił pustą listę.")
-                 except Exception as graph_e:
-                      # Logujemy konkretny błąd, który wystąpił TUTAJ
-                      logger.error(f"❌ Błąd podczas ekstrakcji lub serializacji grafu wiedzy: {graph_e}", exc_info=True)
+                    if graph and graph.nodes:
+                        # Serializacja grafu do formatu node-link oczekiwanego przez streamlit-agraph
+                        graph_data = nx.node_link_data(graph)
+                        logger.info(f"✅ Pomyślnie wyekstrahowano i zserializowano graf z {len(graph.nodes)} węzłami i {len(graph.edges)} krawędziami.")
+                    else:
+                        logger.info("ℹ️ Nie udało się wyekstrahować znaczących relacji do grafu z odpowiedzi lub LLM zwrócił pustą listę.")
+                except Exception as graph_e:
+                    # Logujemy konkretny błąd, który wystąpił TUTAJ
+                    logger.error(f"❌ Błąd podczas ekstrakcji lub serializacji grafu wiedzy: {graph_e}", exc_info=True)
             elif extract_graph: # Jeśli zażądano grafu, ale nie było treści do analizy
-                 logger.warning("⚠️ Pominięto ekstrakcję grafu - brak treści odpowiedzi LLM lub błąd generowania.")
+                logger.warning("⚠️ Pominięto ekstrakcję grafu - brak treści odpowiedzi LLM lub błąd generowania.")
             # -----------------------------------------
 
             return response_dict, sources, graph_data
@@ -374,15 +384,16 @@ class RAGChatbot:
             return {"content": f"Wystąpił błąd podczas przetwarzania pytania: {e}", "metadata": None}, [], None
 
 
-    def _generate_answer(self, question, context, system_prompt_text):
+    def _generate_answer(self, question: str, context: str, system_prompt_text: str, context_files_content: Optional[Dict[str, str]] = None):
         """
-        Generuje odpowiedź na podstawie kontekstu i pytania przy użyciu modelu LLM (lokalnego),
-        dołączając metadane dotyczące generowania.
+        Generuje odpowiedź na podstawie kontekstu RAG, pytania i opcjonalnie treści plików kontekstowych,
+        używając modelu LLM (lokalnego), dołączając metadane dotyczące generowania.
 
         Args:
-            question (str): Pytanie użytkownika
-            context (str): Kontekst z dokumentów
-            system_prompt_text (str): Tekst promptu systemowego (instrukcji)
+            question (str): Pytanie użytkownika.
+            context (str): Kontekst z dokumentów RAG (może być pusty).
+            system_prompt_text (str): Tekst promptu systemowego (instrukcji).
+            context_files_content (Optional[Dict[str, str]]): Słownik z treścią plików kontekstowych.
 
         Returns:
             dict: Słownik zawierający treść odpowiedzi i metadane
@@ -403,20 +414,31 @@ class RAGChatbot:
             # Próba uzyskania nazwy modelu z obiektu, jeśli istnieje
             model_name = getattr(self.llm, 'model_name', getattr(self.llm, 'model', "Lokalny LLM (LM Studio)"))
 
-            prompt_to_send = f"""{system_prompt_text}
+            # Formatowanie treści plików kontekstowych, jeśli istnieją
+            formatted_context_files = ""
+            if context_files_content:
+                formatted_context_files += "\n\n--- DODATKOWY KONTEKST Z PLIKÓW ---\n"
+                for filename, content in context_files_content.items():
+                    formatted_context_files += f"\n-- Plik: {filename} --\n{content}\n-- Koniec pliku: {filename} --\n"
+                formatted_context_files += "\n--- KONIEC DODATKOWEGO KONTEKSTU Z PLIKÓW ---\n"
+                logger.info(f"📄 Dołączono kontekst z {len(context_files_content)} plików do promptu lokalnego LLM.")
 
-            --- DOSTARCZONY KONTEKST ---
-            {context}
+            # Budowanie finalnego promptu
+            prompt_to_send = f"""{system_prompt_text}
+            {formatted_context_files} # Dodajemy sformatowany kontekst z plików
+
+            --- KONTEKST Z DOKUMENTÓW (RAG) ---
+            {context if context else "Brak kontekstu z dokumentów RAG."}
             --- KONIEC KONTEKSTU ---
 
             --- PYTANIE UŻYTKOWNIKA ---
             {question}
             --- KONIEC PYTANIA ---
 
-            --- ODPOWIEDŹ ANALITYKA (bazująca WYŁĄCZNIE na powyższym kontekście): ---
+            --- ODPOWIEDŹ ANALITYKA (bazująca na DOSTARCZONYM KONTEKŚCIE i KONTEKŚCIE Z PLIKÓW): ---
             """
-            logger.info("➡️ Wysłanie ręcznie zbudowanego promptu do lokalnego LLM...")
-            # logger.debug(f"   Pełny prompt (fragment): {prompt_to_send[:500]}...") # Opcjonalny debug
+            logger.info("➡️ Wysłanie promptu do lokalnego LLM...")
+            # logger.debug(f"   Pełny prompt (fragment): {prompt_to_send[:1000]}...") # Zwiększono fragment logu
 
             start_time = time.time()
             # Używamy invoke, oczekujemy obiektu AIMessage lub podobnego
@@ -496,14 +518,15 @@ class RAGChatbot:
             }
         }
 
-    # DODANO: Nowa metoda do generowania odpowiedzi przez Gemini
-    def _generate_gemini_answer(self, question: str) -> Dict[str, Any]:
+    # ZMODYFIKOWANO: Metoda akceptuje teraz context_files_content
+    def _generate_gemini_answer(self, question: str, context_files_content: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
         """
-        Generuje odpowiedź na pytanie bezpośrednio przez model Google Gemini,
-        dołączając metadane dotyczące generowania.
+        Generuje odpowiedź na pytanie, opcjonalnie używając treści plików kontekstowych,
+        bezpośrednio przez model Google Gemini, dołączając metadane dotyczące generowania.
 
         Args:
             question (str): Pytanie użytkownika.
+            context_files_content (Optional[Dict[str, str]]): Słownik z treścią plików kontekstowych.
 
         Returns:
             dict: Słownik zawierający treść odpowiedzi i metadane
@@ -521,9 +544,29 @@ class RAGChatbot:
         response_time = 0.0
 
         try:
+            # Formatowanie treści plików kontekstowych, jeśli istnieją
+            formatted_context_files_gemini = ""
+            if context_files_content:
+                formatted_context_files_gemini += "\n\n--- DODATKOWY KONTEKST Z PLIKÓW ---\n"
+                for filename, content in context_files_content.items():
+                    formatted_context_files_gemini += f"\n-- Plik: {filename} --\n{content}\n-- Koniec pliku: {filename} --\n"
+                formatted_context_files_gemini += "\n--- KONIEC DODATKOWEGO KONTEKSTU Z PLIKÓW ---\n"
+                logger.info(f"📄 Dołączono kontekst z {len(context_files_content)} plików do promptu Gemini API.")
+
+            # Budowanie finalnego promptu (tylko pytanie i kontekst z plików)
+            prompt_to_send_gemini = f"""{formatted_context_files_gemini}
+
+            --- PYTANIE UŻYTKOWNIKA ---
+            {question}
+            --- KONIEC PYTANIA ---
+
+            --- ODPOWIEDŹ (bazująca na pytaniu i kontekście z plików): ---
+            """
             logger.info(f"➡️ Wysłanie promptu do Google Gemini API (model: {model_name})...")
+            # logger.debug(f"   Pełny prompt Gemini (fragment): {prompt_to_send_gemini[:1000]}...")
+
             start_time = time.time()
-            response = self.gemini_llm.invoke(question)
+            response = self.gemini_llm.invoke(prompt_to_send_gemini) # Wysyłamy zbudowany prompt
             end_time = time.time()
             response_time = end_time - start_time
 

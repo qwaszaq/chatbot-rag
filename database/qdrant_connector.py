@@ -315,7 +315,7 @@ class QdrantConnector:
     def update_payload_with_cluster_ids(self, assignments: Dict[str, int]):
         """
         Aktualizuje pole 'cluster_id' w payloadzie punktów w Qdrant na podstawie
-        słownika przypisań przy użyciu client.set_payload (wsadowo).
+        słownika przypisań przy użyciu client.upsert.
 
         Args:
             assignments (Dict[str, int]): Słownik mapujący ID punktu (str) na ID klastra (int).
@@ -334,53 +334,95 @@ class QdrantConnector:
         logger.info(f"⚙️ Rozpoczynanie aktualizacji payloadów dla {len(assignments)} punktów w Qdrant (pole: cluster_id)...")
         start_time = time.time()
 
-        # Przygotuj listy ID punktów i odpowiadających im payloadów (tylko pole cluster_id)
-        point_ids = list(assignments.keys())
-        # Upewnij się, że cluster_id jest typu int, a nie np. np.int32
-        payloads_to_set = [{"cluster_id": int(cluster_id)} for cluster_id in assignments.values()]
+        # Przygotuj punkty do aktualizacji
+        points_to_update = []
+        point_ids_processed = set() # Do śledzenia unikalnych ID
+
+        for pid, cluster_id_val_raw in assignments.items():
+            if not isinstance(pid, str):
+                 logger.warning(f"Pominięto aktualizację dla punktu - nieprawidłowy typ ID: {type(pid)} (wartość: {repr(pid)})")
+                 continue
+
+            if pid in point_ids_processed:
+                 logger.warning(f"Pominięto duplikat ID punktu w assignments: {pid}")
+                 continue
+            point_ids_processed.add(pid)
+
+            try:
+                # Upewnij się, że cluster_id jest poprawnym intem
+                if isinstance(cluster_id_val_raw, (int, float)):
+                     cluster_id_val = int(cluster_id_val_raw)
+                elif hasattr(cluster_id_val_raw, 'item'): # Obsługa typów NumPy
+                     cluster_id_val = int(cluster_id_val_raw.item())
+                else:
+                     raise TypeError(f"Nieprawidłowy typ dla cluster_id: {type(cluster_id_val_raw)}")
+
+                points_to_update.append(
+                    rest.PointStruct(
+                        id=pid,
+                        payload={"cluster_id": cluster_id_val}, # Tworzymy payload do aktualizacji
+                        vector={} # Pusty wektor, bo tylko aktualizujemy payload
+                    )
+                )
+            except (ValueError, TypeError) as e:
+                logger.warning(f"Pominięto aktualizację dla punktu {pid} z powodu nieprawidłowego cluster_id '{cluster_id_val_raw}' (typ: {type(cluster_id_val_raw)}): {e}")
+
+        if not points_to_update:
+             logger.error("❌ Brak prawidłowych punktów do aktualizacji payloadu cluster_id po walidacji.")
+             return False # Zwracamy False, bo były przypisania, ale żadne nie było poprawne
+
+        logger.info(f"   Przygotowano {len(points_to_update)} punktów do aktualizacji payloadu (cluster_id) za pomocą upsert.")
 
         try:
-            # WAŻNE: Upewnij się, że importujesz Payload i UpdateResult (zrobione na górze pliku)
-
-            # Aktualizuj payload wsadowo używając set_payload
-            update_result: UpdateResult = self.client.set_payload(
+            # Użyj upsert do aktualizacji payloadu punktów wsadowo
+            update_result: UpdateResult = self.client.upsert(
                 collection_name=self.collection_name,
-                payload=payloads_to_set, # Lista payloadów
-                points=point_ids,       # Lista odpowiadających ID punktów
-                wait=True               # Poczekaj na zakończenie
+                points=points_to_update,
+                wait=True
             )
 
             end_time = time.time()
-            logger.info(f"⏱️ Aktualizacja payloadów Qdrant (set_payload wsadowo) zajęła: {end_time - start_time:.2f}s")
+            logger.info(f"⏱️ Aktualizacja payloadów Qdrant (upsert wsadowo) zajęła: {end_time - start_time:.2f}s")
 
-            update_status = getattr(update_result, 'status', 'unknown')
-            if update_status in ["completed", "acknowledged"]:
-                logger.info(f"✅ Pomyślnie ustawiono payload (cluster_id) dla {len(point_ids)} punktów w Qdrant.")
+            # Sprawdzanie statusu operacji upsert (bardziej odporne)
+            update_status = "unknown"
+            op_info = getattr(update_result, 'result', getattr(update_result, 'operation_info', None)) # Sprawdź oba możliwe atrybuty
+            if op_info and hasattr(op_info, 'status'):
+                 update_status = op_info.status
+            elif hasattr(update_result, 'status'): # Fallback dla starszych wersji?
+                 update_status = update_result.status
+
+            # Konwersja statusu z obiektu enum na string, jeśli to konieczne
+            if hasattr(update_status, 'value'): update_status = update_status.value
+
+            if str(update_status).lower() in ["completed", "acknowledged"]:
+                logger.info(f"✅ Pomyślnie ustawiono payload (cluster_id) dla {len(points_to_update)} punktów w Qdrant.")
                 return True
             else:
                 logger.error(f"❌ Ustawienie payloadów Qdrant zakończone statusem: {update_status}")
                 return False
         except Exception as e:
-             logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (set_payload wsadowo): {e}", exc_info=True)
+             logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (upsert wsadowo): {e}", exc_info=True)
              return False
     # === KONIEC POPRAWIONEJ METODY AKTUALIZACJI PAYLOADU ===
-# === NOWA METODA DO ZAPISYWANIA METADANYCH KLASTRÓW ===
+
+    # === POPRAWIONA METODA ZAPISU METADANYCH KLASTRÓW ===
     def save_cluster_metadata_to_qdrant(self, cluster_metadata: Dict[int, Dict[str, Any]]):
         """
         Zapisuje metadane klastrów (etykiety, podsumowania, encje) do dedykowanej kolekcji w Qdrant.
-        Każdy klaster jest zapisywany jako osobny punkt, gdzie ID punktu to ID klastra,
+        Każdy klaster jest zapisywany jako osobny punkt, gdzie ID punktu to ID klastra (int),
         a payload to słownik z metadanymi (label, summary, entities).
 
         Args:
-            cluster_metadata (Dict[int, Dict[str, Any]]): Słownik mapujący ID klastra (int)
-                                                          na słownik metadanych (np. {'label': ..., 'summary': ..., 'entities': ...}).
+            cluster_metadata (Dict[Any, Dict[str, Any]]): Słownik mapujący ID klastra (może być np.int64)
+                                                          na słownik metadanych.
 
         Returns:
-            bool: True jeśli operacja się powiodła, False w przypadku błędu lub braku danych.
+            bool: True jeśli operacja się powiodła, False w przypadku błędu lub braku danych do zapisu.
         """
         if not cluster_metadata:
             logger.info("ℹ️ Brak metadanych klastrów do zapisania w Qdrant.")
-            return True
+            return True # Nie ma nic do zrobienia
         if not self.client:
             logger.error("❌ Błąd: Klient Qdrant nie jest zainicjalizowany w save_cluster_metadata_to_qdrant.")
             return False
@@ -392,36 +434,107 @@ class QdrantConnector:
         start_time = time.time()
 
         points_to_upsert = []
-        for cluster_id, metadata in cluster_metadata.items():
-            # Sprawdź, czy klaster_id jest int i nie jest szumem (-1)
-            if isinstance(cluster_id, int) and cluster_id != -1:
-                # Przygotuj payload - upewnij się, że zawiera oczekiwane klucze
-                # Konwertuj listę encji (krotek) na listę list, aby była zgodna z JSON
-                entities_list = metadata.get("entities", [])
-                serializable_entities = [list(entity) for entity in entities_list]
+        skipped_clusters = []
+        processed_clusters = 0
 
-                payload: Payload = {
-                    "label": metadata.get("label", f"Klaster {cluster_id}"),
-                    "summary": metadata.get("summary", "Brak podsumowania."),
-                    "entities": serializable_entities # Zapisz serializowalną listę
+        for cluster_id_raw, metadata in cluster_metadata.items():
+            processed_clusters += 1
+            # Dodano bardziej szczegółowe logowanie PRZED próbą konwersji
+            logger.info(f"--- ({processed_clusters}/{len(cluster_metadata)}) Rozpoczynam przetwarzanie metadanych dla cluster_id: {repr(cluster_id_raw)} (typ: {type(cluster_id_raw)}) ---")
+
+            try:
+                # Bardziej odporna konwersja ID klastra na int
+                int_cluster_id = -999 # Wartość wskazująca na błąd
+                if isinstance(cluster_id_raw, (int, float)):
+                    int_cluster_id = int(cluster_id_raw)
+                elif isinstance(cluster_id_raw, str) and cluster_id_raw.isdigit():
+                    int_cluster_id = int(cluster_id_raw)
+                elif hasattr(cluster_id_raw, 'item') and callable(getattr(cluster_id_raw, 'item')):
+                    try:
+                        int_cluster_id = int(cluster_id_raw.item())
+                        logger.debug(f"   Konwersja z typu NumPy na int: {int_cluster_id}")
+                    except (ValueError, TypeError) as numpy_conv_err:
+                         raise TypeError(f"Błąd konwersji .item() dla typu NumPy: {numpy_conv_err}") from numpy_conv_err
+                else:
+                    raise TypeError(f"Nieobsługiwany typ lub format cluster_id: {type(cluster_id_raw)}")
+
+                logger.info(f"   ID klastra po konwersji: {int_cluster_id} (typ: {type(int_cluster_id)})")
+
+                if int_cluster_id == -1:
+                    logger.info(f"   Pominięto klaster szumu (-1): {cluster_id_raw}")
+                    skipped_clusters.append(f"{cluster_id_raw} (szum)")
+                    continue # Idź do następnej iteracji pętli
+
+                # Walidacja pozostałych metadanych
+                label = metadata.get("label")
+                summary = metadata.get("summary")
+                entities_list_raw = metadata.get("entities", []) # Pobierz surową listę
+
+                # --- Walidacja etykiety ---
+                if not label or not isinstance(label, str):
+                     logger.warning(f"   Pominięto klaster {int_cluster_id}: Brak lub nieprawidłowy typ etykiety: {repr(label)} (typ: {type(label)})")
+                     skipped_clusters.append(f"{int_cluster_id} (błąd etykiety)")
+                     continue
+
+                # --- Walidacja i serializacja encji ---
+                if not isinstance(entities_list_raw, list):
+                    logger.warning(f"   Oczekiwano listy encji dla klastra {int_cluster_id}, otrzymano {type(entities_list_raw)}. Ustawiam na pustą listę.")
+                    serializable_entities = []
+                else:
+                    serializable_entities = []
+                    for i, entity in enumerate(entities_list_raw):
+                        if isinstance(entity, (list, tuple)) and len(entity) == 3:
+                            # Sprawdź, czy elementy wewnętrzne są serializowalne (np. stringi, liczby)
+                            try:
+                                # Próba konwersji na listę, która jest bezpieczna dla JSON
+                                entity_as_list = list(entity)
+                                # Dodatkowe sprawdzenie, czy elementy nie są jakimiś obiektami
+                                if all(isinstance(item, (str, int, float, bool)) or item is None for item in entity_as_list):
+                                     serializable_entities.append(entity_as_list)
+                                else:
+                                     logger.warning(f"   Pominięto encję {i} w klastrze {int_cluster_id} z powodu nieserializowalnych typów: {entity_as_list}")
+                            except Exception as inner_conv_err:
+                                logger.warning(f"   Pominięto encję {i} w klastrze {int_cluster_id} z powodu błędu konwersji na listę: {inner_conv_err}")
+                        else:
+                            logger.warning(f"   Pominięto nieprawidłowy format encji {i} w klastrze {int_cluster_id}: {repr(entity)} (typ: {type(entity)}, długość: {len(entity) if hasattr(entity, '__len__') else 'N/A'})")
+
+                # --- Przygotowanie Payload ---
+                final_summary = summary if isinstance(summary, str) else "Brak podsumowania."
+                payload_dict: Dict[str, Any] = {
+                    "label": label,
+                    "summary": final_summary,
+                    "entities": serializable_entities
                 }
-                # ID punktu w Qdrant musi być stringiem lub int (ale musi być spójne), użyjmy int
-                point_id = cluster_id # Użyj int jako ID punktu
 
+                # --- Logowanie tuż przed dodaniem ---
+                logger.info(f"   >>> Przygotowano do dodania: ID={int_cluster_id}, Payload={payload_dict}")
+
+                # --- Dodanie PointStruct ---
                 points_to_upsert.append(
-                    rest.PointStruct( # Użyj rest.PointStruct
-                        id=point_id,
-                        vector={}, # Brak wektorów w tej kolekcji
-                        payload=payload
+                    rest.PointStruct(
+                        id=int_cluster_id, # Używamy int jako ID
+                        vector={}, # Brak wektorów
+                        payload=payload_dict
                     )
                 )
+                logger.info(f"   +++ Pomyślnie dodano PointStruct dla klastra {int_cluster_id} do listy upsert.")
+
+            except (ValueError, TypeError, Exception) as e: # Rozszerzono obsługę błędów
+                 logger.error(f"   Pominięto klaster z ID '{cluster_id_raw}' z powodu błędu przetwarzania: {e}", exc_info=True)
+                 skipped_clusters.append(f"{cluster_id_raw} (błąd przetwarzania)")
+                 continue # Idź do następnej iteracji pętli
+
+        if skipped_clusters:
+             logger.warning(f"Pominięto zapis metadanych dla {len(skipped_clusters)}/{processed_clusters} klastrów z powodu szumu lub błędów: {skipped_clusters}")
 
         if not points_to_upsert:
-            logger.warning("⚠️ Brak prawidłowych metadanych klastrów do utworzenia punktów w Qdrant.")
-            return True # Nie ma nic do zrobienia, uznajemy za sukces
+            logger.error("❌ Brak prawidłowych metadanych klastrów do zapisania w Qdrant (po odfiltrowaniu/błędach). Operacja zapisu przerwana.")
+            # Zwracamy False, bo nie udało się przygotować żadnych danych do zapisu, mimo że były na wejściu.
+            return False
 
+        # Jeśli mamy punkty do zapisania, kontynuujemy
         try:
-            # Użyj upsert do dodania/aktualizacji punktów (klastrów)
+            logger.info(f"Rozpoczynanie operacji upsert dla {len(points_to_upsert)} punktów metadanych...")
             update_result: UpdateResult = self.client.upsert(
                 collection_name=self.cluster_metadata_collection_name,
                 points=points_to_upsert,
@@ -431,14 +544,19 @@ class QdrantConnector:
             end_time = time.time()
             logger.info(f"⏱️ Zapis metadanych klastrów do Qdrant (upsert wsadowo) zajął: {end_time - start_time:.2f}s")
 
-            update_status = getattr(update_result, 'status', 'unknown')
-            # Qdrant > 1.1 zwraca OperationStatus, sprawdzamy result
-            op_status = getattr(update_result, 'result', None)
-            if op_status and op_status.status == rest.UpdateStatus.COMPLETED:
-                 update_status = "completed" # Ujednolicenie dla logowania
+            # Sprawdzanie statusu operacji upsert (bardziej odporne)
+            update_status = "unknown"
+            op_info = getattr(update_result, 'result', getattr(update_result, 'operation_info', None)) # Sprawdź oba możliwe atrybuty
+            if op_info and hasattr(op_info, 'status'):
+                 update_status = op_info.status
+            elif hasattr(update_result, 'status'): # Fallback dla starszych wersji?
+                 update_status = update_result.status
 
-            if update_status in ["completed", "acknowledged"]:
-                logger.info(f"✅ Pomyślnie zapisano/zaktualizowano metadane dla {len(points_to_upsert)} klastrów w Qdrant.")
+            # Konwersja statusu z obiektu enum na string, jeśli to konieczne
+            if hasattr(update_status, 'value'): update_status = update_status.value
+
+            if str(update_status).lower() in ["completed", "acknowledged"]:
+                logger.info(f"✅ Pomyślnie zapisano/zaktualizowano metadane dla {len(points_to_upsert)} klastrów w Qdrant (status: {update_status}).")
                 return True
             else:
                 logger.error(f"❌ Zapis metadanych klastrów do Qdrant zakończony statusem: {update_status}")
@@ -446,4 +564,72 @@ class QdrantConnector:
         except Exception as e:
              logger.error(f"❌ Błąd podczas zapisu metadanych klastrów do Qdrant (upsert wsadowo): {e}", exc_info=True)
              return False
-    # === KONIEC NOWEJ METODY DO ZAPISYWANIA METADANYCH KLASTRÓW ===
+    # === KONIEC POPRAWIONEJ METODY ZAPISU METADANYCH KLASTRÓW ===
+
+    # === NOWA METODA DO ŁADOWANIA METADANYCH KLASTRÓW ===
+    def load_cluster_metadata_from_qdrant(self) -> Dict[int, Dict[str, Any]]:
+        """
+        Ładuje metadane klastrów (etykiety, podsumowania, encje) z dedykowanej kolekcji w Qdrant.
+
+        Returns:
+            Dict[int, Dict[str, Any]]: Słownik mapujący ID klastra (int) na słownik metadanych.
+                                        Zwraca pusty słownik w przypadku błędu lub braku danych.
+        """
+        if not self.client:
+            logger.error("❌ Błąd: Klient Qdrant nie jest zainicjalizowany w load_cluster_metadata_from_qdrant.")
+            return {}
+
+        # Upewnij się, że kolekcja metadanych istnieje (choć powinna być już zainicjalizowana)
+        self._initialize_metadata_collection()
+
+        logger.info(f"⬇️ Ładowanie metadanych klastrów z kolekcji '{self.cluster_metadata_collection_name}'...")
+        loaded_metadata = {}
+        next_page_offset = None
+
+        try:
+            while True:
+                # Używamy scroll API do pobierania partiami
+                from qdrant_client.http import models as rest # Upewnijmy się, że jest w zasięgu
+                response, next_page_offset = self.client.scroll(
+                    collection_name=self.cluster_metadata_collection_name,
+                    limit=256, # Pobieramy w rozsądnych partiach
+                    offset=next_page_offset,
+                    with_payload=True, # Potrzebujemy payloadu
+                    with_vectors=False, # Wektory nie są potrzebne
+                )
+
+                if not response: # Jeśli nie ma więcej wyników
+                    break
+
+                # Przetwarzanie pobranych rekordów
+                for record in response:
+                    cluster_id = record.id # ID punktu to ID klastra (int)
+                    payload = getattr(record, 'payload', {})
+                    if isinstance(cluster_id, int) and payload:
+                        # Odtwarzamy listę krotek dla encji
+                        entities_list_of_lists = payload.get("entities", [])
+                        reconstructed_entities = [tuple(entity) for entity in entities_list_of_lists if isinstance(entity, list) and len(entity) == 3]
+
+                        loaded_metadata[cluster_id] = {
+                            "label": payload.get("label"),
+                            "summary": payload.get("summary"),
+                            "entities": reconstructed_entities # Zapisz odtworzoną listę krotek
+                        }
+                    else:
+                         logger.warning(f"Pominięto rekord metadanych z nieprawidłowym ID ({cluster_id}, typ: {type(cluster_id)}) lub pustym payloadem.")
+
+                # Jeśli next_page_offset jest None, to koniec danych
+                if next_page_offset is None:
+                    break
+
+            logger.info(f"✅ Pomyślnie załadowano metadane dla {len(loaded_metadata)} klastrów z kolekcji '{self.cluster_metadata_collection_name}'.")
+            return loaded_metadata
+
+        except Exception as e:
+            # Sprawdź, czy błąd wynika z braku kolekcji
+            if "not found" in str(e).lower() or "doesn't exist" in str(e).lower():
+                 logger.warning(f"⚠️ Kolekcja metadanych '{self.cluster_metadata_collection_name}' nie istnieje. Zwracam puste metadane.")
+            else:
+                 logger.error(f"❌ Błąd podczas ładowania metadanych klastrów z Qdrant za pomocą scroll: {str(e)}", exc_info=True)
+            return {} # Zwróć pusty słownik w przypadku błędu
+    # === KONIEC NOWEJ METODY DO ŁADOWANIA METADANYCH KLASTRÓW ===
