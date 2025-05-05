@@ -42,7 +42,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 CHAT_HISTORY_FILE = "chat_history.json" # Ścieżka do pliku historii
-CLUSTER_METADATA_FILE = "cluster_metadata.json" # Ścieżka do pliku metadanych klastrów
+# CLUSTER_METADATA_FILE = "cluster_metadata.json" # USUNIĘTO: Metadane będą w Qdrant
 
 # === POCZĄTEK POPRAWKI KOLORÓW ===
 # --- Mapowanie typów NER na kolory (DOSTOSOWANE DO pl_core_news_md/lg) ---
@@ -184,78 +184,7 @@ def save_chat_history(chats_data, active_chat_id):
         logger.error(f"❌ Błąd podczas zapisywania historii do {CHAT_HISTORY_FILE}: {e}")
 # -----------------------------------------
 
-# --- Funkcje do obsługi metadanych klastrów (plik JSON) ---
-def load_cluster_metadata() -> Optional[Dict[str, Any]]:
-    """
-    Ładuje metadane klastrów (etykiety, podsumowania, encje, timestamp, assignments_count) z pliku JSON.
-    Zwraca słownik z danymi lub None w przypadku błędu lub braku pliku.
-    """
-    if os.path.exists(CLUSTER_METADATA_FILE):
-        try:
-            with open(CLUSTER_METADATA_FILE, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            # Sprawdź, czy plik zawiera oczekiwane klucze główne
-            if isinstance(data, dict) and all(k in data for k in ["timestamp", "assignments_count", "labels", "summaries", "entities"]):
-                logger.info(f"💾 Próba załadowania metadanych klastrów z pliku {CLUSTER_METADATA_FILE}")
-                # Konwertuj klucze słowników metadanych (ID klastra) z powrotem na int
-                labels_loaded = {int(k) if k.isdigit() else k: v for k, v in data.get("labels", {}).items()}
-                summaries_loaded = {int(k) if k.isdigit() else k: v for k, v in data.get("summaries", {}).items()}
-                entities_loaded = {int(k) if k.isdigit() else k: v for k, v in data.get("entities", {}).items()}
-
-                # Zwróć pełny słownik danych
-                return {
-                    "timestamp": data.get("timestamp"),
-                    "assignments_count": data.get("assignments_count"),
-                    "labels": labels_loaded,
-                    "summaries": summaries_loaded,
-                    "entities": entities_loaded
-                }
-            else:
-                logger.warning(f"⚠️ Plik {CLUSTER_METADATA_FILE} ma nieprawidłową strukturę (brak wymaganych kluczy). Usuwanie pliku.")
-                # Jeśli struktura jest zła, usuń plik, aby uniknąć problemów przy kolejnym starcie
-                try: os.remove(CLUSTER_METADATA_FILE)
-                except OSError as e: logger.error(f"Nie udało się usunąć nieprawidłowego pliku {CLUSTER_METADATA_FILE}: {e}")
-                return None
-        except json.JSONDecodeError:
-            logger.error(f"❌ Błąd dekodowania JSON w pliku {CLUSTER_METADATA_FILE}. Plik może być uszkodzony. Usuwanie pliku.")
-            try: os.remove(CLUSTER_METADATA_FILE)
-            except OSError as e: logger.error(f"Nie udało się usunąć uszkodzonego pliku {CLUSTER_METADATA_FILE}: {e}")
-            return None
-        except Exception as e:
-            logger.error(f"❌ Nieoczekiwany błąd podczas ładowania metadanych klastrów z {CLUSTER_METADATA_FILE}: {e}", exc_info=True)
-            return None
-    else:
-        logger.info(f"ℹ️ Plik metadanych klastrów {CLUSTER_METADATA_FILE} nie istnieje.")
-        return None
-
-import time # Upewnij się, że import jest na górze pliku
-from typing import List, Dict, Tuple, Optional # Upewnij się, że import jest na górze pliku
-
-def save_cluster_metadata(assignments: Optional[Dict[str, int]], labels: Dict[int, str], summaries: Dict[int, str], entities: Dict[int, List[Tuple[str, str, int]]]):
-    """Zapisuje metadane klastrów (etykiety, podsumowania, encje) wraz z liczbą przypisań i znacznikiem czasu do pliku JSON."""
-    try:
-        # Konwertuj klucze (int) na stringi dla JSON
-        serializable_labels = {str(k): v for k, v in labels.items()} if labels else {}
-        serializable_summaries = {str(k): v for k, v in summaries.items()} if summaries else {}
-        # Encje: klucze słownika konwertowane, wewnętrzne krotki są OK dla JSON
-        serializable_entities = {str(k): v for k, v in entities.items()} if entities else {}
-
-        assignments_count = len(assignments) if assignments is not None else 0
-        current_timestamp = time.time()
-
-        data_to_save = {
-            "timestamp": current_timestamp,
-            "assignments_count": assignments_count,
-            "labels": serializable_labels,
-            "summaries": serializable_summaries,
-            "entities": serializable_entities
-        }
-        with open(CLUSTER_METADATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data_to_save, f, ensure_ascii=False, indent=4)
-        logger.info(f"💾 Zapisano metadane klastrów (etykiety, podsumowania, encje, liczba przypisań: {assignments_count}, timestamp: {current_timestamp}) do {CLUSTER_METADATA_FILE}")
-    except Exception as e:
-        logger.error(f"❌ Błąd podczas zapisywania metadanych klastrów do {CLUSTER_METADATA_FILE}: {e}")
-# -----------------------------------------
+# --- Usunięto funkcje load_cluster_metadata i save_cluster_metadata ---
 
 # Funkcja pomocnicza do mapowania źródła na ID punktu (wymaga dostosowania!)
 # USUNIĘTO: Już niepotrzebna, bo ID jest przekazywane w sources
@@ -403,11 +332,18 @@ def main():
             st.session_state.cluster_assignments = None
             st.session_state.cluster_load_status = "error"
 
-        # Następnie załaduj metadane (etykiety, podsumowania, encje) z pliku JSON i sprawdź spójność
-        loaded_metadata = load_cluster_metadata()
+        # Następnie załaduj metadane (etykiety, podsumowania, encje) z QDRANT (Iteracja 2)
+        # Na razie inicjalizujemy jako puste, zostaną załadowane w Iteracji 2
+        # loaded_metadata = load_cluster_metadata() # USUNIĘTO
+        loaded_metadata = None # Zostanie załadowane w Iteracji 2
+        # Inicjalizacja stanów metadanych (jeśli nie istnieją)
+        if 'cluster_labels' not in st.session_state: st.session_state.cluster_labels = {}
+        if 'cluster_summaries' not in st.session_state: st.session_state.cluster_summaries = {}
+        if 'cluster_entities' not in st.session_state: st.session_state.cluster_entities = {}
+        if 'show_cluster_inconsistency_warning' not in st.session_state: st.session_state.show_cluster_inconsistency_warning = False # Reset flagi
 
-        if loaded_metadata:
-            # Załaduj metadane z pliku niezależnie od spójności
+        if loaded_metadata: # Ta sekcja będzie aktywowana w Iteracji 2 po dodaniu ładowania z Qdrant
+            # Załaduj metadane z Qdrant niezależnie od spójności (sprawdzanie poniżej)
             st.session_state.cluster_labels = loaded_metadata.get("labels", {})
             st.session_state.cluster_summaries = loaded_metadata.get("summaries", {})
             st.session_state.cluster_entities = loaded_metadata.get("entities", {})
@@ -428,7 +364,7 @@ def main():
                 # Ustaw flagę, aby wyświetlić ostrzeżenie w UI
                 st.session_state.show_cluster_inconsistency_warning = True
             elif metadata_assignments_count is None:
-                 logger.warning(f"⚠️ Brak 'assignments_count' w załadowanych metadanych z pliku {CLUSTER_METADATA_FILE}. Nie można sprawdzić spójności.")
+                 logger.warning(f"⚠️ Brak 'assignments_count' w załadowanych metadanych. Nie można sprawdzić spójności.") # Usunięto odwołanie do pliku
                  # Można też ustawić flagę ostrzeżenia w tym przypadku
                  st.session_state.show_cluster_inconsistency_warning = True
             else:
@@ -461,10 +397,10 @@ def main():
             st.session_state.selected_cluster_id = None
             st.session_state.cluster_summaries = {}
             st.session_state.cluster_entities = {}
-            # Usuń plik metadanych, aby nie ładować starych dla nowego czatu
-            try:
-                 if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-            except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} przy tworzeniu nowego czatu: {e}")
+            # Usunięto logikę usuwania pliku metadanych
+            # try:
+            #      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
+            # except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} przy tworzeniu nowego czatu: {e}")
             save_chat_history(st.session_state.chats, st.session_state.active_chat_id)
             st.rerun()
 
@@ -606,10 +542,7 @@ def main():
                          st.session_state.cluster_summaries = {}
                          st.session_state.cluster_entities = {}
                          st.session_state.cluster_load_status = "loaded_empty"
-                         # Usuń stary plik metadanych, jeśli istnieje
-                         try:
-                              if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-                         except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE}: {e}")
+                         # Usunięto usuwanie pliku metadanych
                     else:
                          # Przygotuj dane wejściowe dla klastrowania
                          point_ids = [d['id'] for d in qdrant_data if d.get('vector') is not None]
@@ -746,16 +679,33 @@ def main():
                                  st.session_state.cluster_labels = generated_labels
                                  st.session_state.cluster_summaries = generated_summaries
                                  st.session_state.cluster_entities = generated_entities
-                                 # ZAPIS DO PLIKU - przekazanie również assignments
-                                 save_cluster_metadata(
-                                     assignments=st.session_state.cluster_assignments,
-                                     labels=generated_labels,
-                                     summaries=generated_summaries,
-                                     entities=generated_entities
-                                 )
+                                 # ZAPIS DO QDRANT zamiast do pliku
+                                 cluster_metadata_to_save = {}
+                                 for cid in generated_labels.keys():
+                                     # Pomijamy klaster -1 (szum) przy zapisie metadanych
+                                     if cid != -1:
+                                         cluster_metadata_to_save[cid] = {
+                                             "label": generated_labels.get(cid),
+                                             "summary": generated_summaries.get(cid),
+                                             "entities": generated_entities.get(cid, []) # Upewnij się, że entities jest listą
+                                         }
+                                 if cluster_metadata_to_save:
+                                     with st.spinner("Zapisywanie metadanych klastrów do Qdrant..."):
+                                         save_meta_success = st.session_state.chatbot.qdrant_connector.save_cluster_metadata_to_qdrant(
+                                             cluster_metadata_to_save
+                                         )
+                                         if save_meta_success:
+                                             logger.info("✅ Pomyślnie zapisano metadane klastrów do Qdrant.")
+                                             st.success("✅ Metadane klastrów zapisane w Qdrant.") # Dodaj komunikat dla użytkownika
+                                         else:
+                                             st.error("⚠️ Wystąpił błąd podczas zapisywania metadanych klastrów do Qdrant.")
+                                 else:
+                                     logger.warning("Brak metadanych klastrów (poza szumem) do zapisania.")
+
+                                 # Usunięto wywołanie save_cluster_metadata(...)
 
                                  if all_metadata_generated_successfully:
-                                     st.success("✅ Etykiety, podsumowania i encje dla wszystkich klastrów wygenerowane i zapisane.")
+                                     st.success("✅ Etykiety, podsumowania i encje dla wszystkich klastrów wygenerowane.") # Zmieniono komunikat
                                  else:
                                      st.warning("⚠️ Niektóre metadane klastrów mogły nie zostać wygenerowane z powodu braku danych lub modeli.")
 
@@ -999,10 +949,10 @@ def main():
                                            st.session_state.cluster_summaries = {}
                                            st.session_state.cluster_entities = {}
                                            st.session_state.cluster_load_status = "loaded_empty" # Ustawiamy na pusty
-                                           # Usuń plik metadanych
-                                           try:
-                                                if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-                                           except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po czyszczeniu bazy: {e}")
+                                           # Usunięto logikę usuwania pliku metadanych
+                                           # try:
+                                           #      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
+                                           # except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po czyszczeniu bazy: {e}")
                                       else:
                                            st.error(f"❌ Wystąpił błąd podczas czyszczenia kolekcji '{collection_name_to_clear}'.")
                                  except AttributeError:
@@ -1091,7 +1041,7 @@ def main():
                           # DODANO: Komunikat o konieczności ponownej analizy klastrów
                           st.info("ℹ️ Dodano nowe dokumenty. Aby uwzględnić je w analizie, uruchom ponownie '🚀 Analizuj / Odśwież Klastry'.")
                       if error_count > 0: st.error(f"❌ Wystąpiły błędy dla {error_count} z {num_files} plików.")
-                      # Po przetworzeniu dokumentów, resetuj stan klastrowania i usuń plik metadanych
+                      # Po przetworzeniu dokumentów, resetuj stan klastrowania
                       st.session_state.cluster_assignments = None
                       st.session_state.cluster_labels = {}
                       st.session_state.qdrant_data_cache = None
@@ -1099,9 +1049,10 @@ def main():
                       st.session_state.cluster_summaries = {}
                       st.session_state.cluster_entities = {}
                       st.session_state.cluster_load_status = "not_loaded"
-                      try:
-                           if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-                      except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po przetworzeniu dokumentów: {e}")
+                      # Usunięto logikę usuwania pliku metadanych
+                      # try:
+                      #      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
+                      # except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po przetworzeniu dokumentów: {e}")
 
 
                  # --- Przetwarzanie URL ---
@@ -1110,7 +1061,7 @@ def main():
                       with st.spinner("Przetwarzanie URL..."):
                           try:
                               st.warning("Przetwarzanie z URL nie jest jeszcze w pełni zaimplementowane w tym przycisku.")
-                              # Po przetworzeniu dokumentów z URL, resetuj stan klastrowania i usuń plik metadanych
+                              # Po przetworzeniu dokumentów z URL, resetuj stan klastrowania
                               st.session_state.cluster_assignments = None
                               st.session_state.cluster_labels = {}
                               st.session_state.qdrant_data_cache = None
@@ -1118,12 +1069,14 @@ def main():
                               st.session_state.cluster_summaries = {}
                               st.session_state.cluster_entities = {}
                               st.session_state.cluster_load_status = "not_loaded"
-                              try:
-                                   if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-                              except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po przetworzeniu URL: {e}")
+                              # Usunięto logikę usuwania pliku metadanych
+                              # try:
+                              #      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
+                              # except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} po przetworzeniu URL: {e}")
+                          # Naprawienie bloku try-except (dodanie except i poprawne wcięcie)
                           except Exception as e:
-                              logger.error(f"❌ Błąd przetwarzania URL: {str(e)}", exc_info=True)
-                              st.error(f"Błąd podczas przetwarzania URL: {e}")
+                               logger.error(f"❌ Błąd przetwarzania URL: {str(e)}", exc_info=True)
+                               st.error(f"Błąd podczas przetwarzania URL: {e}")
 
 
         st.markdown("---")
@@ -1139,11 +1092,11 @@ def main():
                  st.session_state.cluster_summaries = {}
                  st.session_state.cluster_entities = {}
                  st.session_state.filter_by_selected_cluster = False # Resetuj flagę filtrowania
-                 # Usuń plik metadanych przy resecie czatu
-                 try:
-                      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
-                 except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} przy resecie czatu: {e}")
-                 # Resetuj status ładowania, aby wymusić ponowne ładowanie z Qdrant
+                 # Usunięto logikę usuwania pliku metadanych
+                 # try:
+                 #      if os.path.exists(CLUSTER_METADATA_FILE): os.remove(CLUSTER_METADATA_FILE)
+                 # except OSError as e: logger.error(f"Nie udało się usunąć pliku {CLUSTER_METADATA_FILE} przy resecie czatu: {e}")
+                 # Resetuj status ładowania, aby wymusić ponowne ładowanie z Qdrant (w Iteracji 2)
                  if 'cluster_data_loaded' in st.session_state: del st.session_state.cluster_data_loaded
                  if 'cluster_load_status' in st.session_state: del st.session_state.cluster_load_status
             else:

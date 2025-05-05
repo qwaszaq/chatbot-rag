@@ -11,11 +11,13 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import (
     Distance, VectorParams, CollectionInfo, CollectionStatus,
     PointStruct, UpdateResult, PointIdsList, Payload,
-    Filter, FieldCondition, MatchValue # DODANO: Importy dla filtrowania
+    Filter, FieldCondition, MatchValue, # Dodano przecinek
+    # Brak importu Distance, VectorParams, PointStruct, bo już są
 )
+from qdrant_client.http import models as rest # Dodano import rest dla upsert
 import os
 import logging
-from typing import Dict, List, Optional # DODANO: Import Dict, List i Optional
+from typing import Dict, List, Optional, Any # Zmieniono na Any
 import time # DODANO: Import time
 
 logger = logging.getLogger(__name__)
@@ -26,6 +28,7 @@ class QdrantConnector:
         self.host = host
         self.port = port
         self.collection_name = collection_name
+        self.cluster_metadata_collection_name = f"{collection_name}_cluster_metadata" # Nowa nazwa kolekcji na metadane klastrów
         self.vector_size = vector_size
         self.client = None
         self.vectorstore = None
@@ -76,12 +79,14 @@ class QdrantConnector:
                 embeddings=embeddings # Przekazujemy instancję EmbeddingGenerator (która implementuje Embeddings)
             )
             logger.info("✅ LangChain Qdrant vectorstore initialized.")
-            return True
+            # Inicjalizacja kolekcji metadanych klastrów po udanej inicjalizacji klienta
+            self._initialize_metadata_collection()
+            return True # Zwróć True jeśli główna inicjalizacja się powiodła
+
         except Exception as e:
             # Catch any exception during initialization
-            logger.error(f"❌ Błąd podczas inicjalizacji Qdrant: {str(e)}")
+            logger.error(f"❌ Błąd podczas inicjalizacji Qdrant (główna kolekcja): {str(e)}")
             return False
-
     def add_documents(self, documents):
         """Dodaje dokumenty do bazy. Vectorstore użyje swojego wewnętrznego embedding generatora."""
         if not self.vectorstore:
@@ -180,8 +185,31 @@ class QdrantConnector:
         """Zwraca vectorstore Qdrant"""
         return self.vectorstore
 
+    def _initialize_metadata_collection(self):
+        """Inicjalizuje kolekcję na metadane klastrów, jeśli nie istnieje."""
+        if not self.client:
+            logger.error("❌ Klient Qdrant nie zainicjalizowany, nie można inicjalizować kolekcji metadanych.")
+            return
+        try:
+            logger.info(f"Attempting to check/create cluster metadata collection: {self.cluster_metadata_collection_name}")
+            try:
+                self.client.get_collection(collection_name=self.cluster_metadata_collection_name)
+                logger.info(f"✅ Kolekcja metadanych klastrów '{self.cluster_metadata_collection_name}' już istnieje.")
+            except Exception:
+                logger.info(f"ℹ️ Kolekcja metadanych klastrów '{self.cluster_metadata_collection_name}' nie istnieje. Spróbuję utworzyć.")
+                # Kolekcja metadanych nie potrzebuje wektorów
+                self.client.recreate_collection(
+                    collection_name=self.cluster_metadata_collection_name,
+                    vectors_config={} # Pusta konfiguracja wektorów
+                    # Można dodać shard_number=1, replication_factor=1 dla optymalizacji, jeśli to mała kolekcja
+                )
+                logger.info(f"✅ Kolekcja metadanych klastrów '{self.cluster_metadata_collection_name}' utworzona pomyślnie.")
+        except Exception as e:
+            logger.error(f"❌ Błąd podczas inicjalizacji Qdrant (kolekcja metadanych klastrów): {str(e)}")
+            # Nie przerywamy głównej inicjalizacji, ale logujemy błąd
+
     def clear_collection(self):
-        """Usuwa i tworzy na nowo kolekcję Qdrant, efektywnie czyszcząc jej zawartość."""
+        """Usuwa i tworzy na nowo główną kolekcję Qdrant."""
         if not self.client:
             logger.error("❌ Qdrant client nie jest zainicjalizowany. Nie można wyczyścić kolekcji.")
             return False
@@ -281,7 +309,7 @@ class QdrantConnector:
         except Exception as e:
             logger.error(f"❌ Błąd podczas pobierania danych z Qdrant za pomocą scroll: {str(e)}")
             return [] # Zwróć pustą listę w przypadku błędu
-    # === KONIEC POPRAWNIE DODANEJ METODY ===
+    # === KONIEC POPRAWNIE DODANEJ METODY get_all_data_for_clustering ===
 
     # === POPRAWIONA METODA AKTUALIZACJI PAYLOADU ===
     def update_payload_with_cluster_ids(self, assignments: Dict[str, int]):
@@ -336,3 +364,86 @@ class QdrantConnector:
              logger.error(f"❌ Błąd podczas ustawiania payloadów w Qdrant (set_payload wsadowo): {e}", exc_info=True)
              return False
     # === KONIEC POPRAWIONEJ METODY AKTUALIZACJI PAYLOADU ===
+# === NOWA METODA DO ZAPISYWANIA METADANYCH KLASTRÓW ===
+    def save_cluster_metadata_to_qdrant(self, cluster_metadata: Dict[int, Dict[str, Any]]):
+        """
+        Zapisuje metadane klastrów (etykiety, podsumowania, encje) do dedykowanej kolekcji w Qdrant.
+        Każdy klaster jest zapisywany jako osobny punkt, gdzie ID punktu to ID klastra,
+        a payload to słownik z metadanymi (label, summary, entities).
+
+        Args:
+            cluster_metadata (Dict[int, Dict[str, Any]]): Słownik mapujący ID klastra (int)
+                                                          na słownik metadanych (np. {'label': ..., 'summary': ..., 'entities': ...}).
+
+        Returns:
+            bool: True jeśli operacja się powiodła, False w przypadku błędu lub braku danych.
+        """
+        if not cluster_metadata:
+            logger.info("ℹ️ Brak metadanych klastrów do zapisania w Qdrant.")
+            return True
+        if not self.client:
+            logger.error("❌ Błąd: Klient Qdrant nie jest zainicjalizowany w save_cluster_metadata_to_qdrant.")
+            return False
+
+        # Upewnij się, że kolekcja metadanych istnieje
+        self._initialize_metadata_collection()
+
+        logger.info(f"⚙️ Rozpoczynanie zapisu metadanych dla {len(cluster_metadata)} klastrów do kolekcji '{self.cluster_metadata_collection_name}'...")
+        start_time = time.time()
+
+        points_to_upsert = []
+        for cluster_id, metadata in cluster_metadata.items():
+            # Sprawdź, czy klaster_id jest int i nie jest szumem (-1)
+            if isinstance(cluster_id, int) and cluster_id != -1:
+                # Przygotuj payload - upewnij się, że zawiera oczekiwane klucze
+                # Konwertuj listę encji (krotek) na listę list, aby była zgodna z JSON
+                entities_list = metadata.get("entities", [])
+                serializable_entities = [list(entity) for entity in entities_list]
+
+                payload: Payload = {
+                    "label": metadata.get("label", f"Klaster {cluster_id}"),
+                    "summary": metadata.get("summary", "Brak podsumowania."),
+                    "entities": serializable_entities # Zapisz serializowalną listę
+                }
+                # ID punktu w Qdrant musi być stringiem lub int (ale musi być spójne), użyjmy int
+                point_id = cluster_id # Użyj int jako ID punktu
+
+                points_to_upsert.append(
+                    rest.PointStruct( # Użyj rest.PointStruct
+                        id=point_id,
+                        vector={}, # Brak wektorów w tej kolekcji
+                        payload=payload
+                    )
+                )
+
+        if not points_to_upsert:
+            logger.warning("⚠️ Brak prawidłowych metadanych klastrów do utworzenia punktów w Qdrant.")
+            return True # Nie ma nic do zrobienia, uznajemy za sukces
+
+        try:
+            # Użyj upsert do dodania/aktualizacji punktów (klastrów)
+            update_result: UpdateResult = self.client.upsert(
+                collection_name=self.cluster_metadata_collection_name,
+                points=points_to_upsert,
+                wait=True # Poczekaj na zakończenie
+            )
+
+            end_time = time.time()
+            logger.info(f"⏱️ Zapis metadanych klastrów do Qdrant (upsert wsadowo) zajął: {end_time - start_time:.2f}s")
+
+            update_status = getattr(update_result, 'status', 'unknown')
+            # Qdrant > 1.1 zwraca OperationStatus, sprawdzamy result
+            op_status = getattr(update_result, 'result', None)
+            if op_status and op_status.status == rest.UpdateStatus.COMPLETED:
+                 update_status = "completed" # Ujednolicenie dla logowania
+
+            if update_status in ["completed", "acknowledged"]:
+                logger.info(f"✅ Pomyślnie zapisano/zaktualizowano metadane dla {len(points_to_upsert)} klastrów w Qdrant.")
+                return True
+            else:
+                logger.error(f"❌ Zapis metadanych klastrów do Qdrant zakończony statusem: {update_status}")
+                return False
+        except Exception as e:
+             logger.error(f"❌ Błąd podczas zapisu metadanych klastrów do Qdrant (upsert wsadowo): {e}", exc_info=True)
+             return False
+    # === KONIEC NOWEJ METODY DO ZAPISYWANIA METADANYCH KLASTRÓW ===
